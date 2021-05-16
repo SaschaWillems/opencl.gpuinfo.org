@@ -75,6 +75,7 @@ $params = [
 	':openclversionmajor' => $report->getOpenCLValue('versionmajor'),
 	':openclversionminor' => $report->getOpenCLValue('versionminor'),
 	':reportversion' => $report->getEnvironmentValue('reportversion'),
+	':appversion' => $report->getEnvironmentValue('appversion'),
 	':submitter' => '', // @todo
 	':description' => '' // @todo
 ];
@@ -95,9 +96,9 @@ DB::$connection->beginTransaction();
 try {	
 	$sql = 
 		"INSERT INTO reports
-			(devicename, deviceversion, driverversion, openclversionmajor, openclversionminor, osname, osversion, osarchitecture, reportversion, description, submitter)
+			(devicename, deviceversion, driverversion, openclversionmajor, openclversionminor, osname, osversion, osarchitecture, reportversion, appversion, description, submitter)
 		VALUES
-			(:devicename, :deviceversion, :driverversion, :openclversionmajor, :openclversionminor, :osname, :osversion, :osarchitecture, :reportversion, :description, :submitter)";
+			(:devicename, :deviceversion, :driverversion, :openclversionmajor, :openclversionminor, :osname, :osversion, :osarchitecture, :reportversion, :appversion, :description, :submitter)";
 	$stmnt = DB::$connection->prepare($sql);
 	$stmnt->execute($params);
 } catch (Exception $e) {
