@@ -54,5 +54,14 @@ class Report {
 
 	public function deviceExtensions() {
 		return $this->data['device']['extensions'];
-	}	
+	}
+
+	public function platformInfo() {
+		return $this->data['platform']['info'];
+	}
+
+	public function platformExtensions() {
+		return $this->data['platform']['extensions'];
+	}
+
 }

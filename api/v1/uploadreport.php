@@ -165,6 +165,56 @@ try {
 	reportError("Error at saving report device extensions", $file_name);
 }
 
+// Report platform info
+try {	
+	foreach ($report->platformInfo() as $platformInfo) {
+		$sql = 
+			"INSERT INTO deviceplatforminfo 
+				(reportid, name, enumvalue, extension, value)
+			VALUES
+				(:reportid, :name, :enumvalue, :extension, :value)";
+		$values = [
+			':reportid' => $reportid,
+			':name' => $platformInfo['name'],
+			':enumvalue' => $platformInfo['enumvalue'],
+			':extension' => $platformInfo['extension'],
+			':value' => null
+		];
+		if (array_key_exists('value', $platformInfo)) {
+			if (is_array($platformInfo['value'])) {
+				$values[':value'] = serialize($platformInfo['value']);
+			} else {
+				$values[':value'] = $platformInfo['value'];
+			}
+		}
+		$stmnt = DB::$connection->prepare($sql);
+		$stmnt->execute($values);
+	
+	}
+} catch (Exception $e) {
+	reportError("Error at saving report platform info", $file_name);
+}
+
+// Report platform extensions
+try {	
+	foreach ($report->platformExtensions() as $platformExtension) {
+		$sql = 
+			"INSERT INTO deviceplatformextensions 
+				(reportid, name, version)
+			VALUES
+				(:reportid, :name, :version)";
+		$values = [
+			':reportid' => $reportid,
+			':name' => $platformExtension['name'],
+			':version' => $platformExtension['version'],
+		];
+		$stmnt = DB::$connection->prepare($sql);
+		$stmnt->execute($values);
+	}
+} catch (Exception $e) {
+	reportError("Error at saving report platform extensions", $file_name);
+}
+
 DB::$connection->commit();
 DB::disconnect();
 
