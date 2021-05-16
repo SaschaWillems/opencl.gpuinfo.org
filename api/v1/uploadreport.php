@@ -141,6 +141,28 @@ try {
 	header('HTTP/1.1 500 Error while trying to upload report (error at report device info)');
 	unlink($file_name);
 	exit();
+}
+
+// Report device extensions
+try {	
+	foreach ($report->deviceExtensions() as $deviceExtension) {
+		$sql = 
+			"INSERT INTO deviceextensions 
+				(reportid, name, version)
+			VALUES
+				(:reportid, :name, :version)";
+		$values = [
+			':reportid' => $reportid,
+			':name' => $deviceExtension['name'],
+			':version' => $deviceExtension['version'],
+		];
+		$stmnt = DB::$connection->prepare($sql);
+		$stmnt->execute($values);
+	}
+} catch (Exception $e) {
+	header('HTTP/1.1 500 Error while trying to upload report (error at report device extensions)');
+	unlink($file_name);
+	exit();
 }	
 
 DB::$connection->commit();

@@ -51,4 +51,8 @@ class Report {
 	public function deviceInfo() {
 		return $this->data['device']['info'];
 	}
+
+	public function deviceExtensions() {
+		return $this->data['device']['extensions'];
+	}	
 }
