@@ -46,9 +46,9 @@ try {
 	$report->fromJson($source);
 	
 	$params = [
-		':devicename' => $report->getDeviceInfoValue('DEVICE_NAME'),
-		':deviceversion' => $report->getDeviceInfoValue('DEVICE_VERSION'),
-		':driverversion' => $report->getDeviceInfoValue('DRIVER_VERSION'),
+		':devicename' => $report->getDeviceInfoValue('CL_DEVICE_NAME'),
+		':deviceversion' => $report->getDeviceInfoValue('CL_DEVICE_VERSION'),
+		':driverversion' => $report->getDeviceInfoValue('CL_DRIVER_VERSION'),
 		':osname' => $report->getEnvironmentValue('name'),
 		':osversion' => $report->getEnvironmentValue('version'),
 		':osarchitecture' => $report->getEnvironmentValue('architecture'),

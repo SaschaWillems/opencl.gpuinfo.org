@@ -59,16 +59,16 @@ function convertValue($val) {
 
 }
 
-// @todo: try except
+// @todo: check error handling (client and server)
 
 $source = file_get_contents($file_name);
 $report = new Report();
 $report->fromJson($source);
 
 $params = [
-	':devicename' => $report->getDeviceInfoValue('DEVICE_NAME'),
-	':deviceversion' => $report->getDeviceInfoValue('DEVICE_VERSION'),
-	':driverversion' => $report->getDeviceInfoValue('DRIVER_VERSION'),
+	':devicename' => $report->getDeviceInfoValue('CL_DEVICE_NAME'),
+	':deviceversion' => $report->getDeviceInfoValue('CL_DEVICE_VERSION'),
+	':driverversion' => $report->getDeviceInfoValue('CL_DRIVER_VERSION'),
 	':osname' => $report->getEnvironmentValue('name'),
 	':osversion' => $report->getEnvironmentValue('version'),
 	':osarchitecture' => $report->getEnvironmentValue('architecture'),
@@ -91,26 +91,57 @@ foreach ($params as $param) {
 DB::connect();
 DB::$connection->beginTransaction();
 
-try {
-	
-	// Report meta data	
+// Report meta data	
+try {	
 	$sql = 
 		"INSERT INTO reports
 			(devicename, deviceversion, driverversion, openclversionmajor, openclversionminor, osname, osversion, osarchitecture, reportversion, description, submitter)
 		VALUES
 			(:devicename, :deviceversion, :driverversion, :openclversionmajor, :openclversionminor, :osname, :osversion, :osarchitecture, :reportversion, :description, :submitter)";
-	try {
-		$stmnt = DB::$connection->prepare($sql);
-		$stmnt->execute($params);
-		$reportid = DB::$connection->lastInsertId();
-	} catch (Exception $e) {
-		header('HTTP/1.1 500 Error while trying to upload report (error at report meta data)');
-		exit();
-	}				
-} catch(Exception $e) {
+	$stmnt = DB::$connection->prepare($sql);
+	$stmnt->execute($params);
+} catch (Exception $e) {
 	header('HTTP/1.1 500 Error while trying to upload report (error at report meta data)');
+	unlink($file_name);
 	exit();
 }
+
+// Get report id
+$reportid = DB::$connection->lastInsertId();
+
+// Report device info
+try {	
+	foreach ($report->deviceInfo() as $deviceInfo) {
+		$sql = 
+			"INSERT INTO deviceinfo 
+				(reportid, name, enumvalue, extension, value)
+			VALUES
+				(:reportid, :name, :enumvalue, :extension, :value)";
+		$values = [
+			':reportid' => $reportid,
+			':name' => $deviceInfo['name'],
+			':enumvalue' => $deviceInfo['enumvalue'],
+			':extension' => $deviceInfo['extension'],
+			':value' => null
+		];
+		if (array_key_exists('value', $deviceInfo)) {
+			if (is_array($deviceInfo['value'])) {
+				$values[':value'] = serialize($deviceInfo['value']);
+			} else {
+				$values[':value'] = $deviceInfo['value'];
+			}
+		}
+
+		$stmnt = DB::$connection->prepare($sql);
+		$stmnt->execute($values);
+	
+		// @todo: details
+	}
+} catch (Exception $e) {
+	header('HTTP/1.1 500 Error while trying to upload report (error at report device info)');
+	unlink($file_name);
+	exit();
+}	
 
 DB::$connection->commit();
 DB::disconnect();

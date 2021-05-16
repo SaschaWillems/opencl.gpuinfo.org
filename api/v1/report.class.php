@@ -46,5 +46,9 @@ class Report {
 			return $this->data['device']['opencl'][$name];
 		}
 		return null;
-	}		
+	}
+
+	public function deviceInfo() {
+		return $this->data['device']['info'];
+	}
 }
