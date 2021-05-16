@@ -56,7 +56,14 @@ function convertValue($val) {
 	} else {
 		return $val;
 	}
+}
 
+function reportError($file_name, $message, $code = 500) {
+	header("HTTP/1.1 $code Error while trying to upload report: $message");
+	if (file_exists($file_name)) {
+		unlink($file_name);
+	}
+	exit();
 }
 
 // @todo: check error handling (client and server)
@@ -83,9 +90,7 @@ $params = [
 // Check if all values required to uniquely identify the report are set
 foreach ($params as $param) {
 	if ($param === null) {
-		header('HTTP/1.1 500 Could not get required report identifiers');
-		unlink($file_name);
-		exit();
+		reportError("Could not get required report identifiers", $file_name);
 	}
 }
 
@@ -102,12 +107,10 @@ try {
 	$stmnt = DB::$connection->prepare($sql);
 	$stmnt->execute($params);
 } catch (Exception $e) {
-	header('HTTP/1.1 500 Error while trying to upload report (error at report meta data)');
-	unlink($file_name);
-	exit();
+	reportError("Error at saving report meta data", $file_name);
 }
 
-// Get report id
+// Get th id of the inserted report
 $reportid = DB::$connection->lastInsertId();
 
 // Report device info
@@ -139,9 +142,7 @@ try {
 		// @todo: details
 	}
 } catch (Exception $e) {
-	header('HTTP/1.1 500 Error while trying to upload report (error at report device info)');
-	unlink($file_name);
-	exit();
+	reportError("Error at saving report device info", $file_name);
 }
 
 // Report device extensions
@@ -161,10 +162,8 @@ try {
 		$stmnt->execute($values);
 	}
 } catch (Exception $e) {
-	header('HTTP/1.1 500 Error while trying to upload report (error at report device extensions)');
-	unlink($file_name);
-	exit();
-}	
+	reportError("Error at saving report device extensions", $file_name);
+}
 
 DB::$connection->commit();
 DB::disconnect();
