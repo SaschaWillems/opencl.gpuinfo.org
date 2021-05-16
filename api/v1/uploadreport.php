@@ -48,17 +48,7 @@ $path = './';
 $file_name = uniqid('uploadreport_', true) . '.json';
 move_uploaded_file($_FILES['data']['tmp_name'], $path . $file_name) or exit('Error: Could not store report!');
 
-function convertValue($val) {
-	if (is_string($val)) {
-		if (strpos($val, '0x') === 0) {
-			return hexdec($val);
-		}
-	} else {
-		return $val;
-	}
-}
-
-function reportError($file_name, $message, $code = 500) {
+function reportError($message, $file_name, $code = 500) {
 	header("HTTP/1.1 $code Error while trying to upload report: $message");
 	if (file_exists($file_name)) {
 		unlink($file_name);
@@ -110,8 +100,25 @@ try {
 	reportError("Error at saving report meta data", $file_name);
 }
 
-// Get th id of the inserted report
+// Get the id of the newly inserted report
 $reportid = DB::$connection->lastInsertId();
+
+// Store minified JSON for reference
+try {	
+	$sql = 
+		"INSERT INTO reportsjson
+			(reportid, json)
+		VALUES
+			(:reportid, :json)";
+	$values = [
+		':reportid' => $reportid,
+		':json' => json_encode(json_decode($report->json))
+	];
+	$stmnt = DB::$connection->prepare($sql);
+	$stmnt->execute($values);
+} catch (Exception $e) {
+	reportError("Error at saving report json data", $file_name);
+}
 
 // Report device info
 try {	
@@ -138,7 +145,8 @@ try {
 
 		$stmnt = DB::$connection->prepare($sql);
 		$stmnt->execute($values);
-	
+
+
 		// @todo: details
 	}
 } catch (Exception $e) {

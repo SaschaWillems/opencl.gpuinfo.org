@@ -21,8 +21,11 @@
 
 class Report {
 	public $data = null;
+	public $json = null;
+
 	public function fromJson($json) {	
 		$this->data = json_decode($json, true);
+		$this->json = $json;
 	}
 
 	public function getDeviceInfoValue($name) {
