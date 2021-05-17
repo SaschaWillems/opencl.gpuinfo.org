@@ -81,21 +81,23 @@ try {
 			$row = $stmnt->fetch(PDO::FETCH_NUM);
 			if ($stmnt->rowCount() > 0) {
 				$reportid = $row[0];
-				header('HTTP/1.1 200 report_present');
-				echo $reportid;
+				http_response_code(200);
+				echo 'report_present';
 			} else {
-				header('HTTP/1.1 200 report_not_present');
-				echo "-1";
+				http_response_code(200);
+				echo 'report_not_present';
 			}	
 		} catch (Exception $e) {
-			header('HTTP/1.1 500 Error while trying to get report information');
+			http_response_code(500);
+			echo('Error while trying to get report information');
 			if (file_exists($file_name)) {
 				unlink($file_name);
 			}		
 			exit();
 		}				
 	} catch(Exception $e) {
-		header('HTTP/1.1 500 Error while trying to get report information');
+		http_response_code(500);
+		echo('Error while trying to get report information');
 		if (file_exists($file_name)) {
 			unlink($file_name);
 		}	
