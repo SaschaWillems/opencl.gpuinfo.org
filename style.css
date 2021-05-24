@@ -623,3 +623,9 @@ h1 {
 	display: inline-block;
 	padding-bottom: 15px;
 }
+
+.footer {
+	color: #B0B0B0;
+	font-size: x-small;	
+	text-align: center;
+}
