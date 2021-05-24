@@ -66,6 +66,7 @@ $params = [
 	':devicename' => $report->getDeviceInfoValue('CL_DEVICE_NAME'),
 	':deviceversion' => $report->getDeviceInfoValue('CL_DEVICE_VERSION'),
 	':driverversion' => $report->getDeviceInfoValue('CL_DRIVER_VERSION'),
+	':deviceidentifier' => $report->getDeviceInfoValue('CL_DEVICE_NAME')." ".$report->getDeviceInfoValue('CL_DEVICE_VERSION'),
 	':osname' => $report->getEnvironmentValue('name'),
 	':osversion' => $report->getEnvironmentValue('version'),
 	':osarchitecture' => $report->getEnvironmentValue('architecture'),
@@ -91,9 +92,9 @@ DB::$connection->beginTransaction();
 try {	
 	$sql = 
 		"INSERT INTO reports
-			(devicename, deviceversion, driverversion, openclversionmajor, openclversionminor, osname, osversion, osarchitecture, reportversion, appversion, description, submitter)
+			(devicename, deviceversion, driverversion, deviceidentifier, openclversionmajor, openclversionminor, osname, osversion, osarchitecture, reportversion, appversion, description, submitter)
 		VALUES
-			(:devicename, :deviceversion, :driverversion, :openclversionmajor, :openclversionminor, :osname, :osversion, :osarchitecture, :reportversion, :appversion, :description, :submitter)";
+			(:devicename, :deviceversion, :driverversion, :deviceidentifier, :openclversionmajor, :openclversionminor, :osname, :osversion, :osarchitecture, :reportversion, :appversion, :description, :submitter)";
 	$stmnt = DB::$connection->prepare($sql);
 	$stmnt->execute($params);
 } catch (Exception $e) {
