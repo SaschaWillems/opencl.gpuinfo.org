@@ -43,15 +43,7 @@ if (!$report->exists()) {
 
 PageGenerator::header($report->info->device_description);
 
-// Counters
-try {
-	DB::connect();
-	$infocount = DB::getCount("SELECT count(*) from deviceinfo where reportid = :reportid", [':reportid' => $reportID]);
-	$extcount = DB::getCount("SELECT count(*) from deviceextensions where reportid = :reportid", [':reportid' => $reportID]);
-} catch (PDOException $e) {
-	DB::disconnect();
-	die("<b>Error while fetching report data!</b><br>");
-}
+DB::connect();
 echo "<center>";
 
 // Header
@@ -78,7 +70,7 @@ echo "</div>";
 	$views = [
 		'deviceinfo',
 		'deviceextensions',
-		'platform',
+		'deviceplatform',
 	];
 	foreach ($views as $index => $view) {
 		echo "<div id='$view' class='tab-pane fade ".($index == 0 ? "in active" : null)." reportdiv'>";
@@ -96,7 +88,8 @@ echo "</div>";
 				var tableNames = [
 					'table_deviceinfo',
 					'table_deviceextensions',
-					// @todo: platform
+					'table_deviceplatforminfo',
+					'table_deviceplatformextensions'
 				];
 				for (var i = 0, arrlen = tableNames.length; i < arrlen; i++) {
 					if (typeof $('#' + tableNames[i]) != undefined) {

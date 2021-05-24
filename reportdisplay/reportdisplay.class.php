@@ -135,4 +135,30 @@ class Report
             return null;
         }
     }
+
+    public function fetchPlatformInfo()
+    {
+        try {
+            $sql = "SELECT name, value from deviceplatforminfo where extension = \"\" and reportid = :reportid order by id asc";
+            $stmnt = DB::$connection->prepare($sql);
+            $stmnt->execute([":reportid" => $this->id]);
+            $result = $stmnt->fetchAll(PDO::FETCH_ASSOC);
+            return $result;
+        } catch (Throwable $e) {
+            return null;
+        }
+    }
+
+    public function fetchPlatformExtensions()
+    {
+        try {
+            $sql = "SELECT name, version from deviceplatformextensions where reportid = :reportid order by name asc";
+            $stmnt = DB::$connection->prepare($sql);
+            $stmnt->execute([":reportid" => $this->id]);
+            $result = $stmnt->fetchAll(PDO::FETCH_ASSOC);
+            return $result;
+        } catch (Throwable $e) {
+            return null;
+        }
+    }    
 }

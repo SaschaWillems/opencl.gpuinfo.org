@@ -21,7 +21,7 @@
  */
 ?>
 
-<table id='table_deviceextensions' class='table table-striped table-bordered table-hover reporttable'>
+<table id='table_deviceextensions' class='table table-striped table-bordered table-hover'>
 	<thead>
 		<tr>
 			<td class='caption'>Extension</td>

@@ -8,7 +8,7 @@ body {
 
 .tablediv { 
 	background: #FEFEFE;
-	padding-bottom: 35px;
+	padding-bottom: 15px;
     margin-bottom: 20px;
     background-color: #fff;
     border: 1px solid transparent;
@@ -95,12 +95,8 @@ th.sorting::after, th.sorting_asc::after, th.sorting_desc::after {
 }
 
 .reportdiv {
-	/*width:85%;*/
-	/*width:85%;*/
 	padding-top:10px;
 	padding-bottom:15px;
-/*	min-width:250px;
-	max-width:800px;	*/
 }
 
 /* .nav-report {
@@ -139,8 +135,8 @@ th.sorting::after, th.sorting_asc::after, th.sorting_desc::after {
 	/*width:auto;*/
 }
 
-.reporttable {
-	/*width:auto;*/
+.nesteddiv {
+	padding-top: 20px;
 }
 
 .borderless tr td {
