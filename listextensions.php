@@ -56,17 +56,17 @@ PageGenerator::header("Extensions");
 				<?php
 				DB::connect();
 				try {
-					$deviceCount =  DB::getCount("SELECT count(DISTINCT devicename) from reports where osname = :osname", ['osname' => $platform]);
+					$deviceCount =  DB::getCount("SELECT count(DISTINCT devicename) from reports where ostype = :ostype", ['ostype' => ostype($platform)]);
 					$sql = 
 						"SELECT 
 						de.name as name,
 						count(distinct r.devicename) as coverage
 						from deviceextensions de
 						join reports r on r.id = de.reportid 
-						where osname = :osname
+						where r.ostype = :ostype
 						group by name";
 					$stmnt = DB::$connection->prepare($sql);
-					$stmnt->execute(['osname' => $platform]);
+					$stmnt->execute(['ostype' => ostype($platform)]);
 					$extensions = $stmnt->fetchAll(PDO::FETCH_ASSOC);
 
 					foreach ($extensions as $extension) {

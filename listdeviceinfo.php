@@ -51,17 +51,17 @@ PageGenerator::header("Device info");
 			<?php																	
 				DB::connect();		
 				try {
-					$devicecount = DB::getCount("SELECT count(distinct deviceidentifier) from reports where osname = :osname", ['osname' => $platform]);	
+					$devicecount = DB::getCount("SELECT count(distinct deviceidentifier) from reports where ostype = :ostype", ['ostype' => ostype($platform)]);	
 					$sql = 
 						"SELECT 
 							name, 
 							count(distinct deviceidentifier) as coverage
 						from deviceinfo d
 						join reports r on r.id = d.reportid
-						where r.osname = :osname
+						where r.ostype = :ostype
 						group by name";
 					$stmnt = DB::$connection->prepare($sql);
-					$stmnt->execute(['osname' => $platform]);
+					$stmnt->execute(['ostype' => ostype($platform)]);
 					while ($row = $stmnt->fetch(PDO::FETCH_ASSOC)) {
 						$link = "displaydeviceinfo.php?name=".$row['name']."&platform=$platform";
 						echo "<tr>";						
