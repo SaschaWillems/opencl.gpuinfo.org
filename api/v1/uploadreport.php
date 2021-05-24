@@ -145,9 +145,26 @@ try {
 
 		$stmnt = DB::$connection->prepare($sql);
 		$stmnt->execute($values);
+		$detailid = DB::$connection->lastInsertId();
 
-
-		// @todo: details
+		// Additional details for this device info property
+		if ((array_key_exists('details', $deviceInfo) && (is_array($deviceInfo['details'])))) {
+			foreach($deviceInfo['details'] as $detail) {
+				$sqlDetail = 
+					"INSERT INTO deviceinfodetails 
+						(deviceinfoid, reportid, name, value)
+					VALUES 
+						(:deviceinfoid, :reportid, :name, :value)";
+				$valuesDetail = [
+					':deviceinfoid' => $detailid,
+					':reportid' => $reportid,
+					':name' => $detail['name'],
+					':value' => $detail['value']
+				];
+				$stmntDetail = DB::$connection->prepare($sqlDetail);
+				$stmntDetail->execute($valuesDetail);				
+			}
+		}
 	}
 } catch (Exception $e) {
 	reportError("Error at saving report device info", $file_name);
