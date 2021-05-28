@@ -31,6 +31,7 @@
 	<tbody>
 		<?php
 
+		// @todo: display os info
 		$device_info_field_aliases = [
 			'osname' => 'Name',
 			'osarchitecture' => 'Architecture',
@@ -38,14 +39,16 @@
 		];
 
 		try {
-			$data = $report->fetchDeviceInfo();
+			$device_info = $report->fetchDeviceInfo();
+			$device_info_details = $report->fetchDeviceInfoDetails();
 			// @todo: display mapping
-			foreach ($data as $row) {
+			foreach ($device_info as $row) {
 				$key = $row['name'];
 				$valueHint = null;
 				$value = $row['value'];
+				$displayvalue = getDisplayValue($key, $value);
 				// Shorten lengthy values and display them as hints
-				$maxDisplayLength = 35;
+				$maxDisplayLength = 40;
 				if (strlen($value) > $maxDisplayLength) {
 					$valueHint = $value;
 					$value = shorten($value, $maxDisplayLength);
@@ -56,9 +59,9 @@
 				echo "<tr>";
 				echo "<td>$key</td>";
 				if ($valueHint) {
-					echo "<td><abbr title='$valueHint'>$value</abbr></td>";
+					echo "<td><abbr title='$valueHint'>$displayvalue</abbr></td>";
 				} else {
-					echo "<td>$value</td>";
+					echo "<td>$displayvalue</td>";
 
 				}
 				echo "</tr>";
