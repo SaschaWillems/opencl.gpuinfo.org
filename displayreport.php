@@ -23,9 +23,10 @@
 require 'pagegenerator.php';
 require './database/database.class.php';
 require './includes/functions.php';
+require './includes/displayutils.php';
 require './reportdisplay/reportdisplay.class.php';
 
-$reportID = $_GET['id'];
+$reportID = (int)$_GET['id'];
 if (!$reportID) {
 	PageGenerator::errorMessage("<strong>Warning!</strong><br> No report ID set to display!");
 }

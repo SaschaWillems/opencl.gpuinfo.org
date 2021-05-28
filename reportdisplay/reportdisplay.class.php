@@ -70,18 +70,20 @@ class Report
             "SELECT 
                 id, 
                 devicename, 
-                deviceversion, 
+                deviceversion,
+                devicetype,                
                 driverversion, 
                 openclversionmajor, 
                 openclversionminor, 
                 osname, 
                 osversion, 
-                osarchitecture, 
+                osarchitecture,
+                ostype,
                 reportversion, 
-                description, 
-                submitter, 
-                submissiondate, 
-                counter, 
+                submitter,
+                comment,
+                submissiondate,
+                counter,
                 appversion
             FROM reports        
             WHERE id = :reportid";
@@ -100,7 +102,22 @@ class Report
     public function fetchDeviceInfo()
     {
         try {
-            $sql = "SELECT name, value from deviceinfo where extension = \"\" and reportid = :reportid order by id asc";
+            // @todo: hide or display ext related info here?
+            $sql = "SELECT name, value from deviceinfo where reportid = :reportid order by id asc";
+            // $sql = "SELECT name, value from deviceinfo where extension = \"\" and reportid = :reportid order by id asc";
+            $stmnt = DB::$connection->prepare($sql);
+            $stmnt->execute([":reportid" => $this->id]);
+            $result = $stmnt->fetchAll(PDO::FETCH_ASSOC);
+            return $result;
+        } catch (Throwable $e) {
+            return null;
+        }
+    }
+
+    public function fetchDeviceInfoDetails()
+    {
+        try {
+            $sql = "SELECT d2.name as deviceinfo, d.name, d.value from deviceinfodetails d join deviceinfo d2 on d.deviceinfoid = d2.id where d.reportid = :reportid order by d.id asc";
             $stmnt = DB::$connection->prepare($sql);
             $stmnt->execute([":reportid" => $this->id]);
             $result = $stmnt->fetchAll(PDO::FETCH_ASSOC);

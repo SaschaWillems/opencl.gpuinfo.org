@@ -24,11 +24,14 @@
 
 include '../../database/database.class.php';
 include '../../includes/functions.php';
+include '../../includes/displayutils.php';
 
 DB::connect();
 
 $data = array();
 $params = array();
+
+$searchClause = null;
 
 // Ordering
 $orderByColumn = '';
@@ -117,9 +120,9 @@ $sql = "SELECT
         id,
         devicename,
         deviceversion,
+        devicetype,
         driverversion,
         concat(openclversionmajor, '.', openclversionminor) as openclversion,
-        null as devicetype,
         osname,
         osversion,
         osarchitecture
@@ -138,7 +141,7 @@ if ($devices->rowCount() > 0) {
             'deviceversion' => $device['deviceversion'],
             'driverversion' => shorten($device['driverversion']),
             'openclversion' => $device['openclversion'],
-            'devicetype' => $device['devicetype'],
+            'devicetype' => displayDeviceType($device['devicetype']),
             'osname' => $device['osname'],
             'osversion' => $device['osversion'],
             'osarchitecture' => $device['osarchitecture'],

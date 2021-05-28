@@ -44,7 +44,6 @@ if (isset($_GET['platform'])) {
 $extension = GET_sanitized('extension');
 if ($extension != '') {
 	$defaultHeader = false;
-	$headerClass = $negate ? "header-red" : "header-green";
 	$caption = "Reports " . ($negate ? "<b>not</b>" : "") . " supporting <code>" . $extension . "</code>";
 	$caption .= " (<a href='listreports.php?extension=" . $extension . ($negate ? "" : "&option=not") . "'>toggle</a>)";
 }
@@ -52,15 +51,18 @@ if ($extension != '') {
 $submitter = GET_sanitized('submitter');
 if ($submitter != '') {
 	$defaultHeader = false;
-	$headerClass = "header-blue";
 	$caption = "Reports submitted by <code>" . $submitter . "</code>";
 }
 // Device name
 $devicename = GET_sanitized('devicename');
 if ($devicename != '') {
 	$defaultHeader = false;
-	$headerClass = "header-blue";
 	$caption = "Reports for <code>" . $devicename . "</code>";
+}
+// Platform (os)
+if ($platform && $platform !== 'all') {
+	$caption = "Listing " . ($caption ? lcfirst($caption) : "reports") . " on <img src='images/" . $platform . "logo.png' height='14px' style='padding-right:5px'/>" . ucfirst($platform);
+	$defaultHeader = false;
 }
 
 PageGenerator::header($pageTitle == null ? "Reports" : "Reports for $pageTitle");
@@ -150,7 +152,8 @@ if ($defaultHeader) {
 						'extension': 	'<?= GET_sanitized('extension') ?>',
 						'submitter': 	'<?= GET_sanitized('submitter') ?>',
 						'devicename': 	'<?= GET_sanitized('devicename') ?>',
-						'displayname': 	'<?= GET_sanitized('displayname') ?>'
+						'displayname': 	'<?= GET_sanitized('displayname') ?>',
+						'platform': 	'<?= GET_sanitized('platform') ?>'
 					}
 				},
 				error: function(xhr, error, thrown) {
@@ -158,7 +161,8 @@ if ($defaultHeader) {
 					$('#reports_processing').hide();
 				}
 			},
-			"columns": [{
+			"columns": [
+				{
 					data: 'id'
 				},
 				{
