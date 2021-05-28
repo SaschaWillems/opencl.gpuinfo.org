@@ -67,15 +67,17 @@ $params = [
 	':deviceversion' => $report->getDeviceInfoValue('CL_DEVICE_VERSION'),
 	':driverversion' => $report->getDeviceInfoValue('CL_DRIVER_VERSION'),
 	':deviceidentifier' => $report->getDeviceInfoValue('CL_DEVICE_NAME')." ".$report->getDeviceInfoValue('CL_DEVICE_VERSION'),
+	':devicetype' => $report->getDeviceInfoValue('CL_DEVICE_TYPE'),
 	':osname' => $report->getEnvironmentValue('name'),
 	':osversion' => $report->getEnvironmentValue('version'),
 	':osarchitecture' => $report->getEnvironmentValue('architecture'),
+	':ostype' => $report->getEnvironmentValue('type'),
 	':openclversionmajor' => $report->getOpenCLValue('versionmajor'),
 	':openclversionminor' => $report->getOpenCLValue('versionminor'),
 	':reportversion' => $report->getEnvironmentValue('reportversion'),
 	':appversion' => $report->getEnvironmentValue('appversion'),
-	':submitter' => '', // @todo
-	':description' => '' // @todo
+	':submitter' => $report->getEnvironmentValue('submitter'),
+	':comment' => $report->getEnvironmentValue('comment')
 ];
 
 // Check if all values required to uniquely identify the report are set
@@ -88,13 +90,13 @@ foreach ($params as $param) {
 DB::connect();
 DB::$connection->beginTransaction();
 
-// Report meta data	
+// Report meta data
 try {	
 	$sql = 
 		"INSERT INTO reports
-			(devicename, deviceversion, driverversion, deviceidentifier, openclversionmajor, openclversionminor, osname, osversion, osarchitecture, reportversion, appversion, description, submitter)
+			(devicename, deviceversion, driverversion, deviceidentifier, devicetype, openclversionmajor, openclversionminor, osname, osversion, osarchitecture, ostype, reportversion, appversion, submitter, comment)
 		VALUES
-			(:devicename, :deviceversion, :driverversion, :deviceidentifier, :openclversionmajor, :openclversionminor, :osname, :osversion, :osarchitecture, :reportversion, :appversion, :description, :submitter)";
+			(:devicename, :deviceversion, :driverversion, :deviceidentifier, :devicetype, :openclversionmajor, :openclversionminor, :osname, :osversion, :osarchitecture, :ostype, :reportversion, :appversion, :submitter, :comment)";
 	$stmnt = DB::$connection->prepare($sql);
 	$stmnt->execute($params);
 } catch (Exception $e) {
