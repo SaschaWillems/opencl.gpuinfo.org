@@ -49,20 +49,36 @@
 				$displayvalue = getDisplayValue($key, $value);
 				// Shorten lengthy values and display them as hints
 				$maxDisplayLength = 40;
-				if (strlen($value) > $maxDisplayLength) {
+				if (strlen($displayvalue) > $maxDisplayLength) {
 					$valueHint = $value;
-					$value = shorten($value, $maxDisplayLength);
+					$displayvalue = shorten($displayvalue, $maxDisplayLength);
 				}
 				if (array_key_exists($key, $device_info_field_aliases)) {
 					$key = $device_info_field_aliases[$key];
 				}
 				echo "<tr>";
+				$details = [];
+				if (count($device_info_details) > 0 ){
+					foreach($device_info_details as $info_detail) {
+						if (strcasecmp($info_detail['deviceinfo'], $key) == 0) {
+							$details[] = ['name' => $info_detail['name'], 'value' => $info_detail['value']];
+						}
+					}
+				}
 				echo "<td>$key</td>";
-				if ($valueHint) {
-					echo "<td><abbr title='$valueHint'>$displayvalue</abbr></td>";
+				if (count($details) > 0) {
+					echo "<td>";
+					foreach($details as $detail) {
+						$detail_display_value = getDetailDisplayValue($key, $detail['name'], $detail['value']);
+						echo $detail_display_value."<br/>";
+					}
+					echo "</td>";
 				} else {
-					echo "<td>$displayvalue</td>";
-
+					if ($valueHint) {
+						echo "<td><abbr title='$valueHint'>$displayvalue</abbr></td>";
+					} else {
+						echo "<td>$displayvalue</td>";
+					}
 				}
 				echo "</tr>";
 			}

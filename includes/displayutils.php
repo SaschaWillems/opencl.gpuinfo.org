@@ -20,13 +20,27 @@
  *
  */
 
- /*
-  * Contains the display mapping functions from the client app (ported to PHP)
-  */
+function displayVersion($version)
+{
+    $CL_VERSION_MINOR_BITS = 10;
+    $CL_VERSION_PATCH_BITS = 12;
 
-  function getDisplayValue($deviceInfoName, $value)
-  {
-      switch ($deviceInfoName) {
+    $CL_VERSION_MINOR_MASK = ((1 << $CL_VERSION_MINOR_BITS) - 1);
+    $CL_VERSION_PATCH_MASK = ((1 << $CL_VERSION_PATCH_BITS) - 1);
+
+    $major = (($version) >> ($CL_VERSION_MINOR_BITS + $CL_VERSION_PATCH_BITS));
+    $minor = ((($version) >> $CL_VERSION_PATCH_BITS) & $CL_VERSION_MINOR_MASK);
+    $patch = (($version) & $CL_VERSION_PATCH_MASK);
+
+    return "$major.$minor.$patch";
+}
+
+/*
+ * Contains the display mapping functions from the client app (ported to PHP)
+ */
+function getDisplayValue($deviceInfoName, $value)
+{
+    switch ($deviceInfoName) {
         case 'CL_DEVICE_IMAGE_SUPPORT': 
         case 'CL_DEVICE_ERROR_CORRECTION_SUPPORT':
         case 'CL_DEVICE_ENDIAN_LITTLE':
@@ -52,20 +66,35 @@
             break;
         default:
             return $value;
-      }
-  }
+    }
+}
 
-  function displayBool($value)
-  {
+/*
+ * Contains the display mapping functions for device info detail values
+ */
+function getDetailDisplayValue($deviceInfoName, $detailName, $detailValue)
+{
+    switch ($deviceInfoName) {
+        case 'CL_DEVICE_BUILT_IN_KERNELS_WITH_VERSION':
+        case 'CL_DEVICE_ILS_WITH_VERSION':
+        case 'CL_DEVICE_OPENCL_C_ALL_VERSIONS':
+        case 'CL_DEVICE_OPENCL_C_FEATURES':
+            return $detailName." ".displayVersion($detailValue);
+            break;        
+    }
+}
+
+function displayBool($value)
+{
     $class = (intval($value) === 1) ? 'supported' : 'unsupported';
     $text = (intval($value) === 1) ? 'true' : 'false';
     return "<span class='$class'>$text</span>";
-  }
+}
 
-  function displayDeviceType($value)
-  {
-      switch (intval($value))
-      {
+function displayDeviceType($value)
+{
+    switch (intval($value))
+    {
         case 1:
             return 'DEFAULT';
             break;
@@ -81,17 +110,17 @@
         case 16:
             return 'CUSTOM';
             break;
-      default: 
-        return 'unknown';
-      }
-  }
+        default: 
+            return 'unknown';
+    }
+}
 
-  function displayNumberArray($value)
-  {
+function displayNumberArray($value)
+{
     if (substr($value, 0, 2) == 'a:') {
         $value = unserialize($value);
         return '[' . implode(', ', $value) . ']';
     } else {
         return "Unserialize error";
     }
-  }
+}
