@@ -103,6 +103,14 @@ if (isset($_REQUEST['filter']['devicename'])) {
         $params['filter_devicename'] = $devicename;
     }
 }
+// Platform (CL)
+if (isset($_REQUEST['filter']['platformname'])) {
+    $platformname = $_REQUEST['filter']['platformname'];
+    if ($platformname != '') {
+        $whereClause = "where r.id in (select distinct(reportid) from deviceplatforminfo where name = 'CL_PLATFORM_NAME' and value = :filter_platformname)";
+        $params['filter_platformname'] = $platformname;
+    }
+}
 // Platform (os)
 if (isset($_REQUEST['filter']['platform']) && ($_REQUEST['filter']['platform'] != '')) {
     $platform = $_REQUEST['filter']['platform'];
@@ -126,7 +134,7 @@ $sql = "SELECT
         osname,
         osversion,
         osarchitecture
-        from reports r
+        from reports r      
         " . $whereClause . "        
         " . $searchClause . "
         " . $orderBy;

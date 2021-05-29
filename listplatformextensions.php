@@ -24,20 +24,20 @@ require 'pagegenerator.php';
 require './database/database.class.php';
 require './includes/functions.php';
 
-$platform = "windows";
+$platform = null;
 if (isset($_GET['platform'])) {
 	$platform = GET_sanitized('platform');
 }
 
-PageGenerator::header("Extensions");
+PageGenerator::header("Platform extensions");
 ?>
 
 <div class='header'>
-	<?php echo "<h4>Extension coverage for ".PageGenerator::platformInfo($platform) ?>
+	<?php echo "<h4>Platform extension coverage for ".PageGenerator::platformInfo($platform) ?>
 </div>
 
 <center>
-	<?php PageGenerator::platformNavigation('listextensions.php', $platform); ?>
+	<?php PageGenerator::platformNavigation('listplatformextensions.php', $platform, true); ?>
 
 	<div class='tablediv' style='width:auto; display: inline-block;'>
 		<table id="extensions" class="table table-striped table-bordered table-hover responsive" style='width:auto;'>
@@ -56,22 +56,28 @@ PageGenerator::header("Extensions");
 				<?php
 				DB::connect();
 				try {
-					$deviceCount =  DB::getCount("SELECT count(DISTINCT devicename) from reports where ostype = :ostype", ['ostype' => ostype($platform)]);
+					$params = [];
+					$where = null;
+					if ($platform) {
+						$params = ['ostype' => ostype($platform)];
+						$where = "where r.ostype = :ostype";
+					}
+					$devicecount = DB::getCount("SELECT count(distinct deviceidentifier) from reports r $where", $params);
 					$sql = 
 						"SELECT 
 						de.name as name,
 						count(distinct r.devicename) as coverage
-						from deviceextensions de
+						from deviceplatformextensions de
 						join reports r on r.id = de.reportid 
-						where r.ostype = :ostype
+						$where
 						group by name";
 					$stmnt = DB::$connection->prepare($sql);
-					$stmnt->execute(['ostype' => ostype($platform)]);
+					$stmnt->execute($params);
 					$extensions = $stmnt->fetchAll(PDO::FETCH_ASSOC);
 
 					foreach ($extensions as $extension) {
 						$coverageLink = "listdevicescoverage.php?extension=" . $extension['name'] . "&platform=$platform";
-						$coverage = round($extension['coverage'] / $deviceCount * 100, 1);
+						$coverage = round($extension['coverage'] / $devicecount * 100, 1);
 						$ext = $extension['name'];
 						echo "<tr>";
 						echo "<td>$ext</td>";

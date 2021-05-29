@@ -24,7 +24,7 @@ require 'pagegenerator.php';
 require './database/database.class.php';
 require './includes/functions.php';
 
-$platform = "windows";
+$platform = null;
 if (isset($_GET['platform'])) {
 	$platform = GET_sanitized('platform');
 }
@@ -33,54 +33,49 @@ PageGenerator::header("Extensions");
 ?>
 
 <div class='header'>
-	<?php echo "<h4>Extension coverage for ".PageGenerator::platformInfo($platform) ?>
+	<?php echo "<h4>Platform listing for ".PageGenerator::platformInfo($platform) ?>
 </div>
 
 <center>
-	<?php PageGenerator::platformNavigation('listextensions.php', $platform); ?>
-
+	<?php PageGenerator::platformNavigation('listplatforms.php', $platform, true); ?>
 	<div class='tablediv' style='width:auto; display: inline-block;'>
-		<table id="extensions" class="table table-striped table-bordered table-hover responsive" style='width:auto;'>
+		<table id="platforms" class="table table-striped table-bordered table-hover responsive" style='width:auto;'>
 			<thead>
 				<tr>
-					<th></th>
-					<th colspan=2 style="text-align: center;">Device coverage</th>
-				</tr>
-				<tr>
-					<th>Extension</th>
-					<th style="text-align: center;"><img src='images/icons/check.png' width=16px></th>
-					<th style="text-align: center;"><img src='images/icons/missing.png' width=16px></th>
+					<th>Name</th>
+					<th>Reports</th>
 				</tr>
 			</thead>
 			<tbody>
 				<?php
 				DB::connect();
 				try {
-					$deviceCount =  DB::getCount("SELECT count(DISTINCT devicename) from reports where ostype = :ostype", ['ostype' => ostype($platform)]);
+					$params = [];
+					$where = null;
+					if ($platform) {
+						$params = ['ostype' => ostype($platform)];
+						$where = "where r.ostype = :ostype";
+					}
+					$devicecount = DB::getCount("SELECT count(distinct deviceidentifier) from reports r $where", $params);
 					$sql = 
 						"SELECT 
-						de.name as name,
-						count(distinct r.devicename) as coverage
-						from deviceextensions de
-						join reports r on r.id = de.reportid 
-						where r.ostype = :ostype
-						group by name";
+							value, 
+							count(*) as reports 
+						from deviceplatforminfo d 
+						join reports r on r.id = d.reportid
+						$where ".($where ? "and" : "where")." name = 'CL_PLATFORM_NAME' group by reportid";
 					$stmnt = DB::$connection->prepare($sql);
-					$stmnt->execute(['ostype' => ostype($platform)]);
-					$extensions = $stmnt->fetchAll(PDO::FETCH_ASSOC);
-
-					foreach ($extensions as $extension) {
-						$coverageLink = "listdevicescoverage.php?extension=" . $extension['name'] . "&platform=$platform";
-						$coverage = round($extension['coverage'] / $deviceCount * 100, 1);
-						$ext = $extension['name'];
+					$stmnt->execute();
+					$platforms = $stmnt->fetchAll(PDO::FETCH_ASSOC);
+					foreach ($platforms as $platform) {
+						$link = "listreports.php?platformname=".$platform['value'];
 						echo "<tr>";
-						echo "<td>$ext</td>";
-						echo "<td class='text-center'><a class='supported' href=\"$coverageLink\">$coverage<span style='font-size:10px;'>%</span></a></td>";
-						echo "<td class='text-center'><a class='na' href=\"$coverageLink&option=not\">" . round(100 - $coverage, 1) . "<span style='font-size:10px;'>%</span></a></td>";
+						echo "<td>".$platform['value']."</td>";
+						echo "<td class='text-center'><a href=\"$link\">".$platform['reports']."</a></td>";
 						echo "</tr>";
 					}
 				} catch (PDOException $e) {
-					echo "<b>Error while fetcthing data!</b><br>";
+					echo "<b>Error while fetching data!</b><br>";
 				}
 				DB::disconnect();
 				?>
@@ -90,7 +85,7 @@ PageGenerator::header("Extensions");
 
 	<script>
 		$(document).ready(function() {
-			var table = $('#extensions').DataTable({
+			var table = $('#platforms').DataTable({
 				"pageLength": -1,
 				"paging": false,
 				"stateSave": false,
@@ -104,9 +99,6 @@ PageGenerator::header("Extensions");
 				"order": [
 					[0, "asc"]
 				],
-				"columnDefs": [{
-					"targets": [1, 2],
-				}]
 			});
 
 			$("#searchbox").on("keyup search input paste cut", function() {

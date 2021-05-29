@@ -59,9 +59,15 @@ if ($devicename != '') {
 	$defaultHeader = false;
 	$caption = "Reports for <code>" . $devicename . "</code>";
 }
+// Platform (cl)
+$platformname = GET_sanitized('platformname');
+if ($platformname != '') {
+	$defaultHeader = false;
+	$caption = "Reports for platform <code>" . $platformname . "</code>";
+}
 // Platform (os)
 if ($platform && $platform !== 'all') {
-	$caption = "Listing " . ($caption ? lcfirst($caption) : "reports") . " on <img src='images/" . $platform . "logo.png' height='14px' style='padding-right:5px'/>" . ucfirst($platform);
+	$caption = "Listing on <img src='images/" . $platform . "logo.png' height='14px' style='padding-right:5px'/>" . ucfirst($platform);
 	$defaultHeader = false;
 }
 
@@ -153,6 +159,7 @@ if ($defaultHeader) {
 						'submitter': 	'<?= GET_sanitized('submitter') ?>',
 						'devicename': 	'<?= GET_sanitized('devicename') ?>',
 						'displayname': 	'<?= GET_sanitized('displayname') ?>',
+						'platformname': '<?= GET_sanitized('platformname') ?>',
 						'platform': 	'<?= GET_sanitized('platform') ?>'
 					}
 				},

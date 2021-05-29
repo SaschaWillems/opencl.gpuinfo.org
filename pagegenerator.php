@@ -57,6 +57,9 @@ class PageGenerator
 
 	public static function platformInfo($platform)
 	{
+		if (!$platform) {
+			return "all platforms";
+		}
 		return "<img src='images/" . $platform . "logo.png' height='14px' style='padding-right:5px'/>" . ucfirst($platform);
 	}
 
@@ -65,13 +68,17 @@ class PageGenerator
 		echo "<div>";
 		echo "	<ul class='nav nav-tabs'>";
 		if ($combined_tab) {
-			$active = ($active_platform == 'all');
+			$active = (($active_platform == 'all') || ($active_platform === null));
 			echo "<li" . ($active ? ' class="active"' : null) . "><a href='$base_url'>All platforms</a> </li>";
 		}
 		foreach (self::$platform_list as $navplatform) {
 			$active = ($active_platform == $navplatform);
 			$icon_size = ($navplatform == 'windows') ? 14 : 16;
-			echo "<li" . ($active ? ' class="active"' : null) . "><a href='$base_url?platform=$navplatform'><img src='images/" . $navplatform . "logo.png' height='".$icon_size."px' style='padding-right:5px'/>" . ucfirst($navplatform) . "</a> </li>";
+			$param_char = '?';
+			if (strpos($base_url, "?") !== false) {
+				$param_char = '&';
+			}
+			echo "<li" . ($active ? ' class="active"' : null) . "><a href='$base_url".$param_char."platform=$navplatform'><img src='images/" . $navplatform . "logo.png' height='".$icon_size."px' style='padding-right:5px'/>" . ucfirst($navplatform) . "</a> </li>";
 		};
 		echo "	</ul>";
 		echo "</div>";

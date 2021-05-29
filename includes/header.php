@@ -96,9 +96,9 @@
 						<a class="dropdown-toggle" data-toggle="dropdown" href="#">Platforms
 							<span class="caret"></span></a>
 						<ul class="dropdown-menu">
-							<li><a href="listinstancelayers.php">List</a></li>
-							<li><a href="listinstancelayers.php">Info</a></li>
-							<li><a href="listinstanceextensions.php">Extensions</a></li>
+							<li><a href="listplatforms.php">List</a></li>
+							<li><a href="listplatforminfo.php">Info</a></li>
+							<li><a href="listplatformextensions.php">Extensions</a></li>
 						</ul>
 					</li>
 					<li><a href="download.php">Download</a></li>
