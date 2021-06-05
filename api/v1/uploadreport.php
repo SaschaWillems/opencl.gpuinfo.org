@@ -193,6 +193,29 @@ try {
 	reportError("Error at saving report device extensions", $file_name);
 }
 
+// Report device image formats
+try {	
+	foreach ($report->deviceImageFormats() as $deviceImageFormat) {
+		$sql = 
+			"INSERT INTO deviceimageformats 
+				(reportid, type, channelorder, channeltype, flags)
+			VALUES
+				(:reportid, :type, :channelorder, :channeltype, :flags)";
+		$values = [
+			':reportid' => $reportid,
+			':type' => $deviceImageFormat['type'],
+			':channelorder' => $deviceImageFormat['channelorder'],
+			':channeltype' => $deviceImageFormat['channeltype'],
+			':flags' => $deviceImageFormat['flags'],
+		];
+		$stmnt = DB::$connection->prepare($sql);
+		$stmnt->execute($values);
+	}
+} catch (Exception $e) {
+	reportError("Error at saving report device image formats", $file_name);
+}
+
+
 // Report platform info
 try {	
 	foreach ($report->platformInfo() as $platformInfo) {

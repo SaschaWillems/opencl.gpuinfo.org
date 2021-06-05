@@ -59,6 +59,10 @@ class Report {
 		return $this->data['device']['extensions'];
 	}
 
+	public function deviceImageFormats() {
+		return $this->data['device']['imageformats'];
+	}
+
 	public function platformInfo() {
 		return $this->data['platform']['info'];
 	}
