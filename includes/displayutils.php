@@ -1,22 +1,22 @@
 <?php
 
-/** 		
+/**
  *
  * OpenCL hardware capability database server implementation
- *	
+ *
  * Copyright (C) 2021 by Sascha Willems (www.saschawillems.de)
- *	
+ *
  * This code is free software, you can redistribute it and/or
  * modify it under the terms of the GNU Affero General Public
  * License version 3 as published by the Free Software Foundation.
- *	
+ *
  * Please review the following information to ensure the GNU Lesser
  * General Public License version 3 requirements will be met:
  * http://www.gnu.org/licenses/agpl-3.0.de.html
- *	
+ *
  * The code is distributed WITHOUT ANY WARRANTY; without even the
  * implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
- * PURPOSE.  See the GNU AGPL 3.0 for more details.		
+ * PURPOSE.  See the GNU AGPL 3.0 for more details.
  *
  */
 
@@ -41,7 +41,7 @@ function displayVersion($version)
 function getDisplayValue($deviceInfoName, $value)
 {
     switch ($deviceInfoName) {
-        case 'CL_DEVICE_IMAGE_SUPPORT': 
+        case 'CL_DEVICE_IMAGE_SUPPORT':
         case 'CL_DEVICE_ERROR_CORRECTION_SUPPORT':
         case 'CL_DEVICE_ENDIAN_LITTLE':
         case 'CL_DEVICE_COMPILER_AVAILABLE':
@@ -80,7 +80,7 @@ function getDetailDisplayValue($deviceInfoName, $detailName, $detailValue)
         case 'CL_DEVICE_OPENCL_C_ALL_VERSIONS':
         case 'CL_DEVICE_OPENCL_C_FEATURES':
             return $detailName." ".displayVersion($detailValue);
-            break;        
+            break;
     }
 }
 
@@ -110,7 +110,7 @@ function displayDeviceType($value)
         case 16:
             return 'CUSTOM';
             break;
-        default: 
+        default:
             return 'unknown';
     }
 }
@@ -123,4 +123,70 @@ function displayNumberArray($value)
     } else {
         return "Unserialize error";
     }
+}
+
+function displayMemObjectType($value)
+{
+    $cl_mem_object_types = [
+        0x10F0 => 'CL_MEM_OBJECT_BUFFER',
+        0x10F1 => 'CL_MEM_OBJECT_IMAGE2D',
+        0x10F2 => 'CL_MEM_OBJECT_IMAGE3D',
+        0x10F3 => 'CL_MEM_OBJECT_IMAGE2D_ARRAY',
+        0x10F4 => 'CL_MEM_OBJECT_IMAGE1D',
+        0x10F5 => 'CL_MEM_OBJECT_IMAGE1D_ARRAY',
+        0x10F6 => 'CL_MEM_OBJECT_IMAGE1D_BUFFER',
+        0x10F7=> 'CL_MEM_OBJECT_PIPE',
+    ];
+    return $cl_mem_object_types[$value];
+}
+
+function displayChannelOrder($value)
+{
+    $cl_channel_orders = [
+        0x10B0 => "CL_R",
+        0x10B1 => "CL_A",
+        0x10B2 => "CL_RG",
+        0x10B3 => "CL_RA",
+        0x10B4 => "CL_RGB",
+        0x10B5 => "CL_RGBA",
+        0x10B6 => "CL_BGRA",
+        0x10B7 => "CL_ARGB",
+        0x10B8=> "CL_INTENSITY",
+        0x10B9 => "CL_LUMINANCE",
+        0x10BA => "CL_Rx",
+        0x10BB=> "CL_RGx",
+        0x10BC => "CL_RGBx",
+        0x10BD=> "CL_DEPTH",
+        0x10BE => "CL_DEPTH_STENCIL",
+        0x10BF => "CL_sRGB",
+        0x10C0 => "CL_sRGBx",
+        0x10C1 => "CL_sRGBA",
+        0x10C2 => "CL_sBGRA",
+        0x10C3 => "CL_ABGR",
+    ];
+    return $cl_channel_orders[$value];
+}
+
+function displayChannelType($value)
+{
+    $cl_channel_types = [
+        0x10D0 => "CL_SNORM_INT8",
+        0x10D1 => "CL_SNORM_INT16",
+        0x10D2 => "CL_UNORM_INT8",
+        0x10D3 => "CL_UNORM_INT16",
+        0x10D4 => "CL_UNORM_SHORT_565",
+        0x10D5 => "CL_UNORM_SHORT_555",
+        0x10D6 => "CL_UNORM_INT_101010",
+        0x10D7 => "CL_SIGNED_INT8",
+        0x10D8 => "CL_SIGNED_INT16",
+        0x10D9 => "CL_SIGNED_INT32",
+        0x10DA => "CL_UNSIGNED_INT8",
+        0x10DB => "CL_UNSIGNED_INT16",
+        0x10DC => "CL_UNSIGNED_INT32",
+        0x10DD => "CL_HALF_FLOAT",
+        0x10DE => "CL_FLOAT",
+        0x10DF => "CL_UNORM_INT24",
+        0x10E0 => "CL_UNORM_INT_101010_2",
+    ];
+    return $cl_channel_types[$value];
 }

@@ -61,6 +61,7 @@ echo "</div>";
 	<ul class='nav nav-tabs nav-report'>
 		<li class='active'><a data-toggle='tab' href='#deviceinfo'>Device info</a></li>
 		<li><a data-toggle='tab' href='#deviceextensions'>Extensions</a></li>
+		<li><a data-toggle='tab' href='#deviceimageformats'>Image formats</a></li>
 		<li><a data-toggle='tab' href='#deviceplatform'>Platform</a></li>
 	</ul>
 </div>
@@ -71,6 +72,7 @@ echo "</div>";
 	$views = [
 		'deviceinfo',
 		'deviceextensions',
+		'deviceimageformats',
 		'deviceplatform',
 	];
 	foreach ($views as $index => $view) {
@@ -89,6 +91,7 @@ echo "</div>";
 				var tableNames = [
 					'table_deviceinfo',
 					'table_deviceextensions',
+					'table_deviceimageformats',
 					'table_deviceplatforminfo',
 					'table_deviceplatformextensions'
 				];
