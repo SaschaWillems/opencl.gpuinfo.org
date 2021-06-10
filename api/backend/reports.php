@@ -141,6 +141,7 @@ $sql = "SELECT
 
 $devices = DB::$connection->prepare($sql . " " . $paging);
 $devices->execute($params);
+$display_utils = new DisplayUtils();
 if ($devices->rowCount() > 0) {
     foreach ($devices as $device) {
         $data[] = [
@@ -149,7 +150,7 @@ if ($devices->rowCount() > 0) {
             'deviceversion' => $device['deviceversion'],
             'driverversion' => shorten($device['driverversion']),
             'openclversion' => $device['openclversion'],
-            'devicetype' => displayDeviceType($device['devicetype']),
+            'devicetype' => $display_utils->displayDeviceType($device['devicetype']),
             'osname' => $device['osname'],
             'osversion' => $device['osversion'],
             'osarchitecture' => $device['osarchitecture'],

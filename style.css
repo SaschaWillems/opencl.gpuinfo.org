@@ -299,7 +299,7 @@ h4 {
 .subkey
 {
 	width:1px;
-	padding-left:25px !important;
+	padding-left:10px !important;
 	overflow: hidden;
 	text-overflow: ellipsis;
 	white-space: nowrap;	

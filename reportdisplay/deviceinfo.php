@@ -38,6 +38,8 @@
 			'osversion' => 'Version'
 		];
 
+		$display_utils = new DisplayUtils();
+
 		try {
 			$device_info = $report->fetchDeviceInfo();
 			$device_info_details = $report->fetchDeviceInfoDetails();
@@ -46,7 +48,7 @@
 				$key = $row['name'];
 				$valueHint = null;
 				$value = $row['value'];
-				$displayvalue = getDisplayValue($key, $value);
+				$displayvalue = $display_utils->getDisplayValue($key, $value); // getDisplayValue($key, $value);
 				// Shorten lengthy values and display them as hints
 				$maxDisplayLength = 40;
 				if (strlen($displayvalue) > $maxDisplayLength) {
