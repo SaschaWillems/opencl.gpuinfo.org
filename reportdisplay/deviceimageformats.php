@@ -45,9 +45,9 @@
 		if ($data) {
 			foreach ($data as $format) {				
 				echo "<tr>";
-				echo "<td>".displayMemObjectType($format['type'])."</td>";
-				echo "<td>".displayChannelOrder($format['channelorder'])."</td>";
-				echo "<td>".displayChannelType($format['channeltype'])."</td>";
+				echo "<td>".$display_utils->displayMemObjectType($format['type'])."</td>";
+				echo "<td>".$display_utils->displayChannelOrder($format['channelorder'])."</td>";
+				echo "<td>".$display_utils->displayChannelType($format['channeltype'])."</td>";
 				foreach ($cl_mem_flags as $flag) {
 					$icon = ($flag & $format['flags']) ? 'check' : 'missing';
 					echo "<td><img src='images/icons/$icon.png' width=16px></td>";

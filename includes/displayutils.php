@@ -70,14 +70,14 @@ class DisplayUtils {
 		// 'CL_DEVICE_MAX_SAMPLERS' => ,
 		// 'CL_DEVICE_MEM_BASE_ADDR_ALIGN' => ,
 		'CL_DEVICE_MIN_DATA_TYPE_ALIGN_SIZE' => 'displayByteSize', // @todo: deprecated in 1.2
-		// 'CL_DEVICE_SINGLE_FP_CONFIG' => , utils::displayFloatingPointConfig },
-		// 'CL_DEVICE_GLOBAL_MEM_CACHE_TYPE' => , utils::displayMemCacheType },
+		'CL_DEVICE_SINGLE_FP_CONFIG' => 'displayFloatingPointConfig',
+		'CL_DEVICE_GLOBAL_MEM_CACHE_TYPE' => 'displayMemCacheType',
 		'CL_DEVICE_GLOBAL_MEM_CACHELINE_SIZE' => 'displayByteSize',
 		'CL_DEVICE_GLOBAL_MEM_CACHE_SIZE' => 'displayByteSize',
 		'CL_DEVICE_GLOBAL_MEM_SIZE' => 'displayByteSize',
 		'CL_DEVICE_MAX_CONSTANT_BUFFER_SIZE' => 'displayByteSize',
 		// 'CL_DEVICE_MAX_CONSTANT_ARGS' => ,
-		// 'CL_DEVICE_LOCAL_MEM_TYPE' => , utils::displayLocalMemType },
+		'CL_DEVICE_LOCAL_MEM_TYPE' => 'displayLocalMemType',
 		'CL_DEVICE_LOCAL_MEM_SIZE' => 'displayByteSize',
 		'CL_DEVICE_ERROR_CORRECTION_SUPPORT' => 'displayBool',
 		// 'CL_DEVICE_PROFILING_TIMER_RESOLUTION' => ,
@@ -100,7 +100,7 @@ class DisplayUtils {
         
         /* CL 1.2 */
         'CL_DEVICE_LINKER_AVAILABLE' => 'displayBool',
-        // 'CL_DEVICE_BUILT_IN_KERNELS' => displayText,
+        'CL_DEVICE_BUILT_IN_KERNELS' => 'displayList',
         // 'CL_DEVICE_IMAGE_MAX_BUFFER_SIZE' => ,
         // 'CL_DEVICE_IMAGE_MAX_ARRAY_SIZE' => ,
         // 'CL_DEVICE_PARENT_DEVICE' => _id,
@@ -155,9 +155,16 @@ class DisplayUtils {
         'CL_DEVICE_EXT_MEM_PADDING_IN_BYTES_QCOM' => 'displayByteSize',        
         'CL_DEVICE_PAGE_SIZE_QCOM' => 'displayByteSize',
         'CL_DEVICE_SUB_GROUP_SIZES_INTEL' => 'displayNumberArray',
+        'CL_DEVICE_AVC_ME_SUPPORTS_TEXTURE_SAMPLER_USE_INTEL' => 'displayBool',
+        'CL_DEVICE_AVC_ME_SUPPORTS_PREEMPTION_INTEL' => 'displayBool',
+        'CL_DEVICE_DOUBLE_FP_CONFIG' => 'displayFloatingPointConfig',
+        'CL_DEVICE_HALF_FP_CONFIG' => 'displayFloatingPointConfig',
     ];
 
-    static function displayNumberArray($value)
+    /** If true, visualization of flag value types contains all possible flags, with support highlighted using different css classes */
+    public $display_all_flags = true;
+    
+    function displayNumberArray($value)
     {
         if (substr($value, 0, 2) == 'a:') {
             $value = unserialize($value);
@@ -176,6 +183,20 @@ class DisplayUtils {
     function displayByteSize($value)
     {
         return number_format($value).' bytes';
+    }
+
+    function displayList($value)
+    {
+        if (trim($value) == "") {
+            return 'none';
+        }
+        $separator = ';';
+        $res = explode($separator, $value);
+        if (count($res) > 0) {
+            return implode($this->display_all_flags ? '<br/>' : '\n', $res);
+        } else {
+            return 'none';
+        }
     }
 
     function displayDeviceType($value)
@@ -201,7 +222,141 @@ class DisplayUtils {
             default:
                 return 'unknown';
         }
+    }
+    
+    function displayMemCacheType($value)
+    {
+        $mapping = [
+            0x0 => 'CL_NONE',
+            0x1 => 'CL_READ_ONLY_CACHE',
+            0x2 => 'CL_READ_WRITE_CACHE',
+        ];
+        return $mapping[$value];        
     }    
+    
+    function displayLocalMemType($value)
+    {
+        $mapping = [
+            0x0 => 'CL_NONE',
+            0x1 => 'CL_LOCAL',
+            0x2 => 'CL_GLOBAL',
+        ];
+        return $mapping[$value];        
+    }    
+
+    function displayFloatingPointConfig($value)
+    {
+        $flags = [
+            (1 << 0) => 'CL_FP_DENORM',
+            (1 << 1) => 'CL_FP_INF_NAN',
+            (1 << 2) => 'CL_FP_ROUND_TO_NEAREST',
+            (1 << 3) => 'CL_FP_ROUND_TO_ZERO',
+            (1 << 4) => 'CL_FP_ROUND_TO_INF',
+            (1 << 5) => 'CL_FP_FMA',
+            (1 << 6) => 'CL_FP_SOFT_FLOAT',
+            (1 << 7) => 'CL_FP_CORRECTLY_ROUNDED_DIVIDE_SQRT',
+        ];
+        $res = $this->getFlags($flags, $value);
+        return implode($this->display_all_flags ? '<br/>' : '\n', $res);
+    }
+
+    //
+
+    function displayMemObjectType($value)
+    {
+        $cl_mem_object_types = [
+            0x10F0 => 'CL_MEM_OBJECT_BUFFER',
+            0x10F1 => 'CL_MEM_OBJECT_IMAGE2D',
+            0x10F2 => 'CL_MEM_OBJECT_IMAGE3D',
+            0x10F3 => 'CL_MEM_OBJECT_IMAGE2D_ARRAY',
+            0x10F4 => 'CL_MEM_OBJECT_IMAGE1D',
+            0x10F5 => 'CL_MEM_OBJECT_IMAGE1D_ARRAY',
+            0x10F6 => 'CL_MEM_OBJECT_IMAGE1D_BUFFER',
+            0x10F7 => 'CL_MEM_OBJECT_PIPE',
+        ];
+        return $cl_mem_object_types[$value];
+    }
+    
+    function displayChannelOrder($value)
+    {
+        $cl_channel_orders = [
+            0x10B0 => "CL_R",
+            0x10B1 => "CL_A",
+            0x10B2 => "CL_RG",
+            0x10B3 => "CL_RA",
+            0x10B4 => "CL_RGB",
+            0x10B5 => "CL_RGBA",
+            0x10B6 => "CL_BGRA",
+            0x10B7 => "CL_ARGB",
+            0x10B8 => "CL_INTENSITY",
+            0x10B9 => "CL_LUMINANCE",
+            0x10BA => "CL_Rx",
+            0x10BB => "CL_RGx",
+            0x10BC => "CL_RGBx",
+            0x10BD => "CL_DEPTH",
+            0x10BE => "CL_DEPTH_STENCIL",
+            0x10BF => "CL_sRGB",
+            0x10C0 => "CL_sRGBx",
+            0x10C1 => "CL_sRGBA",
+            0x10C2 => "CL_sBGRA",
+            0x10C3 => "CL_ABGR",
+            0x4076 => "CL_YUYV_INTEL",
+            0x4077 => "CL_UYVY_INTEL",
+            0x4078 => "CL_YVYU_INTEL",
+            0x4079 => "CL_VYUY_INTEL",
+            0x410E => "CL_NV12_INTEL"
+        ];
+        if (!key_exists($value, $cl_channel_orders)) {
+            return '0x'.dechex($value);
+        }
+        return $cl_channel_orders[$value];
+    }
+    
+    function displayChannelType($value)
+    {
+        $cl_channel_types = [
+            0x10D0 => "CL_SNORM_INT8",
+            0x10D1 => "CL_SNORM_INT16",
+            0x10D2 => "CL_UNORM_INT8",
+            0x10D3 => "CL_UNORM_INT16",
+            0x10D4 => "CL_UNORM_SHORT_565",
+            0x10D5 => "CL_UNORM_SHORT_555",
+            0x10D6 => "CL_UNORM_INT_101010",
+            0x10D7 => "CL_SIGNED_INT8",
+            0x10D8 => "CL_SIGNED_INT16",
+            0x10D9 => "CL_SIGNED_INT32",
+            0x10DA => "CL_UNSIGNED_INT8",
+            0x10DB => "CL_UNSIGNED_INT16",
+            0x10DC => "CL_UNSIGNED_INT32",
+            0x10DD => "CL_HALF_FLOAT",
+            0x10DE => "CL_FLOAT",
+            0x10DF => "CL_UNORM_INT24",
+            0x10E0 => "CL_UNORM_INT_101010_2",
+        ];
+        return $cl_channel_types[$value];
+    }    
+
+    //
+
+    function getFlags($flag_list, $flag_value)
+    {
+        $res = [];
+        foreach ($flag_list as $flag => $value) {            
+            if ($this->display_all_flags) {
+                $class = ($flag & $flag_value) ? "supported" : "na";
+                if ($this->display_all_flags) {
+                    $res[] = "<span class='$class'>".$value."</span>";
+                }
+            } else {
+                if ($flag & $flag_value) {
+                    $res[] = $value;
+                }
+            }
+        }
+        return $res;
+    }    
+    
+    // 
 
     public function getDisplayValue($value_name, $value)
     {
@@ -212,41 +367,6 @@ class DisplayUtils {
             }
         }
         return $value;
-    }
-}
-
-/*
- * Contains the display mapping functions from the client app (ported to PHP)
- */
-function getDisplayValue($deviceInfoName, $value)
-{
-    switch ($deviceInfoName) {
-        case 'CL_DEVICE_IMAGE_SUPPORT':
-        case 'CL_DEVICE_ERROR_CORRECTION_SUPPORT':
-        case 'CL_DEVICE_ENDIAN_LITTLE':
-        case 'CL_DEVICE_COMPILER_AVAILABLE':
-        case 'CL_DEVICE_LINKER_AVAILABLE':
-        case 'CL_DEVICE_PREFERRED_INTEROP_USER_SYNC':
-        case 'CL_DEVICE_NON_UNIFORM_WORK_GROUP_SUPPORT':
-        case 'CL_DEVICE_WORK_GROUP_COLLECTIVE_FUNCTIONS_SUPPORT':
-        case 'CL_DEVICE_GENERIC_ADDRESS_SPACE_SUPPORT':
-        case 'CL_DEVICE_PIPE_SUPPORT':
-        case 'CL_DEVICE_HOST_UNIFIED_MEMORY':
-        case 'CL_DEVICE_LUID_VALID_KHR':
-        case 'CL_DEVICE_GPU_OVERLAP_NV':
-        case 'CL_DEVICE_KERNEL_EXEC_TIMEOUT_NV':
-        case 'CL_DEVICE_INTEGRATED_MEMORY_NV':
-            return displayBool($value);
-            break;
-        case 'CL_DEVICE_TYPE':
-            return displayDeviceType($value);
-            break;
-        case 'CL_DEVICE_MAX_WORK_ITEM_SIZES':
-        case 'CL_DEVICE_SUB_GROUP_SIZES_INTEL':
-            return displayNumberArray($value);
-            break;
-        default:
-            return $value;
     }
 }
 
@@ -263,88 +383,4 @@ function getDetailDisplayValue($deviceInfoName, $detailName, $detailValue)
             return $detailName." ".displayVersion($detailValue);
             break;
     }
-}
-
-function displayNumberArray($value)
-{
-    if (substr($value, 0, 2) == 'a:') {
-        $value = unserialize($value);
-        return '[' . implode(', ', $value) . ']';
-    } else {
-        return "Unserialize error";
-    }
-}
-
-function displayMemObjectType($value)
-{
-    $cl_mem_object_types = [
-        0x10F0 => 'CL_MEM_OBJECT_BUFFER',
-        0x10F1 => 'CL_MEM_OBJECT_IMAGE2D',
-        0x10F2 => 'CL_MEM_OBJECT_IMAGE3D',
-        0x10F3 => 'CL_MEM_OBJECT_IMAGE2D_ARRAY',
-        0x10F4 => 'CL_MEM_OBJECT_IMAGE1D',
-        0x10F5 => 'CL_MEM_OBJECT_IMAGE1D_ARRAY',
-        0x10F6 => 'CL_MEM_OBJECT_IMAGE1D_BUFFER',
-        0x10F7=> 'CL_MEM_OBJECT_PIPE',
-    ];
-    return $cl_mem_object_types[$value];
-}
-
-function displayChannelOrder($value)
-{
-    $cl_channel_orders = [
-        0x10B0 => "CL_R",
-        0x10B1 => "CL_A",
-        0x10B2 => "CL_RG",
-        0x10B3 => "CL_RA",
-        0x10B4 => "CL_RGB",
-        0x10B5 => "CL_RGBA",
-        0x10B6 => "CL_BGRA",
-        0x10B7 => "CL_ARGB",
-        0x10B8=> "CL_INTENSITY",
-        0x10B9 => "CL_LUMINANCE",
-        0x10BA => "CL_Rx",
-        0x10BB=> "CL_RGx",
-        0x10BC => "CL_RGBx",
-        0x10BD=> "CL_DEPTH",
-        0x10BE => "CL_DEPTH_STENCIL",
-        0x10BF => "CL_sRGB",
-        0x10C0 => "CL_sRGBx",
-        0x10C1 => "CL_sRGBA",
-        0x10C2 => "CL_sBGRA",
-        0x10C3 => "CL_ABGR",
-        0x4076 => "CL_YUYV_INTEL",
-        0x4077 => "CL_UYVY_INTEL",
-        0x4078 => "CL_YVYU_INTEL",
-        0x4079 => "CL_VYUY_INTEL",
-        0x410E => "CL_NV12_INTEL"
-    ];
-    if (!key_exists($value, $cl_channel_orders)) {
-        return '0x'.dechex($value);
-    }
-    return $cl_channel_orders[$value];
-}
-
-function displayChannelType($value)
-{
-    $cl_channel_types = [
-        0x10D0 => "CL_SNORM_INT8",
-        0x10D1 => "CL_SNORM_INT16",
-        0x10D2 => "CL_UNORM_INT8",
-        0x10D3 => "CL_UNORM_INT16",
-        0x10D4 => "CL_UNORM_SHORT_565",
-        0x10D5 => "CL_UNORM_SHORT_555",
-        0x10D6 => "CL_UNORM_INT_101010",
-        0x10D7 => "CL_SIGNED_INT8",
-        0x10D8 => "CL_SIGNED_INT16",
-        0x10D9 => "CL_SIGNED_INT32",
-        0x10DA => "CL_UNSIGNED_INT8",
-        0x10DB => "CL_UNSIGNED_INT16",
-        0x10DC => "CL_UNSIGNED_INT32",
-        0x10DD => "CL_HALF_FLOAT",
-        0x10DE => "CL_FLOAT",
-        0x10DF => "CL_UNORM_INT24",
-        0x10E0 => "CL_UNORM_INT_101010_2",
-    ];
-    return $cl_channel_types[$value];
 }

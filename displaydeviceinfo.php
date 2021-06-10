@@ -152,12 +152,13 @@ if (isset($_GET['platform'])) {
 		var data = google.visualization.arrayToDataTable([
 			['Value', 'Reports'],
 			<?php
+			$display_utils->display_all_flags = false;
 			DB::connect();
 			$result = DB::$connection->prepare("SELECT value, count(0) as reports from deviceinfo where name = :name $filter group by 1 order by 2 desc");
 			$result->execute(['name' => $name]);
 			$rows = $result->fetchAll(PDO::FETCH_ASSOC);
-			foreach ($rows as $row) {
-				echo "['" . $row['value'] . "'," . $row['reports'] . "],";
+			foreach ($rows as $device_info) {
+				echo "['" . $display_utils->getDisplayValue($name, $device_info['value']) . "'," . $device_info['reports'] . "],";
 			}
 			DB::disconnect();
 			?>
