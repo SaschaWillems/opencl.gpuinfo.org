@@ -120,15 +120,16 @@ if (isset($_GET['platform'])) {
 				</thead>
 				<tbody>
 					<?php
+					$display_utils = new DisplayUtils();
 					DB::connect();
 					$result = DB::$connection->prepare("SELECT value, count(0) as reports from deviceinfo where name = :name $filter group by 1 order by 1");
 					$result->execute(['name' => $name]);
 					$rows = $result->fetchAll(PDO::FETCH_ASSOC);
-					foreach ($rows as $cap) {
-						$link = "listreports.php?deviceinfo=$name&value=" . $cap["value"] . ($platform ? "&platform=$platform" : "");
+					foreach ($rows as $device_info) {
+						$link = "listreports.php?deviceinfo=$name&value=" . $device_info["value"] . ($platform ? "&platform=$platform" : "");
 						echo "<tr>";
-						echo "<td>" . $cap["value"] . "</td>";
-						echo "<td><a href='$link'>" . $cap["reports"] . "</a></td>";
+						echo "<td>" .$display_utils->getDisplayValue($name, $device_info['value']) . "</td>";
+						echo "<td><a href='$link'>" . $device_info['reports'] . "</a></td>";
 						echo "</tr>";
 					}
 					DB::disconnect();
