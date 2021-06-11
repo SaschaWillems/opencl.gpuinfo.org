@@ -63,7 +63,7 @@ PageGenerator::header("Extensions");
 							count(*) as reports 
 						from deviceplatforminfo d 
 						join reports r on r.id = d.reportid
-						$where ".($where ? "and" : "where")." name = 'CL_PLATFORM_NAME' group by reportid";
+						$where ".($where ? "and" : "where")." name = 'CL_PLATFORM_NAME' group by value";
 					$stmnt = DB::$connection->prepare($sql);
 					$stmnt->execute();
 					$platforms = $stmnt->fetchAll(PDO::FETCH_ASSOC);
