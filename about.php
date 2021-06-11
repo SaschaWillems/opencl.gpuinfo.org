@@ -25,7 +25,7 @@ PageGenerator::header('About');
 
 <div id='reportdiv'>	   
 	<div class="panel panel-default">
-		<div class="panel-body" style="margin-left:50px; width:65%px;">    
+		<div class="panel-body text-content-block">
 			<div class="page-header">
 				<h2>About this database</h2>
 			</div>
