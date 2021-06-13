@@ -47,7 +47,7 @@ foreach ($device_extensions_list as $device_extension) {
     }
     // Display values
     echo $differing_values ? "<tr>" : "<tr class='same'>";
- 	echo "<td>".$report_compare->insterDiffIcon($ext, $differing_values)."</td>";
+ 	echo "<td>$ext</td>";
     for ($i = 0; $i < $report_compare->report_count; $i++) {
         echo "<td>";
         if (key_exists($ext, $device_extensions_report_data[$i])) {

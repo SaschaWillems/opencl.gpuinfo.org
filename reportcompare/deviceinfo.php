@@ -48,18 +48,17 @@ foreach ($device_info_list as $device_info) {
     }
     // Display values
     echo $differing_values ? "<tr>" : "<tr class='same'>";
- 	echo "<td>".$report_compare->insterDiffIcon($key, $differing_values)."</td>";
+ 	echo "<td>".str_replace('CL_DEVICE_', '', $key)."</td>";
     for ($i = 0; $i < $report_compare->report_count; $i++) {
-        echo "<td>";
+        echo "<td><div class='compare-info-value'>";
         if (key_exists($key, $device_info_report_data[$i])) {
             $report_value = $device_info_report_data[$i][$key][0]['value'];
             $displayvalue = $display_utils->getDisplayValue($key, $report_value);
-            // @todo: abbreviate long lines
             echo $displayvalue;
         } else {
             echo "<span class='na'>n/a</span>";
         }
-        echo "</td>";
+        echo "</div></td>";
 	}
     echo "</tr>";
 }
