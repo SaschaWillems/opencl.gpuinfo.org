@@ -27,8 +27,8 @@ if (!$report_compare->fetchDeviceExtensions($device_extensions_list, $device_ext
     PageGenerator::errorMessage("Error fetching data for report compare!");
 }
 
-$report_compare->beginTable('comparedevices');
-$report_compare->insertTableHeader('', false, false);
+$report_compare->beginTable('compareextensions');
+$report_compare->insertTableHeader('', false, true);
 
 foreach ($device_extensions_list as $device_extension) {
     $ext = $device_extension['name'];

@@ -28,17 +28,22 @@ if (!$report_compare->fetchDeviceInfo($device_info_list, $device_info_report_dat
 }
 
 $report_compare->beginTable('comparedevices');
-$report_compare->insertTableHeader('', false, false);
+$report_compare->insertTableHeader('', false, true);
 
 foreach ($device_info_list as $device_info) {
     $key = $device_info['name'];
     // Check if values differ among the selected reports
     $differing_values = false;
-    $last_value = $device_info_report_data[0][$key][0];
+    $last_value = null;
+    if (key_exists($key, $device_info_report_data[0])) {
+        $last_value = $device_info_report_data[0][$key][0];
+    }
     for ($i = 1; $i < $report_compare->report_count; $i++) {
-        if ($device_info_report_data[$i][$key][0] != $last_value) {
-            $differing_values = true;
-            break;
+        if (key_exists($key, $device_info_report_data[$i])) {
+            if ($device_info_report_data[$i][$key][0] != $last_value) {
+                $differing_values = true;
+                break;
+            }
         }
     }
     // Display values

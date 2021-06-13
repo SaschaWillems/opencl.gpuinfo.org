@@ -115,13 +115,7 @@ $colspan = count($reportids) + 1;
 			// Ungrouped tables
 			var tableNames = [
 				'comparedevices',
-				'surface-caps', 
-				'surface-formats', 
-				'table_features_core_10',
-				'table_features_core_11',
-				'table_features_core_12',
-				'table_properties_core_11',
-				'table_properties_core_12',
+				'compareextensions', 
 			];
 			for (var i = 0, arrlen = tableNames.length; i < arrlen; i++) {
 				if (typeof $('#'+tableNames[i]) != undefined) {
@@ -136,58 +130,6 @@ $colspan = count($reportids) + 1;
 							"header": true,
 							"headerOffset": 50
 						},
-					});
-				}
-			}
-
-			// Grouped tables
-			tableNames = [
-				// 'comparedevices',
-				'compareextensions',
-				'table_queue_families',
-				'table_features_extensions',
-				'table_properties_core_10',
-				'table_properties_extensions',
-				'compare_extended_features',
-			];
-
-			// Device properties table with grouping
-			for (var i = 0, arrlen = tableNames.length; i < arrlen; i++) {
-				if (typeof $('#'+tableNames[i]) != undefined) {
-					$('#' + tableNames[i]).dataTable({
-						"pageLength": -1,
-						"paging": false,
-						"order": [],
-						"columnDefs": [{
-							"visible": false,
-							"targets": 1
-						}],
-						"searchHighlight": true,
-						"bAutoWidth": false,
-						"sDom": 'flpt',
-						"deferRender": true,
-						"processing": true,
-						"fixedHeader": {
-							"header": true,
-							"headerOffset": 50
-						},
-						"drawCallback": function(settings) {
-							var api = this.api();
-							var rows = api.rows({
-								page: 'current'
-							}).nodes();
-							var last = null;
-							api.column(1, {
-								page: 'current'
-							}).data().each(function(group, i) {
-								if (last !== group) {
-									$(rows).eq(i).before(
-										'<tr><td colspan="' + api.columns().header().length + '" class="group">' + group + '</td></tr>'
-									);
-									last = group;
-								}
-							});
-						}
 					});
 				}
 			}
@@ -215,20 +157,8 @@ $colspan = count($reportids) + 1;
 			if (a) 
 			{
 				// Nested tabs, need to show parent tab too
-				if ((a === '#features_core') || (a === '#features_extensions')) {
-					$('.nav a[href=\\#features]').tab('show');
-				}
-				if ((a === '#properties_core') || (a === '#properties_extensions')) {
-					$('.nav a[href=\\#properties]').tab('show');
-				}
-				if ((a === '#formats_linear') || (a === '#formats_optimal') || (a === '#formats_buffer')) {
-					$('.nav a[href=\\#formats]').tab('show');
-				}
-				if ((a === '#instanceextensions') || (a === '#instancelayers')) {
-					$('.nav a[href=\\#instance]').tab('show');
-				}
-				if ((a === '#surfaceproperties') || (a === '#surfaceformats') || (a === '#presentmodes')) {
-					$('.nav a[href=\\#surface]').tab('show');
+				if ((a === '#platform_info') || (a === '#platform_extensions')) {
+					$('.nav a[href=\\#platform]').tab('show');
 				}
 				$('.nav a[href=\\'+a+']').tab('show');
 			}			

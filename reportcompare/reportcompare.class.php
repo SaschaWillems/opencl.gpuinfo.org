@@ -154,7 +154,36 @@ class ReportCompare
         } catch (Throwable $e) {
             return false;
         }        
-    }    
+    }
+
+    public function fetchDeviceExtensions(&$device_extension_list, &$report_data)
+    {
+        try {
+            // Get a list of all device info values for the selected reports
+            try {
+                $stmnt = DB::$connection->prepare("SELECT distinct name from deviceextensions where reportid in ($this->report_id_list)");
+                $stmnt->execute();
+                $device_extension_list = $stmnt->fetchAll(PDO::FETCH_ASSOC);
+            } catch (Exception $e) {
+                die('Could not fetch device info vaues for compare!');
+                DB::disconnect();
+            }
+
+            // Get extended features for each selected report into an array 
+            foreach ($this->report_ids as $reportid) {
+                try {
+                    $stmnt = DB::$connection->prepare("SELECT name from deviceextensions where reportid = :reportid");
+                    $stmnt->execute(['reportid' => $reportid]);
+                    $report_data[] = $stmnt->fetchAll(PDO::FETCH_GROUP | PDO::FETCH_ASSOC);
+                } catch (PDOException $e) {
+                    die("Could not fetch device info values for compare!");
+                }
+            }
+            return true;
+        } catch (Throwable $e) {
+            return false;
+        }        
+    }        
 
     // HTML builder functions
 
