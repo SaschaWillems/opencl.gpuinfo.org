@@ -93,7 +93,7 @@ if ($defaultHeader) {
 	}
 	?>
 	<div class='tablediv tab-content' style='display: inline-flex;'>
-		<form method="get" action="compare.php?compare">
+		<form method="get" action="comparereports.php">
 			<table id='reports' class='table table-striped table-bordered table-hover responsive' style='width:auto'>
 				<thead>
 					<tr>
@@ -118,7 +118,7 @@ if ($defaultHeader) {
 						<th>OS</th>
 						<th>Version</th>
 						<th>Platform</th>
-						<th><input type='submit' name='compare' value='compare' class='button'></th>
+						<th><input type='submit' value='Compare' class='button'></th>
 					</tr>
 				</thead>
 			</table>
