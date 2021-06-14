@@ -127,6 +127,8 @@ class ReportCompare
         echo "</thead><tbody>";
     }
 
+    // Device information
+
     public function fetchDeviceInfo(&$device_info_values, &$report_data)
     {
         try {
@@ -136,7 +138,7 @@ class ReportCompare
                 $stmnt->execute();
                 $device_info_values = $stmnt->fetchAll(PDO::FETCH_ASSOC);
             } catch (Exception $e) {
-                die('Could not fetch device info vaues for compare!');
+                die('Could not fetch device info values for compare!');
                 DB::disconnect();
             }
 
@@ -165,7 +167,7 @@ class ReportCompare
                 $stmnt->execute();
                 $device_extension_list = $stmnt->fetchAll(PDO::FETCH_ASSOC);
             } catch (Exception $e) {
-                die('Could not fetch device info vaues for compare!');
+                die('Could not fetch device extension values for compare!');
                 DB::disconnect();
             }
 
@@ -176,14 +178,74 @@ class ReportCompare
                     $stmnt->execute(['reportid' => $reportid]);
                     $report_data[] = $stmnt->fetchAll(PDO::FETCH_GROUP | PDO::FETCH_ASSOC);
                 } catch (PDOException $e) {
-                    die("Could not fetch device info values for compare!");
+                    die("Could not fetch device extension values for compare!");
                 }
             }
             return true;
         } catch (Throwable $e) {
             return false;
         }        
-    }        
+    }
+
+    // Platform information
+
+    public function fetchPlatformInfo(&$platform_info_values, &$report_data)
+    {
+        try {
+            // Get a list of all device info values for the selected reports
+            try {
+                $stmnt = DB::$connection->prepare("SELECT distinct name from deviceplatforminfo where reportid in ($this->report_id_list)");
+                $stmnt->execute();
+                $platform_info_values = $stmnt->fetchAll(PDO::FETCH_ASSOC);
+            } catch (Exception $e) {
+                die('Could not fetch platform info values for compare!');
+                DB::disconnect();
+            }
+
+            // Get extended features for each selected report into an array 
+            foreach ($this->report_ids as $reportid) {
+                try {
+                    $stmnt = DB::$connection->prepare("SELECT name, value, extension from deviceplatforminfo where reportid = :reportid");
+                    $stmnt->execute(['reportid' => $reportid]);
+                    $report_data[] = $stmnt->fetchAll(PDO::FETCH_GROUP | PDO::FETCH_ASSOC);
+                } catch (PDOException $e) {
+                    die("Could not fetch platform info values for compare!");
+                }
+            }
+            return true;
+        } catch (Throwable $e) {
+            return false;
+        }        
+    }    
+
+    public function fetchPlatformExtensions(&$platform_extension_list, &$report_data)
+    {
+        try {
+            // Get a list of all device info values for the selected reports
+            try {
+                $stmnt = DB::$connection->prepare("SELECT distinct name from deviceplatformextensions where reportid in ($this->report_id_list)");
+                $stmnt->execute();
+                $platform_extension_list = $stmnt->fetchAll(PDO::FETCH_ASSOC);
+            } catch (Exception $e) {
+                die('Could not fetch platform extension vaues for compare!');
+                DB::disconnect();
+            }
+
+            // Get extended features for each selected report into an array 
+            foreach ($this->report_ids as $reportid) {
+                try {
+                    $stmnt = DB::$connection->prepare("SELECT name from deviceplatformextensions where reportid = :reportid");
+                    $stmnt->execute(['reportid' => $reportid]);
+                    $report_data[] = $stmnt->fetchAll(PDO::FETCH_GROUP | PDO::FETCH_ASSOC);
+                } catch (PDOException $e) {
+                    die("Could not fetch platform extension values for compare!");
+                }
+            }
+            return true;
+        } catch (Throwable $e) {
+            return false;
+        }        
+    } 
 
     // HTML builder functions
 

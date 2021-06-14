@@ -27,7 +27,7 @@ if (!$report_compare->fetchDeviceInfo($device_info_list, $device_info_report_dat
     PageGenerator::errorMessage("Error fetching data for report compare!");
 }
 
-$report_compare->beginTable('comparedevices');
+$report_compare->beginTable('device-info-table');
 $report_compare->insertTableHeader('', false, true);
 
 foreach ($device_info_list as $device_info) {

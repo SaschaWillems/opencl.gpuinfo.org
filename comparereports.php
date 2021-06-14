@@ -111,11 +111,11 @@ $colspan = count($reportids) + 1;
 
 	<script>
 		$(document).ready(function() {
-
-			// Ungrouped tables
 			var tableNames = [
-				'comparedevices',
-				'compareextensions', 
+				'device-info-table',
+				'device-extensions-table',
+				'platform-info-table',
+				'platform-extensions-table'
 			];
 			for (var i = 0, arrlen = tableNames.length; i < arrlen; i++) {
 				if (typeof $('#'+tableNames[i]) != undefined) {
@@ -157,8 +157,8 @@ $colspan = count($reportids) + 1;
 			if (a) 
 			{
 				// Nested tabs, need to show parent tab too
-				if ((a === '#platform_info') || (a === '#platform_extensions')) {
-					$('.nav a[href=\\#platform]').tab('show');
+				if ((a === '#platform-info') || (a === '#platform-extensions')) {
+					$('.nav a[href=\\#deviceplatform]').tab('show');
 				}
 				$('.nav a[href=\\'+a+']').tab('show');
 			}			
