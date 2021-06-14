@@ -142,7 +142,7 @@ class ReportCompare
                 DB::disconnect();
             }
 
-            // Get extended features for each selected report into an array 
+            // Get device infor values for each selected report into an array 
             foreach ($this->report_ids as $reportid) {
                 try {
                     $stmnt = DB::$connection->prepare("SELECT name, value, extension from deviceinfo where reportid = :reportid");
@@ -161,7 +161,7 @@ class ReportCompare
     public function fetchDeviceExtensions(&$device_extension_list, &$report_data)
     {
         try {
-            // Get a list of all device info values for the selected reports
+            // Get a list of all device extension values for the selected reports
             try {
                 $stmnt = DB::$connection->prepare("SELECT distinct name from deviceextensions where reportid in ($this->report_id_list)");
                 $stmnt->execute();
@@ -171,7 +171,7 @@ class ReportCompare
                 DB::disconnect();
             }
 
-            // Get extended features for each selected report into an array 
+            // Get extensions for each selected report into an array 
             foreach ($this->report_ids as $reportid) {
                 try {
                     $stmnt = DB::$connection->prepare("SELECT name from deviceextensions where reportid = :reportid");
@@ -187,12 +187,51 @@ class ReportCompare
         }        
     }
 
+    public function fetchDeviceImageformats(&$device_format_values, &$report_data)
+    {
+        try {
+            // Get a list of all device image format combinations for the selected reports
+            try {
+                $stmnt = DB::$connection->prepare("SELECT distinct type, channelorder, channeltype from deviceimageformats where reportid in ($this->report_id_list)");
+                $stmnt->execute();
+                $device_format_values = $stmnt->fetchAll(PDO::FETCH_ASSOC);
+            } catch (Exception $e) {
+                die('Could not fetch device image foramats for compare!');
+                DB::disconnect();
+            }
+
+            // Get image formats for each selected report into an array 
+            foreach ($this->report_ids as $reportid) {
+                try {
+                    $stmnt = DB::$connection->prepare("SELECT * from deviceimageformats where reportid = :reportid");
+                    $stmnt->execute(['reportid' => $reportid]);
+                    $report_data[] = $stmnt->fetchAll(PDO::FETCH_GROUP | PDO::FETCH_ASSOC);
+                } catch (PDOException $e) {
+                    die("Could not fetch device image formats for compare!");
+                }
+            }
+            return true;
+        } catch (Throwable $e) {
+            return false;
+        }        
+    }
+
+    public function getImageFormatInfo($report_data, $image_format)
+    {
+        foreach($report_data as $format) {
+            if (($format[0]['type'] == $image_format['type']) && ($format[0]['channelorder'] == $image_format['channelorder']) && ($format[0]['channeltype'] == $image_format['channeltype'])) {
+                return $format;
+            }
+        }
+        return null;
+    }
+
     // Platform information
 
     public function fetchPlatformInfo(&$platform_info_values, &$report_data)
     {
         try {
-            // Get a list of all device info values for the selected reports
+            // Get a list of all platform info values for the selected reports
             try {
                 $stmnt = DB::$connection->prepare("SELECT distinct name from deviceplatforminfo where reportid in ($this->report_id_list)");
                 $stmnt->execute();
@@ -202,7 +241,7 @@ class ReportCompare
                 DB::disconnect();
             }
 
-            // Get extended features for each selected report into an array 
+            // Get platform info values for each selected report into an array 
             foreach ($this->report_ids as $reportid) {
                 try {
                     $stmnt = DB::$connection->prepare("SELECT name, value, extension from deviceplatforminfo where reportid = :reportid");
@@ -221,7 +260,7 @@ class ReportCompare
     public function fetchPlatformExtensions(&$platform_extension_list, &$report_data)
     {
         try {
-            // Get a list of all device info values for the selected reports
+            // Get a list of all platform extensions for the selected reports
             try {
                 $stmnt = DB::$connection->prepare("SELECT distinct name from deviceplatformextensions where reportid in ($this->report_id_list)");
                 $stmnt->execute();
@@ -231,7 +270,7 @@ class ReportCompare
                 DB::disconnect();
             }
 
-            // Get extended features for each selected report into an array 
+            // Get platform extensions for each selected report into an array 
             foreach ($this->report_ids as $reportid) {
                 try {
                     $stmnt = DB::$connection->prepare("SELECT name from deviceplatformextensions where reportid = :reportid");

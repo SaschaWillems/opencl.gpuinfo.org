@@ -81,7 +81,7 @@ $colspan = count($reportids) + 1;
 	<ul class='nav nav-tabs nav-report'>
 		<li class='active'><a data-toggle='tab' href='#deviceinfo'>Device info</a></li>
 		<li><a data-toggle='tab' href='#deviceextensions'>Extensions</a></li>
-		<!-- <li><a data-toggle='tab' href='#deviceimageformats'>Image formats</a></li> -->
+		<li><a data-toggle='tab' href='#deviceimageformats'>Image formats</a></li>
 		<li><a data-toggle='tab' href='#deviceplatform'>Platform</a></li>
 	</ul>
 </div>
@@ -98,7 +98,7 @@ $colspan = count($reportids) + 1;
 	$views = [
 		'deviceinfo',
 		'deviceextensions',
-		// 'deviceimageformats',
+		'deviceimageformats',
 		'deviceplatform',
 	];
 	foreach ($views as $index => $view) {
@@ -114,6 +114,7 @@ $colspan = count($reportids) + 1;
 			var tableNames = [
 				'device-info-table',
 				'device-extensions-table',
+				// 'device-image-formats',
 				'platform-info-table',
 				'platform-extensions-table'
 			];
@@ -130,6 +131,53 @@ $colspan = count($reportids) + 1;
 							"header": true,
 							"headerOffset": 50
 						},
+					});
+				}
+			}
+
+			// Grouped tables
+			tableNames = [
+				'device-image-formats',
+			];
+
+			// Device properties table with grouping
+			for (var i = 0, arrlen = tableNames.length; i < arrlen; i++) {
+				if (typeof $('#'+tableNames[i]) != undefined) {
+					$('#' + tableNames[i]).dataTable({
+						"pageLength": -1,
+						"paging": false,
+						"order": [],
+						"columnDefs": [
+							{ visible: false, targets: 0 },
+							{ width: 40, targets: [3, 4, 5, 6] },
+							{ orderable: false, targets: [3, 4, 5, 6] }
+						],
+						"searchHighlight": true,
+						"bAutoWidth": false,
+						"sDom": 'flpt',
+						"deferRender": true,
+						"processing": true,
+						"fixedHeader": {
+							"header": true,
+							"headerOffset": 50
+						},
+						"drawCallback": function(settings) {
+							var api = this.api();
+							var rows = api.rows({
+								page: 'current'
+							}).nodes();
+							var last = null;
+							api.column(0, {
+								page: 'current'
+							}).data().each(function(group, i) {
+								if (last !== group) {
+									$(rows).eq(i).before(
+										'<tr><td colspan="' + api.columns().header().length + '" class="group">' + group + '</td></tr>'
+									);
+									last = group;
+								}
+							});
+						}
 					});
 				}
 			}
