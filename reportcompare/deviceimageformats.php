@@ -53,8 +53,9 @@ $report_compare->beginTable('device-info-imageformats');
             echo "Format ".$display_utils->displayMemObjectType($image_format['type'])." with channel order ";
             echo $display_utils->displayChannelOrder($image_format['channelorder']);
             echo "</td>";
-            echo "<td>".$display_utils->displayChannelType($image_format['channeltype'])."</td>";
-            echo "<td>".$report_compare->device_infos[$index]->device_description."</td>";
+            $css_class = $image_format_info ? null : 'class="na"';
+            echo "<td $css_class>".$display_utils->displayChannelType($image_format['channeltype'])."</td>";
+            echo "<td $css_class>".$report_compare->device_infos[$index]->device_description."</td>";
 
             if ($image_format_info) {
                 $cl_mem_flags = [
@@ -65,13 +66,12 @@ $report_compare->beginTable('device-info-imageformats');
                 ];                
 				foreach ($cl_mem_flags as $flag) {
 					$icon = ($flag & $image_format_info[0]['flags']) ? 'check' : 'missing';
-					echo "<td><img src='images/icons/$icon.png' width=16px></td>";
+					echo "<td class='format-support-cell'><img src='images/icons/$icon.png' class='checkmark'></td>";
 				}                
             } else {
-                echo "<td><img src='images/icons/unsupported.png' class='checkmark'></td>";
-                echo "<td><img src='images/icons/unsupported.png' class='checkmark'></td>";
-                echo "<td><img src='images/icons/unsupported.png' class='checkmark'></td>";
-                echo "<td><img src='images/icons/unsupported.png' class='checkmark'></td>";
+                for ($i = 0; $i < 4; $i++) {
+                    echo "<td class='format-support-cell'><img src='images/icons/unsupported.png' class='checkmark'></td>";
+                }
             }
             echo "</tr>";
         }

@@ -656,3 +656,8 @@ h1 {
 	text-overflow: ellipsis;
 	white-space: nowrap;
 }
+
+.format-support-cell {
+	vertical-align: middle !important;
+	text-align: center;
+}
