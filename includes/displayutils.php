@@ -135,8 +135,8 @@ class DisplayUtils {
         // 'CL_DEVICE_NUMERIC_VERSION' => cl_version, utils::displayVersion,
         // 'CL_DEVICE_ILS_WITH_VERSION' => cl_name_version_array, utils::displayNameVersionArray,
         // 'CL_DEVICE_BUILT_IN_KERNELS_WITH_VERSION' => cl_name_version_array, utils::displayNameVersionArray,
-        // 'CL_DEVICE_ATOMIC_MEMORY_CAPABILITIES' => cl_device_atomic_capabilities, utils::displayAtomicCapabilities,
-        // 'CL_DEVICE_ATOMIC_FENCE_CAPABILITIES' => cl_device_atomic_capabilities, utils::displayAtomicCapabilities,
+        'CL_DEVICE_ATOMIC_MEMORY_CAPABILITIES' => 'displayAtomicCapabilities',
+        'CL_DEVICE_ATOMIC_FENCE_CAPABILITIES' => 'displayAtomicCapabilities',
         'CL_DEVICE_NON_UNIFORM_WORK_GROUP_SUPPORT' => 'displayBool',
         // 'CL_DEVICE_OPENCL_C_ALL_VERSIONS' => cl_name_version_array, utils::displayNameVersionArray,
         // 'CL_DEVICE_PREFERRED_WORK_GROUP_SIZE_MULTIPLE' => cl_size_t,
@@ -175,9 +175,13 @@ class DisplayUtils {
 
     function displayBool($value)
     {
-        $class = (intval($value) === 1) ? 'supported' : 'unsupported';
         $text = (intval($value) === 1) ? 'true' : 'false';
-        return "<span class='$class'>$text</span>";
+        if ($this->display_all_flags) {
+            $class = (intval($value) === 1) ? 'supported' : 'unsupported';
+            return "<span class='$class'>$text</span>";
+        } else {
+            return $text;
+        }
     }
     
     function displayByteSize($value)
@@ -335,6 +339,21 @@ class DisplayUtils {
         ];
         return $cl_channel_types[$value];
     }    
+
+    function displayAtomicCapabilities($value)
+    {
+        $flags = [
+            (1 << 0) => 'CL_DEVICE_ATOMIC_ORDER_RELAXED',
+            (1 << 1) => 'CL_DEVICE_ATOMIC_ORDER_ACQ_REL',
+            (1 << 2) => 'CL_DEVICE_ATOMIC_ORDER_SEQ_CST',
+            (1 << 3) => 'CL_DEVICE_ATOMIC_SCOPE_WORK_ITEM',
+            (1 << 4) => 'CL_DEVICE_ATOMIC_SCOPE_WORK_GROUP',
+            (1 << 5) => 'CL_DEVICE_ATOMIC_SCOPE_DEVICE',
+            (1 << 6) => 'CL_DEVICE_ATOMIC_SCOPE_ALL_DEVICES',
+        ];
+        $res = $this->getFlags($flags, $value);
+        return implode($this->display_all_flags ? '<br/>' : '\n', $res);        
+    }
 
     //
 
