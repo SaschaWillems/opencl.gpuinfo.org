@@ -48,7 +48,7 @@ if (isset($_GET['platform'])) {
 	$platform = GET_sanitized('platform');
 	if (($platform !== null) && ($platform !== "")) {
 		$ostype = ostype($platform);
-		$filter .= "and reportid in (select id from reports where ostype = '$ostype')";
+		$filter = "and reportid in (select id from reports where ostype = '$ostype')";
 		$caption .= " on <img src='images/".$platform."logo.png' class='platform-icon'/>" . ucfirst($platform);
 	} else {
 		$platform = 'all';
@@ -102,7 +102,7 @@ if (isset($_GET['platform'])) {
 						$link = "listreports.php?platforminfo=$name&value=".$device_info["value"].($platform ? "&platform=$platform" : "");
 						echo "<tr>";
 						echo "<td>".$display_utils->getDisplayValue($name, $device_info['value'])."</td>";
-						echo "<td><a href='$link'>" . $device_info['reports'] . "</a></td>";
+						echo "<td><a href='$link'>".$device_info['reports']."</a></td>";
 						echo "</tr>";
 					}
 					DB::disconnect();

@@ -661,3 +661,8 @@ h1 {
 	vertical-align: middle !important;
 	text-align: center;
 }
+
+.platform-icon {
+	height: 14px;
+	padding-right: 5px;
+}

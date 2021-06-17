@@ -20,6 +20,8 @@
  *
  */
 
+ // @todo: adopt changes made on displayplatforminfo.php
+
 require './pagegenerator.php';
 require './database/database.class.php';
 require './includes/functions.php';
@@ -28,24 +30,6 @@ require './includes/displayutils.php';
 $name = null;
 if (isset($_GET['name'])) {
 	$name = GET_sanitized('name');
-}
-
-// @todo: replace with function
-$os = null;
-$filter = null;
-if (isset($_GET['os'])) {
-	$os = GET_sanitized($_GET['os']);
-	if (!in_array($os, ['windows', 'android', 'linux', 'ios', 'osx'])) {
-		$os = null;
-	}
-	if ($os) {
-		if (in_array($os, ['windows', 'android', 'ios', 'osx'])) {
-			$filter = "where reportid in (select id from reports where osname = '$os')";
-		}
-		if (in_array($os, ['linux'])) {
-			$filter = "where reportid in (select id from reports where osname not in ('windows', 'android', 'ios', 'osx'))";
-		}
-	}
 }
 
 // Check if capability is present
@@ -60,25 +44,16 @@ if ($result->rowCount() == 0) {
 PageGenerator::header($name);
 
 $caption = "Value distribution for <code>$name</code>";
-
-// @todo: replace with function
+$filter = null;
 $platform = null;
 if (isset($_GET['platform'])) {
-	$platform = $_GET["platform"];
-	if ($platform !== "all") {
-		switch ($platform) {
-			case 'windows':
-				$ostype = 0;
-				break;
-			case 'linux':
-				$ostype = 1;
-				break;
-			case 'android':
-				$ostype = 2;
-				break;
-		}
-		$filter .= "and reportid in (select id from reports where ostype = '" . $ostype . "')";
-		$caption .= " on <img src='images/" . $platform . "logo.png' height='14px' style='padding-right:5px'/>" . ucfirst($platform);
+	$platform = GET_sanitized('platform');
+	if (($platform !== null) && ($platform !== "")) {
+		$ostype = ostype($platform);
+		$filter = "and reportid in (select id from reports where ostype = '$ostype')";
+		$caption .= " on <img src='images/".$platform."logo.png' class='platform-icon'/>" . ucfirst($platform);
+	} else {
+		$platform = 'all';
 	}
 }
 
@@ -126,10 +101,10 @@ if (isset($_GET['platform'])) {
 					$result->execute(['name' => $name]);
 					$rows = $result->fetchAll(PDO::FETCH_ASSOC);
 					foreach ($rows as $device_info) {
-						$link = "listreports.php?deviceinfo=$name&value=" . $device_info["value"] . ($platform ? "&platform=$platform" : "");
+						$link = "listreports.php?deviceinfo=$name&value=".$device_info["value"].($platform ? "&platform=$platform" : "");
 						echo "<tr>";
-						echo "<td>" .$display_utils->getDisplayValue($name, $device_info['value']) . "</td>";
-						echo "<td><a href='$link'>" . $device_info['reports'] . "</a></td>";
+						echo "<td>".$display_utils->getDisplayValue($name, $device_info['value'])."</td>";
+						echo "<td><a href='$link'>".$device_info['reports']."</a></td>";
 						echo "</tr>";
 					}
 					DB::disconnect();
@@ -185,5 +160,4 @@ if (isset($_GET['platform'])) {
 <?php PageGenerator::footer(); ?>
 
 </body>
-
 </html>
