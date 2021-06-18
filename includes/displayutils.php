@@ -69,7 +69,7 @@ class DisplayUtils {
 		'CL_DEVICE_MAX_PARAMETER_SIZE' => 'displayByteSize',
 		// 'CL_DEVICE_MAX_SAMPLERS' => ,
 		// 'CL_DEVICE_MEM_BASE_ADDR_ALIGN' => ,
-		'CL_DEVICE_MIN_DATA_TYPE_ALIGN_SIZE' => 'displayByteSize', // @todo: deprecated in 1.2
+		'CL_DEVICE_MIN_DATA_TYPE_ALIGN_SIZE' => 'displayByteSize',
 		'CL_DEVICE_SINGLE_FP_CONFIG' => 'displayFloatingPointConfig',
 		'CL_DEVICE_GLOBAL_MEM_CACHE_TYPE' => 'displayMemCacheType',
 		'CL_DEVICE_GLOBAL_MEM_CACHELINE_SIZE' => 'displayByteSize',
@@ -83,7 +83,7 @@ class DisplayUtils {
 		// 'CL_DEVICE_PROFILING_TIMER_RESOLUTION' => ,
 		'CL_DEVICE_ENDIAN_LITTLE' => 'displayBool',
 		'CL_DEVICE_COMPILER_AVAILABLE' => 'displayBool',
-		// 'CL_DEVICE_EXECUTION_CAPABILITIES' => , utils::displayExecCapabilities,
+		'CL_DEVICE_EXECUTION_CAPABILITIES' => 'displayExecCapabilities',
 
         /* CL 1.1 */
         // 'CL_DEVICE_PREFERRED_VECTOR_WIDTH_HALF' => cl_uint,
@@ -96,11 +96,11 @@ class DisplayUtils {
         // 'CL_DEVICE_NATIVE_VECTOR_WIDTH_DOUBLE' => cl_uint,
         // 'CL_DEVICE_NATIVE_VECTOR_WIDTH_HALF' => cl_uint,
         // 'CL_DEVICE_NATIVE_VECTOR_WIDTH_HALF' => cl_uint,
-        // 'CL_DEVICE_OPENCL_C_VERSION' => cl_char, utils::displayText }, 
+        'CL_DEVICE_OPENCL_C_VERSION' => 'displayText',
         
         /* CL 1.2 */
         'CL_DEVICE_LINKER_AVAILABLE' => 'displayBool',
-        'CL_DEVICE_BUILT_IN_KERNELS' => 'displayList',
+        'CL_DEVICE_BUILT_IN_KERNELS' => 'displayText',
         // 'CL_DEVICE_IMAGE_MAX_BUFFER_SIZE' => ,
         // 'CL_DEVICE_IMAGE_MAX_ARRAY_SIZE' => ,
         // 'CL_DEVICE_PARENT_DEVICE' => _id,
@@ -201,6 +201,19 @@ class DisplayUtils {
         } else {
             return 'none';
         }
+    }
+
+    function displayText($value)
+    {
+        $text = (trim($value) != "") ? $value : 'none';
+        if ($this->display_all_flags) {
+            if ($text != "none") {
+                return $text;
+            }
+            return "<span class='na'>$text</span>";
+        } else {
+            return $text;
+        }        
     }
 
     function displayDeviceType($value)
@@ -350,6 +363,16 @@ class DisplayUtils {
             (1 << 4) => 'CL_DEVICE_ATOMIC_SCOPE_WORK_GROUP',
             (1 << 5) => 'CL_DEVICE_ATOMIC_SCOPE_DEVICE',
             (1 << 6) => 'CL_DEVICE_ATOMIC_SCOPE_ALL_DEVICES',
+        ];
+        $res = $this->getFlags($flags, $value);
+        return implode($this->display_all_flags ? '<br/>' : '\n', $res);        
+    }
+
+    function displayExecCapabilities($value)
+    {
+        $flags = [
+            (1 << 0) => 'CL_EXEC_KERNEL',
+            (1 << 1) => 'CL_EXEC_NATIVE_KERNEL',
         ];
         $res = $this->getFlags($flags, $value);
         return implode($this->display_all_flags ? '<br/>' : '\n', $res);        
