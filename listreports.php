@@ -27,7 +27,7 @@ include './database/database.class.php';
 // Header
 $defaultHeader = true;
 $pageTitle = null;
-$alertText = null;
+$caption = null;
 $negate = false;
 $showTabs = true;
 if (isset($_GET['option'])) {
@@ -45,7 +45,6 @@ $extension = GET_sanitized('extension');
 if ($extension != '') {
 	$defaultHeader = false;
 	$caption = "Reports " . ($negate ? "<b>not</b>" : "") . " supporting <code>" . $extension . "</code>";
-	$caption .= " (<a href='listreports.php?extension=" . $extension . ($negate ? "" : "&option=not") . "'>toggle</a>)";
 }
 // Submitter
 $submitter = GET_sanitized('submitter');
@@ -67,7 +66,10 @@ if ($platformname != '') {
 }
 // Platform (os)
 if ($platform && $platform !== 'all') {
-	$caption = "Listing on <img src='images/" . $platform . "logo.png' height='14px' style='padding-right:5px'/>" . ucfirst($platform);
+	if (!$caption) {
+		$caption = "Listing reports";
+	}
+	$caption .= " on <img src='images/".$platform."logo.png' class='platform-icon'/>".ucfirst($platform);
 	$defaultHeader = false;
 }
 
@@ -160,7 +162,8 @@ if ($defaultHeader) {
 						'devicename': 	'<?= GET_sanitized('devicename') ?>',
 						'displayname': 	'<?= GET_sanitized('displayname') ?>',
 						'platformname': '<?= GET_sanitized('platformname') ?>',
-						'platform': 	'<?= GET_sanitized('platform') ?>'
+						'platform': 	'<?= GET_sanitized('platform') ?>',
+						'option': 		'<?= GET_sanitized('option') ?>'
 					}
 				},
 				error: function(xhr, error, thrown) {

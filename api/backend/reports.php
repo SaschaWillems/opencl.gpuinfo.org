@@ -20,17 +20,14 @@
  *
  */
 
-// @todo: Only allow requests from same host
-
 include '../../database/database.class.php';
 include '../../includes/functions.php';
 include '../../includes/displayutils.php';
 
 DB::connect();
 
-$data = array();
-$params = array();
-
+$data = [];
+$params = [];
 $searchClause = null;
 
 // Ordering
@@ -83,7 +80,7 @@ if (isset($_REQUEST['filter']['option'])) {
 if (isset($_REQUEST['filter']['extension'])) {
     $extension = $_REQUEST['filter']['extension'];
     if ($extension != '') {
-        $whereClause = "where r.id " . ($negate ? "not" : "") . " in (select distinct(reportid) from deviceextensions de join extensions ext on de.extensionid = ext.id where ext.name = :filter_extension)";
+        $whereClause = "where r.id " . ($negate ? "not" : "") . " in (select distinct(reportid) from deviceextensions where name = :filter_extension)";
         $params['filter_extension'] = $extension;
     }
 }
@@ -147,7 +144,7 @@ if ($devices->rowCount() > 0) {
         $data[] = [
             'id' => $device['id'],
             'devicename' => '<a href="displayreport.php?id=' . $device['id'] . '">' . $device['devicename'] . '</a>',
-            'deviceversion' => $device['deviceversion'],
+            'deviceversion' => shorten($device['deviceversion']),
             'driverversion' => shorten($device['driverversion']),
             'openclversion' => $device['openclversion'],
             'devicetype' => $display_utils->displayDeviceType($device['devicetype']),
