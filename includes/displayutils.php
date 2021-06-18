@@ -36,39 +36,14 @@ function displayVersion($version)
 }
 
 class DisplayUtils {
+    // Map device info enum to display function (only for values that need explicit display transformations)
     private $display_mapping = [
         /* CL 1.0 */
-		// 'CL_DEVICE_NAME' => ,
 		'CL_DEVICE_TYPE' => 'displayDeviceType',
-		// 'CL_DEVICE_VENDOR_ID' => ,
-		// 'CL_DEVICE_VENDOR' => ,
-		// 'CL_DRIVER_VERSION' => ,
-		// 'CL_DEVICE_PROFILE' => ,
-		// 'CL_DEVICE_VERSION' => ,
-		// 'CL_DEVICE_MAX_COMPUTE_UNITS' => ,
-		// 'CL_DEVICE_MAX_WORK_ITEM_DIMENSIONS' => ,
-		// 'CL_DEVICE_MAX_WORK_GROUP_SIZE' => ,
 		'CL_DEVICE_MAX_WORK_ITEM_SIZES' => 'displayNumberArray',
-		// 'CL_DEVICE_PREFERRED_VECTOR_WIDTH_CHAR' => ,
-		// 'CL_DEVICE_PREFERRED_VECTOR_WIDTH_SHORT' => ,
-		// 'CL_DEVICE_PREFERRED_VECTOR_WIDTH_INT' => ,
-		// 'CL_DEVICE_PREFERRED_VECTOR_WIDTH_LONG' => ,
-		// 'CL_DEVICE_PREFERRED_VECTOR_WIDTH_FLOAT' => ,
-		// 'CL_DEVICE_PREFERRED_VECTOR_WIDTH_DOUBLE' => ,
-		// 'CL_DEVICE_MAX_CLOCK_FREQUENCY' => ,
-		// 'CL_DEVICE_ADDRESS_BITS' => ,
-		// 'CL_DEVICE_MAX_READ_IMAGE_ARGS' => ,
-		// 'CL_DEVICE_MAX_WRITE_IMAGE_ARGS' => ,
 		'CL_DEVICE_MAX_MEM_ALLOC_SIZE' => 'displayByteSize',
-		// 'CL_DEVICE_IMAGE2D_MAX_WIDTH' => ,
-		// 'CL_DEVICE_IMAGE2D_MAX_HEIGHT' => ,
-		// 'CL_DEVICE_IMAGE3D_MAX_WIDTH' => ,
-		// 'CL_DEVICE_IMAGE3D_MAX_HEIGHT' => ,
-		// 'CL_DEVICE_IMAGE3D_MAX_DEPTH' => ,
 		'CL_DEVICE_IMAGE_SUPPORT' => 'displayBool',
 		'CL_DEVICE_MAX_PARAMETER_SIZE' => 'displayByteSize',
-		// 'CL_DEVICE_MAX_SAMPLERS' => ,
-		// 'CL_DEVICE_MEM_BASE_ADDR_ALIGN' => ,
 		'CL_DEVICE_MIN_DATA_TYPE_ALIGN_SIZE' => 'displayByteSize',
 		'CL_DEVICE_SINGLE_FP_CONFIG' => 'displayFloatingPointConfig',
 		'CL_DEVICE_GLOBAL_MEM_CACHE_TYPE' => 'displayMemCacheType',
@@ -76,76 +51,51 @@ class DisplayUtils {
 		'CL_DEVICE_GLOBAL_MEM_CACHE_SIZE' => 'displayByteSize',
 		'CL_DEVICE_GLOBAL_MEM_SIZE' => 'displayByteSize',
 		'CL_DEVICE_MAX_CONSTANT_BUFFER_SIZE' => 'displayByteSize',
-		// 'CL_DEVICE_MAX_CONSTANT_ARGS' => ,
 		'CL_DEVICE_LOCAL_MEM_TYPE' => 'displayLocalMemType',
 		'CL_DEVICE_LOCAL_MEM_SIZE' => 'displayByteSize',
 		'CL_DEVICE_ERROR_CORRECTION_SUPPORT' => 'displayBool',
-		// 'CL_DEVICE_PROFILING_TIMER_RESOLUTION' => ,
 		'CL_DEVICE_ENDIAN_LITTLE' => 'displayBool',
 		'CL_DEVICE_COMPILER_AVAILABLE' => 'displayBool',
 		'CL_DEVICE_EXECUTION_CAPABILITIES' => 'displayExecCapabilities',
 
         /* CL 1.1 */
-        // 'CL_DEVICE_PREFERRED_VECTOR_WIDTH_HALF' => cl_uint,
         'CL_DEVICE_HOST_UNIFIED_MEMORY' => 'displayBool',
-        // 'CL_DEVICE_NATIVE_VECTOR_WIDTH_CHAR' => cl_uint,
-        // 'CL_DEVICE_NATIVE_VECTOR_WIDTH_SHORT' => cl_uint,
-        // 'CL_DEVICE_NATIVE_VECTOR_WIDTH_INT' => cl_uint,
-        // 'CL_DEVICE_NATIVE_VECTOR_WIDTH_LONG' => cl_uint,
-        // 'CL_DEVICE_NATIVE_VECTOR_WIDTH_FLOAT' => cl_uint,
-        // 'CL_DEVICE_NATIVE_VECTOR_WIDTH_DOUBLE' => cl_uint,
-        // 'CL_DEVICE_NATIVE_VECTOR_WIDTH_HALF' => cl_uint,
-        // 'CL_DEVICE_NATIVE_VECTOR_WIDTH_HALF' => cl_uint,
         'CL_DEVICE_OPENCL_C_VERSION' => 'displayText',
         
         /* CL 1.2 */
         'CL_DEVICE_LINKER_AVAILABLE' => 'displayBool',
         'CL_DEVICE_BUILT_IN_KERNELS' => 'displayText',
-        // 'CL_DEVICE_IMAGE_MAX_BUFFER_SIZE' => ,
-        // 'CL_DEVICE_IMAGE_MAX_ARRAY_SIZE' => ,
-        // 'CL_DEVICE_PARENT_DEVICE' => _id,
-        // 'CL_DEVICE_PARTITION_MAX_SUB_DEVICES' =,
-        // 'CL_DEVICE_PARTITION_PROPERTIES, clValueType::cl_device_partition_property_array' => rtitionProperties,
-        // 'CL_DEVICE_PARTITION_AFFINITY_DOMAIN, clValueType::cl_device_affinity_domain' => finityDomains,
-        // 'CL_DEVICE_PARTITION_TYPE, clValueType::cl_device_partition_property_array' => rtitionProperties,
-        // 'CL_DEVICE_REFERENCE_COUNT' =,
+        'CL_DEVICE_PARTITION_PROPERTIES' => 'displayDevicePartitionProperties',
+        'CL_DEVICE_PARTITION_AFFINITY_DOMAIN' => 'displayDeviceAffinityDomains',
+        'CL_DEVICE_PARTITION_TYPE' => 'displayDevicePartitionProperties',
         'CL_DEVICE_PREFERRED_INTEROP_USER_SYNC' => 'displayBool',
         'CL_DEVICE_PRINTF_BUFFER_SIZE' => 'displayByteSize',
 
         /* CL 2.0 */
-        // 'CL_DEVICE_IMAGE_PITCH_ALIGNMENT' => clValueType::cl_uint,
-        // 'CL_DEVICE_IMAGE_BASE_ADDRESS_ALIGNMENT' => clValueType::cl_uint,
-        // 'CL_DEVICE_MAX_READ_WRITE_IMAGE_ARGS' => clValueType::cl_uint,
         'CL_DEVICE_MAX_GLOBAL_VARIABLE_SIZE' => 'displayByteSize',
-        // 'CL_DEVICE_QUEUE_ON_DEVICE_PROPERTIES' => clValueType::cl_command_queue_properties, utils::displayCommandQueueCapabilities,
+        'CL_DEVICE_QUEUE_ON_DEVICE_PROPERTIES' => 'displayCommandQueueCapabilities',
         'CL_DEVICE_QUEUE_ON_DEVICE_PREFERRED_SIZE' => 'displayByteSize',
         'CL_DEVICE_QUEUE_ON_DEVICE_MAX_SIZE' =>'displayByteSize',
-        // 'CL_DEVICE_MAX_ON_DEVICE_QUEUES' => clValueType::cl_uint,
-        // 'CL_DEVICE_MAX_ON_DEVICE_EVENTS' => clValueType::cl_uint,
-        // 'CL_DEVICE_SVM_CAPABILITIES' => clValueType::cl_device_svm_capabilities, utils::displayDeviceSvmCapabilities,
+        'CL_DEVICE_SVM_CAPABILITIES' => 'displayDeviceSvmCapabilities',
         'CL_DEVICE_GLOBAL_VARIABLE_PREFERRED_TOTAL_SIZE' => 'displayByteSize',
-        // 'CL_DEVICE_MAX_PIPE_ARGS' => clValueType::cl_uint,
-        // 'CL_DEVICE_PIPE_MAX_ACTIVE_RESERVATIONS' => clValueType::cl_uint,
         'CL_DEVICE_PIPE_MAX_PACKET_SIZE' => 'displayByteSize',
         'CL_DEVICE_PREFERRED_PLATFORM_ATOMIC_ALIGNMENT' => 'displayByteSize',
         'CL_DEVICE_PREFERRED_GLOBAL_ATOMIC_ALIGNMENT' => 'displayByteSize',
         'CL_DEVICE_PREFERRED_LOCAL_ATOMIC_ALIGNMENT' => 'displayByteSize',
 
         /* CL 3.0 */
-        // 'CL_DEVICE_NUMERIC_VERSION' => cl_version, utils::displayVersion,
-        // 'CL_DEVICE_ILS_WITH_VERSION' => cl_name_version_array, utils::displayNameVersionArray,
-        // 'CL_DEVICE_BUILT_IN_KERNELS_WITH_VERSION' => cl_name_version_array, utils::displayNameVersionArray,
+        'CL_DEVICE_NUMERIC_VERSION' => 'displayVersion',
+        'CL_DEVICE_ILS_WITH_VERSION' => 'displayNameVersionArray',
+        'CL_DEVICE_BUILT_IN_KERNELS_WITH_VERSION' => 'displayNameVersionArray',
         'CL_DEVICE_ATOMIC_MEMORY_CAPABILITIES' => 'displayAtomicCapabilities',
         'CL_DEVICE_ATOMIC_FENCE_CAPABILITIES' => 'displayAtomicCapabilities',
         'CL_DEVICE_NON_UNIFORM_WORK_GROUP_SUPPORT' => 'displayBool',
-        // 'CL_DEVICE_OPENCL_C_ALL_VERSIONS' => cl_name_version_array, utils::displayNameVersionArray,
-        // 'CL_DEVICE_PREFERRED_WORK_GROUP_SIZE_MULTIPLE' => cl_size_t,
+        'CL_DEVICE_OPENCL_C_ALL_VERSIONS' => 'displayNameVersionArray',
         'CL_DEVICE_WORK_GROUP_COLLECTIVE_FUNCTIONS_SUPPORT' => 'displayBool',
         'CL_DEVICE_GENERIC_ADDRESS_SPACE_SUPPORT' => 'displayBool',
-        // 'CL_DEVICE_OPENCL_C_FEATURES' => cl_name_version_array, utils::displayNameVersionArray,
-        // 'CL_DEVICE_DEVICE_ENQUEUE_CAPABILITIES' => cl_device_device_enqueue_capabilities, utils::displayEnqueueCapabilities,
+        'CL_DEVICE_OPENCL_C_FEATURES' => 'displayNameVersionArray',
+        'CL_DEVICE_DEVICE_ENQUEUE_CAPABILITIES' => 'displayEnqueueCapabilities',
         'CL_DEVICE_PIPE_SUPPORT' => 'displayBool',
-        // 'CL_DEVICE_LATEST_CONFORMANCE_VERSION_PASSED' => cl_char }
 
         /* Extensions */
         'CL_DEVICE_LUID_VALID_KHR' => 'displaybool',
@@ -239,6 +189,23 @@ class DisplayUtils {
             default:
                 return 'unknown';
         }
+    }
+
+    function displayVersion($version)
+    {
+        $CL_VERSION_MINOR_BITS = 10;
+        $CL_VERSION_PATCH_BITS = 12;    
+        $CL_VERSION_MINOR_MASK = ((1 << $CL_VERSION_MINOR_BITS) - 1);
+        $CL_VERSION_PATCH_MASK = ((1 << $CL_VERSION_PATCH_BITS) - 1);    
+        $major = (($version) >> ($CL_VERSION_MINOR_BITS + $CL_VERSION_PATCH_BITS));
+        $minor = ((($version) >> $CL_VERSION_PATCH_BITS) & $CL_VERSION_MINOR_MASK);
+        $patch = (($version) & $CL_VERSION_PATCH_MASK);    
+        return "$major.$minor.$patch";
+    }
+
+    function displayNameVersionArray($value)
+    {
+
     }
     
     function displayMemCacheType($value)
@@ -376,6 +343,65 @@ class DisplayUtils {
         ];
         $res = $this->getFlags($flags, $value);
         return implode($this->display_all_flags ? '<br/>' : '\n', $res);        
+    }
+
+    function displayEnqueueCapabilities($value)
+    {
+        $flags = [
+            (1 << 0) => 'CL_DEVICE_QUEUE_SUPPORTED',
+            (1 << 1) => 'CL_DEVICE_QUEUE_REPLACEABLE_DEFAULT',
+        ];
+        $res = $this->getFlags($flags, $value);
+        return implode($this->display_all_flags ? '<br/>' : '\n', $res);                
+    }
+
+    function displayCommandQueueCapabilities($value)
+    {
+        $flags = [
+            (1 << 0) => 'CL_QUEUE_OUT_OF_ORDER_EXEC_MODE_ENABLE',
+            (1 << 1) => 'CL_QUEUE_PROFILING_ENABLE',
+        ];
+        $res = $this->getFlags($flags, $value);
+        return implode($this->display_all_flags ? '<br/>' : '\n', $res);                        
+    }
+
+    function displayDeviceSvmCapabilities($value)
+    {
+        $flags = [
+            (1 << 0) => 'CL_DEVICE_SVM_COARSE_GRAIN_BUFFER',
+            (1 << 1) => 'CL_DEVICE_SVM_FINE_GRAIN_BUFFER',
+            (1 << 2) => 'CL_DEVICE_SVM_FINE_GRAIN_SYSTEM',
+            (1 << 3) => 'CL_DEVICE_SVM_ATOMICS',
+        ];
+        $res = $this->getFlags($flags, $value);
+        return implode($this->display_all_flags ? '<br/>' : '\n', $res);                        
+    }
+
+    function displayDevicePartitionProperties($value)
+    {
+        $text = (trim($value) != "") ? $value : 'none';
+        if ($this->display_all_flags) {
+            if ($text != "none") {
+                return $text;
+            }
+            return "<span class='na'>$text</span>";
+        } else {
+            return $text;
+        }
+    }
+
+    function displayDeviceAffinityDomains($value)
+    {
+        $flags = [
+            (1 << 0) => 'CL_DEVICE_AFFINITY_DOMAIN_NUMA',
+            (1 << 1) => 'CL_DEVICE_AFFINITY_DOMAIN_L4_CACHE',
+            (1 << 2) => 'CL_DEVICE_AFFINITY_DOMAIN_L3_CACHE',
+            (1 << 3) => 'CL_DEVICE_AFFINITY_DOMAIN_L2_CACHE',
+            (1 << 4) => 'CL_DEVICE_AFFINITY_DOMAIN_L1_CACHE',
+            (1 << 5) => 'CL_DEVICE_AFFINITY_DOMAIN_NEXT_PARTITIONABLE',
+        ];
+        $res = $this->getFlags($flags, $value);
+        return implode($this->display_all_flags ? '<br/>' : '\n', $res); 
     }
 
     //
