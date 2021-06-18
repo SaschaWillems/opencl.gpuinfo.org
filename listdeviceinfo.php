@@ -24,7 +24,7 @@ require 'pagegenerator.php';
 require './database/database.class.php';
 require './includes/functions.php';
 
-$platform = "windows";
+$platform = null;
 if (isset($_GET['platform'])) {
 	$platform = $_GET['platform'];
 }
@@ -37,7 +37,7 @@ PageGenerator::header("Device info");
 </div>
 
 <center>	
-<?php PageGenerator::platformNavigation('listdeviceinfo.php', $platform); ?>
+<?php PageGenerator::platformNavigation('listdeviceinfo.php', $platform, true); ?>
 
 <div class='tablediv' style='width:auto; display: inline-block;'>
 	<table id="deviceinfo" class="table table-striped table-bordered table-hover" >
@@ -51,19 +51,28 @@ PageGenerator::header("Device info");
 			<?php																	
 				DB::connect();		
 				try {
-					$devicecount = DB::getCount("SELECT count(distinct deviceidentifier) from reports where ostype = :ostype", ['ostype' => ostype($platform)]);	
+					$params = [];
+					$where = null;
+					if ($platform) {
+						$params = ['ostype' => ostype($platform)];
+						$where = "where r.ostype = :ostype";
+					}
+					$devicecount = DB::getCount("SELECT count(distinct deviceidentifier) from reports r $where", $params);
 					$sql = 
 						"SELECT 
 							name, 
 							count(distinct deviceidentifier) as coverage
 						from deviceinfo d
 						join reports r on r.id = d.reportid
-						where r.ostype = :ostype
+						$where
 						group by name";
 					$stmnt = DB::$connection->prepare($sql);
-					$stmnt->execute(['ostype' => ostype($platform)]);
+					$stmnt->execute($params);
 					while ($row = $stmnt->fetch(PDO::FETCH_ASSOC)) {
-						$link = "displaydeviceinfo.php?name=".$row['name']."&platform=$platform";
+						$link = "displaydeviceinfo.php?name=".$row['name'];
+						if ($platform) {
+							$link .= "&platform=$platform";
+						};
 						echo "<tr>";						
 						echo "<td><a href='$link'>".$row['name']."</a></td>";
 						echo "<td align=center>".round($row['coverage'] / $devicecount * 100, 1)."%</td>";
