@@ -28,9 +28,8 @@ if (!$report_compare->fetchDeviceImageformats($device_formats_list, $device_form
 }
 
 $report_compare->beginTable('device-info-imageformats');
-// $report_compare->insertTableHeader('', false, true);
-
 ?>
+
 <table id='device-image-formats' class='table table-striped table-bordered table-hover'>
     <thead>
 		<tr>        
@@ -46,9 +45,24 @@ $report_compare->beginTable('device-info-imageformats');
 
 <?php
     foreach ($device_formats_list as $image_format) {
+        $image_format_infos = [];
+        // Get image format info for the selected reports (can be null for reports without support for a single format)
         foreach ($device_formats_report_data as $index => $report_data) {
-            $image_format_info = $report_compare->getImageFormatInfo($report_data, $image_format);
-            echo "<tr>";
+            $image_format_infos[] = $report_compare->getImageFormatInfo($report_data, $image_format);
+        }
+        // Check if image format support differs among selected reports
+        $differing_values = false;
+        $last_value = $image_format_infos[0] ? $image_format_infos[0][0]['flags'] : null;
+        for ($i = 1; $i < $report_compare->report_count; $i++) {
+            $curr_value = $image_format_infos[$i] ? $image_format_infos[$i][0]['flags'] : null;
+            if ($curr_value != $last_value) {
+                $differing_values = true;
+                break;
+            }
+        }
+        foreach ($device_formats_report_data as $index => $report_data) {
+            $image_format_info = $image_format_infos[$index];
+            echo $differing_values ? "<tr>" : "<tr class='same'>";
             echo "<td>";
             echo "Format ".$display_utils->displayMemObjectType($image_format['type'])." with channel order ";
             echo $display_utils->displayChannelOrder($image_format['channelorder']);

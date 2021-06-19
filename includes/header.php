@@ -88,7 +88,7 @@
 			</div>
 			<div class="collapse navbar-collapse" id="myNavbar">
 				<ul class="nav navbar-nav">
-					<li><a href="listdevices.php">Devices</a></li>
+					<!-- <li><a href="listdevices.php">Devices</a></li> -->
 					<li><a href="listreports.php">Reports</a></li>
 					<li><a href="listdeviceinfo.php">Deviceinfo</a></li>
 					<li><a href="listextensions.php">Extensions</a></li>

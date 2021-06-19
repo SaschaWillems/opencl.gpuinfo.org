@@ -44,6 +44,8 @@ if (!$report->exists()) {
 
 PageGenerator::header($report->info->device_description);
 
+$display_utils = new DisplayUtils();
+
 DB::connect();
 echo "<center>";
 
@@ -91,7 +93,6 @@ echo "</div>";
 				var tableNames = [
 					'table_deviceinfo',
 					'table_deviceextensions',
-					'table_deviceimageformats',
 					'table_deviceplatforminfo',
 					'table_deviceplatformextensions'
 				];
@@ -109,6 +110,39 @@ echo "</div>";
 						});
 					}
 				}
+				// 
+				// Extended properties table with grouping
+				$('#table_deviceimageformats').dataTable({
+					"pageLength": -1,
+					"paging": false,
+					"order": [],
+					"columnDefs": [{
+						"visible": false,
+						"targets": 0
+					}],
+					"searchHighlight": true,
+					"bAutoWidth": false,
+					"sDom": 'flpt',
+					"deferRender": true,
+					"processing": true,
+					"drawCallback": function(settings) {
+						var api = this.api();
+						var rows = api.rows({
+							page: 'current'
+						}).nodes();
+						var last = null;
+						api.column(0, {
+							page: 'current'
+						}).data().each(function(group, i) {
+							if (last !== group) {
+								$(rows).eq(i).before(
+									'<tr><td class="group" colspan="6">' + group + '</td></tr>'
+								);
+								last = group;
+							}
+						});
+					}
+				});				
 			});
 
 		$(function() {
