@@ -272,4 +272,16 @@ DB::disconnect();
 echo "res_uploaded";
 
 unlink($file_name);	
+
+try {
+	$msgtitle = "New OpenCL report for ".$params[':devicename']." ".$params[':deviceversion']. " ".$params[':driverversion'];
+	$msg = "New OpenCL hardware report uploaded to the database\n\n";
+	$msg .= "Link : https://opencl.gpuinfo.org/displayreport.php?id=$reportid\n\n";	
+	foreach ($params as $key => $value) {
+		$msg .= ucfirst(str_replace(":", "", $key))." = ".$value."\n";
+	}	
+	mail($mailto, $msgtitle, $msg);
+} catch (Exception $e) {
+	// Failure to mail is not critical
+}	
 ?>
