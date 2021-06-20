@@ -24,47 +24,69 @@ include 'pagegenerator.php';
 include './includes/functions.php';
 include './database/database.class.php';
 
-// Header
-$defaultHeader = true;
-$pageTitle = null;
-$caption = null;
-$negate = false;
-$showTabs = true;
-if (isset($_GET['option'])) {
-	if ($_GET['option'] == 'not') {
-		$negate = true;
+class ListReports {
+
+	public $filters = [];
+
+	function addFilter($name) {
+		$value = GET_sanitized($name);
+		if (($value !== null) && (trim($value) != '')) {
+			$this->filters[$name] = $value;
+		}
+	}
+
+	function getFilter($name) {
+		if (key_exists($name, $this->filters)) {
+			$value = $this->filters[$name];
+			if (trim($value) != '') {
+				return $value;
+			}
+		}
+		return null;
+	}
+
+	function hasFilter($name) {
+		return (key_exists($name, $this->filters));
+	}
+
+	function hasFilters() {
+		return (count($this->filters) > 0);
 	}
 }
-$platform = "all";
-if (isset($_GET['platform'])) {
-	$platform = GET_sanitized('platform');
-}
 
-// Extension
-$extension = GET_sanitized('extension');
-if ($extension != '') {
-	$defaultHeader = false;
-	$caption = "Reports " . ($negate ? "<b>not</b>" : "") . " supporting <code>" . $extension . "</code>";
+$list_reports = new ListReports();
+
+$pageTitle = null;
+$caption = null;
+$showTabs = true;
+$filters = ['platform', 'extension', 'submitter', 'devicename', 'platformname', 'platformextension', 'extension', 'invert'];
+foreach ($filters as $filter) {
+	$list_reports->addFilter($filter);
 }
-// Submitter
-$submitter = GET_sanitized('submitter');
-if ($submitter != '') {
-	$defaultHeader = false;
-	$caption = "Reports submitted by <code>" . $submitter . "</code>";
+$inverted = $list_reports->hasFilter('invert') && ($list_reports->getFilter('invert') == true);
+
+if ($list_reports->hasFilter('extension')) {
+	$caption = "Reports ".($inverted ? "<b>not</b>" : "")." supporting device extension <code>".$list_reports->getFilter('extension')."</code>";
 }
-// Device name
-$devicename = GET_sanitized('devicename');
-if ($devicename != '') {
-	$defaultHeader = false;
-	$caption = "Reports for <code>" . $devicename . "</code>";
+if ($list_reports->hasFilter('submitter')) {
+	$caption = "Reports submitted by <code>".$list_reports->getFilter('submitter')."</code>";
 }
-// Platform (cl)
-$platformname = GET_sanitized('platformname');
-if ($platformname != '') {
-	$defaultHeader = false;
-	$caption = "Reports for platform <code>" . $platformname . "</code>";
+if ($list_reports->hasFilter('devicename')) {
+	$caption = "Reports for <code>".$list_reports->getFilter('devicename')."</code>";
 }
+if ($list_reports->hasFilter('platformname')) {
+	$caption = "Reports for platform <code>".$list_reports->getFilter('platformname')."</code>";
+}
+if ($list_reports->hasFilter('platformextension')) {
+	$caption = "Reports " . ($inverted ? "<b>not</b>" : "") . " supporting platform extension <code>".$list_reports->getFilter('platformextension')."</code>";
+}
+$defaultHeader = !($list_reports->hasFilters());
+
 // Platform (os)
+$platform = 'all';
+if ($list_reports->hasFilter('platform')) {
+	$platform = $list_reports->getFilter('platform');
+}
 if ($platform && $platform !== 'all') {
 	if (!$caption) {
 		$caption = "Listing reports";
@@ -85,9 +107,7 @@ if ($defaultHeader) {
 <center>
 	<?php
 	if (!$defaultHeader) {
-		echo "<div class='header'><h4>";
-		echo $caption ? $caption : "Listing available devices";
-		echo "</h4></div>";
+		echo "<div class='header'><h4>$caption</h4></div>";
 	}
 
 	if ($showTabs) {
@@ -157,13 +177,11 @@ if ($defaultHeader) {
 				url: "api/backend/reports.php",
 				data: {
 					"filter": {
-						'extension': 	'<?= GET_sanitized('extension') ?>',
-						'submitter': 	'<?= GET_sanitized('submitter') ?>',
-						'devicename': 	'<?= GET_sanitized('devicename') ?>',
-						'displayname': 	'<?= GET_sanitized('displayname') ?>',
-						'platformname': '<?= GET_sanitized('platformname') ?>',
-						'platform': 	'<?= GET_sanitized('platform') ?>',
-						'option': 		'<?= GET_sanitized('option') ?>'
+					<?php
+					foreach ($list_reports->filters as $filter => $value) {
+						echo "'$filter': '$value',".PHP_EOL;
+					}
+					?>
 					}
 				},
 				error: function(xhr, error, thrown) {
