@@ -108,11 +108,20 @@ if (isset($_REQUEST['filter']['platformname'])) {
         $params['filter_platformname'] = $platformname;
     }
 }
+// Platform extension
+if (isset($_REQUEST['filter']['platformextension'])) {
+    $platformextension = $_REQUEST['filter']['platformextension'];
+    if ($platformextension != '') {
+        $whereClause = "where r.id in (select distinct(reportid) from deviceplatformextensions where name = :filter_platformextension)";
+        $params['filter_platformextension'] = $platformextension;
+    }
+}
 // Platform (os)
 if (isset($_REQUEST['filter']['platform']) && ($_REQUEST['filter']['platform'] != '')) {
     $platform = $_REQUEST['filter']['platform'];
-    $whereClause .= (($whereClause != '') ? ' and ' : ' where ') . 'osname = :osname';
-    $params['osname'] = $platform;
+    $ostype = ostype($platform);
+    $whereClause .= (($whereClause != '') ? ' and ' : ' where ') . 'ostype = :ostype';
+    $params['ostype'] = $ostype;
 }
 
 $orderBy = "order by " . $orderByColumn . " " . $orderByDir;
