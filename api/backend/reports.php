@@ -70,8 +70,8 @@ if (sizeof($filters) > 0) {
 $whereClause = '';
 $selectAddColumns = '';
 $negate = false;
-if (isset($_REQUEST['filter']['option'])) {
-    if ($_REQUEST['filter']['option'] == 'not') {
+if (isset($_REQUEST['filter']['invert'])) {
+    if ($_REQUEST['filter']['invert'] == 'true') {
         $negate = true;
     }
 }
