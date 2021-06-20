@@ -75,10 +75,13 @@ PageGenerator::header("Platform extensions");
 					$stmnt->execute($params);
 					$extensions = $stmnt->fetchAll(PDO::FETCH_ASSOC);
 
-					foreach ($extensions as $extension) {
-						$coverageLink = "listdevicescoverage.php?extension=" . $extension['name'] . "&platform=$platform";
-						$coverage = round($extension['coverage'] / $devicecount * 100, 1);
+					foreach ($extensions as $extension) {					
 						$ext = $extension['name'];
+						if (trim($ext) == "") {
+							continue;
+						}
+						$coverageLink = "listreports.php?platformextension=$ext&platform=$platform";
+						$coverage = round($extension['coverage'] / $devicecount * 100, 1);
 						echo "<tr>";
 						echo "<td>$ext</td>";
 						echo "<td class='text-center'><a class='supported' href=\"$coverageLink\">$coverage<span style='font-size:10px;'>%</span></a></td>";
