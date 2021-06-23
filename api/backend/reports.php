@@ -100,6 +100,17 @@ if (isset($_REQUEST['filter']['devicename'])) {
         $params['filter_devicename'] = $devicename;
     }
 }
+// Device info value
+if (isset($_REQUEST['filter']['deviceinfo']) && isset($_REQUEST['filter']['value'])) {
+    $deviceinfoname = $_REQUEST['filter']['deviceinfo'];
+    $value = $_REQUEST['filter']['value'];
+    if (($deviceinfoname != '') && ($value != '')) {
+        $whereClause = "where r.id in (select distinct(reportid) from deviceinfo where name = :filter_deviceinfoname and value = :filter_deviceinfovalue)";
+        $params['filter_deviceinfoname'] = $deviceinfoname;
+        $params['filter_deviceinfovalue'] = $value;
+    }
+}
+
 // Platform (CL)
 if (isset($_REQUEST['filter']['platformname'])) {
     $platformname = $_REQUEST['filter']['platformname'];
