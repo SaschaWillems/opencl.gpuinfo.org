@@ -149,8 +149,8 @@ echo "</div>";
 			var a = document.location.hash;
 			if (a) {
 				// Nested tabs, need to show parent tab too
-				if ((a === '#platform_info') || (a === '#platform_extensions')) {
-					$('.nav a[href=\\#platform]').tab('show');
+				if ((a === '#platforminfo') || (a === '#platformextensions')) {
+					$('.nav a[href=\\#deviceplatform]').tab('show');
 				}
 				$('.nav a[href=\\' + a + ']').tab('show');
 			}
