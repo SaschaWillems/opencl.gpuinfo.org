@@ -111,7 +111,7 @@ if ($defaultHeader) {
 	}
 
 	if ($showTabs) {
-		PageGenerator::platformNavigation('listreports.php', $platform, true);
+		PageGenerator::platformNavigation('listreports.php', $platform, true, $list_reports->filters);
 	}
 	?>
 	<div class='tablediv tab-content' style='display: inline-flex;'>
