@@ -68,7 +68,10 @@ PageGenerator::header("Platform info");
 					$stmnt = DB::$connection->prepare($sql);
 					$stmnt->execute($params);
 					while ($row = $stmnt->fetch(PDO::FETCH_ASSOC)) {
-						$link = "displayplatforminfo.php?name=".$row['name']."&platform=$platform";
+						$link = "displayplatforminfo.php?name=".$row['name'];
+						if ($platform) {
+							$link .= "&platform=$platform";
+						};						
 						echo "<tr>";						
 						echo "<td><a href='$link'>".$row['name']."</a></td>";
 						echo "<td align=center>".round($row['coverage'] / $devicecount * 100, 1)."%</td>";

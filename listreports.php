@@ -59,7 +59,7 @@ $list_reports = new ListReports();
 $pageTitle = null;
 $caption = null;
 $showTabs = true;
-$filters = ['platform', 'extension', 'submitter', 'devicename', 'platformname', 'platformextension', 'extension', 'deviceinfo', 'value', 'invert'];
+$filters = ['platform', 'extension', 'submitter', 'devicename', 'platformname', 'platformextension', 'extension', 'deviceinfo', 'platforminfo', 'value', 'invert'];
 foreach ($filters as $filter) {
 	$list_reports->addFilter($filter);
 }
@@ -83,6 +83,10 @@ if ($list_reports->hasFilter('platformextension')) {
 if ($list_reports->hasFilter('deviceinfo') && $list_reports->hasFilter('value')) {
 	// @todo: getdisplayvalue?
 	$caption = "Reports with <code>".$list_reports->getFilter('deviceinfo')."</code> = ".$list_reports->getFilter('value');
+}
+if ($list_reports->hasFilter('platforminfo') && $list_reports->hasFilter('value')) {
+	// @todo: getdisplayvalue?
+	$caption = "Reports with <code>".$list_reports->getFilter('platforminfo')."</code> = ".$list_reports->getFilter('value');
 }
 $defaultHeader = !($list_reports->hasFilters());
 

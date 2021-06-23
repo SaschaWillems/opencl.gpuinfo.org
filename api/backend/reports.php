@@ -127,6 +127,17 @@ if (isset($_REQUEST['filter']['platformextension'])) {
         $params['filter_platformextension'] = $platformextension;
     }
 }
+// Platform info value
+if (isset($_REQUEST['filter']['platforminfo']) && isset($_REQUEST['filter']['value'])) {
+    $platforminfoname = $_REQUEST['filter']['platforminfo'];
+    $value = $_REQUEST['filter']['value'];
+    if (($platforminfoname != '') && ($value != '')) {
+        $whereClause = "where r.id in (select distinct(reportid) from deviceplatforminfo where name = :filter_platforminfoname and value = :filter_platforminfovalue)";
+        $params['filter_platforminfoname'] = $platforminfoname;
+        $params['filter_platforminfovalue'] = $value;
+    }
+}
+
 // Platform (os)
 if (isset($_REQUEST['filter']['platform']) && ($_REQUEST['filter']['platform'] != '')) {
     $platform = $_REQUEST['filter']['platform'];
