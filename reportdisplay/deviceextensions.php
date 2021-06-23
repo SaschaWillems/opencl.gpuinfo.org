@@ -33,14 +33,13 @@
 		$data = $report->fetchExtensions();
 		if ($data) {
 			foreach ($data as $extension) {
-				$link = "listdevicescoverage.php?extension=" . $extension['name']; // . $linkplatform;
 				if ($extension['version'] > 0) {
 					$version = versionToString($extension['version']);
 				} else {
 					$version = "<span class='na'>n/a</span>";
 				}
 				echo "<tr>";
-				echo "<td><a href='$link'>" . $extension['name'] . "</a></td>";
+				echo "<td>".$extension['name']."</td>";
 				echo "<td>$version</td>";
 				echo "</tr>";
 			}

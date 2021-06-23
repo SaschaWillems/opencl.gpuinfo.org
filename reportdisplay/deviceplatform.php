@@ -81,15 +81,13 @@ $platform_extensions = $report->fetchPlatformExtensions();
 				<?php
 				if ($platform_extensions) {
 					foreach ($platform_extensions as $extension) {
-						// @todo
-						$link = "listdevicescoverage.php?platformextension=" . $extension['name']; // . $linkplatform;
 						if ($extension['version'] > 0) {
 							$version = versionToString($extension['version']);
 						} else {
 							$version = "<span class='na'>n/a</span>";
 						}
 						echo "<tr>";
-						echo "<td><a href='$link'>" . $extension['name'] . "</a></td>";
+						echo "<td>".$extension['name']."</td>";
 						echo "<td>$version</td>";
 						echo "</tr>";
 					}					
