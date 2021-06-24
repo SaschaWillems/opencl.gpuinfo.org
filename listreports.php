@@ -63,7 +63,7 @@ class ListReports {
 				$table = 'deviceinfo';
 				break;
 			case self::PlatformInfo:
-				$table = 'platforminfo';
+				$table = 'deviceplatforminfo';
 				break;
 		}
 		$res = false;
@@ -121,7 +121,7 @@ if ($list_reports->hasFilter('platforminfo') && $list_reports->hasFilter('value'
 	// @todo: getdisplayvalue?
 	$caption = "Reports with <code>".$list_reports->getFilter('platforminfo')."</code> = ".$list_reports->getFilter('value');
 	$extension = null;
-	if ($list_reports->belongsToExtension($list_reports->getFilter('deviceinfo'), $list_reports::PlatformInfo, $extension)) {
+	if ($list_reports->belongsToExtension($list_reports->getFilter('platforminfo'), $list_reports::PlatformInfo, $extension)) {
 		$subcaption = "Part of the <code>$extension</code> extension";
 	}
 }
