@@ -102,9 +102,9 @@ class Report
     public function fetchDeviceInfo()
     {
         try {
+            // @todo: add os, submitter, comment, submissiondate?
             // @todo: hide or display ext related info here?
             $sql = "SELECT name, value from deviceinfo where reportid = :reportid order by id asc";
-            // $sql = "SELECT name, value from deviceinfo where extension = \"\" and reportid = :reportid order by id asc";
             $stmnt = DB::$connection->prepare($sql);
             $stmnt->execute([":reportid" => $this->id]);
             $result = $stmnt->fetchAll(PDO::FETCH_ASSOC);
