@@ -666,3 +666,8 @@ h1 {
 	height: 14px;
 	padding-right: 5px;
 }
+
+code {
+    color: #3DAE2B;
+    background-color: inherit;
+}

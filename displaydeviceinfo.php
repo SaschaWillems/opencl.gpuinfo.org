@@ -32,13 +32,17 @@ if (isset($_GET['name'])) {
 	$name = GET_sanitized('name');
 }
 
-// Check if capability is present
+// Check if device info is valid and to what extension it belongs to
+$extension = null;
 DB::connect();
 $result = DB::$connection->prepare("SELECT * from deviceinfo d where name = :name order by reportid limit 1");
 $result->execute(["name" => $name]);
 DB::disconnect();
 if ($result->rowCount() == 0) {
 	PageGenerator::errorMessage("<strong>This is not the <strike>droid</strike> device info you are looking for!</strong><br><br>You may have passed a wrong device limit name.");
+} else {
+	$row = $result->fetch(PDO::FETCH_ASSOC);
+	$extension = $row['extension'];
 }
 
 PageGenerator::header($name);
@@ -56,8 +60,11 @@ if (isset($_GET['platform'])) {
 		$platform = 'all';
 	}
 }
-
+if ($extension) {
+	$caption .= "<br><br>Part of the <code>$extension</code> extension";
+}
 ?>
+
 <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
 <script>
 	$(document).ready(function() {

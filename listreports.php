@@ -26,6 +26,9 @@ include './database/database.class.php';
 
 class ListReports {
 
+	public const DeviceInfo = 0;
+	public const PlatformInfo = 1;
+
 	public $filters = [];
 
 	function addFilter($name) {
@@ -52,12 +55,38 @@ class ListReports {
 	function hasFilters() {
 		return (count($this->filters) > 0);
 	}
+
+	function belongsToExtension($name, $target, &$ext) {
+		$table = null;
+		switch ($target) {
+			case self::DeviceInfo:
+				$table = 'deviceinfo';
+				break;
+			case self::PlatformInfo:
+				$table = 'platforminfo';
+				break;
+		}
+		$res = false;
+		if ($table) {
+			DB::connect();
+			$stmnt = DB::$connection->prepare("SELECT extension FROM $table where name = :name");
+			$stmnt->execute([':name' => $name]);
+			$row = $stmnt->fetch(PDO::FETCH_ASSOC);
+			if ($row) {
+				$ext = $row['extension'];
+				$res = true;
+			}
+			DB::disconnect();
+		}
+		return $res;
+	}
 }
 
 $list_reports = new ListReports();
 
 $pageTitle = null;
 $caption = null;
+$subcaption = null;
 $showTabs = true;
 $filters = ['platform', 'extension', 'submitter', 'devicename', 'platformname', 'platformextension', 'extension', 'deviceinfo', 'platforminfo', 'value', 'invert'];
 foreach ($filters as $filter) {
@@ -83,10 +112,18 @@ if ($list_reports->hasFilter('platformextension')) {
 if ($list_reports->hasFilter('deviceinfo') && $list_reports->hasFilter('value')) {
 	// @todo: getdisplayvalue?
 	$caption = "Reports with <code>".$list_reports->getFilter('deviceinfo')."</code> = ".$list_reports->getFilter('value');
+	$extension = null;
+	if ($list_reports->belongsToExtension($list_reports->getFilter('deviceinfo'), $list_reports::DeviceInfo, $extension)) {
+		$subcaption = "Part of the <code>$extension</code> extension";
+	}
 }
 if ($list_reports->hasFilter('platforminfo') && $list_reports->hasFilter('value')) {
 	// @todo: getdisplayvalue?
 	$caption = "Reports with <code>".$list_reports->getFilter('platforminfo')."</code> = ".$list_reports->getFilter('value');
+	$extension = null;
+	if ($list_reports->belongsToExtension($list_reports->getFilter('deviceinfo'), $list_reports::PlatformInfo, $extension)) {
+		$subcaption = "Part of the <code>$extension</code> extension";
+	}
 }
 $defaultHeader = !($list_reports->hasFilters());
 
@@ -101,6 +138,9 @@ if ($platform && $platform !== 'all') {
 	}
 	$caption .= " on <img src='images/".$platform."logo.png' class='platform-icon'/>".ucfirst($platform);
 	$defaultHeader = false;
+}
+if ($subcaption) {
+	$caption .= "<br/><br/>$subcaption";
 }
 
 PageGenerator::header($pageTitle == null ? "Reports" : "Reports for $pageTitle");
