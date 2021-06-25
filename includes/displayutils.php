@@ -109,6 +109,10 @@ class DisplayUtils {
         'CL_DEVICE_AVC_ME_SUPPORTS_PREEMPTION_INTEL' => 'displayBool',
         'CL_DEVICE_DOUBLE_FP_CONFIG' => 'displayFloatingPointConfig',
         'CL_DEVICE_HALF_FP_CONFIG' => 'displayFloatingPointConfig',
+
+        /* Report meta data */
+        'Submitted by' => 'displaySubmitter',
+        'Operating system' => 'displayOperatingsystem'
     ];
 
     /** If true, visualization of flag value types contains all possible flags, with support highlighted using different css classes */
@@ -402,6 +406,16 @@ class DisplayUtils {
         ];
         $res = $this->getFlags($flags, $value);
         return implode($this->display_all_flags ? '<br/>' : '\n', $res); 
+    }
+
+    function displaySubmitter($value)
+    {
+        return "<a href=\"listreports.php?submitter=$value\">$value</a>";
+    }
+    
+    function displayOperatingsystem($value)
+    {
+        return ucfirst($value);
     }
 
     //

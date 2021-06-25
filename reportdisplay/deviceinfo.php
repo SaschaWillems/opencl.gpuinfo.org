@@ -39,9 +39,20 @@
 		];
 
 		try {
-			$device_info = $report->fetchDeviceInfo();
+			// Report meta data
+			$report_info = $report->fetchReportInfo();
+			foreach ($report_info as $key => $value) {
+				if (trim($value) == '') {
+					continue;
+				}
+				$displayvalue = $display_utils->getDisplayValue($key, $value);
+				// @todo: shorten
+				echo "<tr><td>$key</td><td>$displayvalue</td></tr>";
+			}
+
+			$device_info = $report->fetchDeviceInfo();			
 			$device_info_details = $report->fetchDeviceInfoDetails();
-			// @todo: display mapping
+			// Device info values
 			foreach ($device_info as $row) {
 				$key = $row['name'];
 				$valueHint = null;

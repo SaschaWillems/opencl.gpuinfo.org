@@ -99,6 +99,26 @@ class Report
         DB::disconnect();
     }
 
+    public function fetchReportInfo()
+    {
+        try {
+        $sql = 
+            "SELECT 
+                submitter as 'Submitted by', 
+                submissiondate as 'Submitted at', 
+                comment as 'Comment', 
+                concat_ws(' ', osname, osversion, osarchitecture) as 'Operating system' 
+            FROM reports 
+            WHERE id = :reportid";
+        $stmnt = DB::$connection->prepare($sql);
+        $stmnt->execute([':reportid' => $this->id]);
+        $result = $stmnt->fetch(PDO::FETCH_ASSOC);
+        return $result;
+        } catch (Throwable $e) {
+            return null;
+        }
+    }
+
     public function fetchDeviceInfo()
     {
         try {
