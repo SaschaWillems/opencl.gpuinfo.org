@@ -22,115 +22,57 @@
 
 include 'pagegenerator.php';
 include './includes/functions.php';
+include './includes/filterlist.class.php';
 include './database/database.class.php';
 
-class ListReports {
-
-	public const DeviceInfo = 0;
-	public const PlatformInfo = 1;
-
-	public $filters = [];
-
-	function addFilter($name) {
-		$value = GET_sanitized($name);
-		if (($value !== null) && (trim($value) != '')) {
-			$this->filters[$name] = $value;
-		}
-	}
-
-	function getFilter($name) {
-		if (key_exists($name, $this->filters)) {
-			$value = $this->filters[$name];
-			if (trim($value) != '') {
-				return $value;
-			}
-		}
-		return null;
-	}
-
-	function hasFilter($name) {
-		return (key_exists($name, $this->filters));
-	}
-
-	function hasFilters() {
-		return (count($this->filters) > 0);
-	}
-
-	function belongsToExtension($name, $target, &$ext) {
-		$table = null;
-		switch ($target) {
-			case self::DeviceInfo:
-				$table = 'deviceinfo';
-				break;
-			case self::PlatformInfo:
-				$table = 'deviceplatforminfo';
-				break;
-		}
-		$res = false;
-		if ($table) {
-			DB::connect();
-			$stmnt = DB::$connection->prepare("SELECT extension FROM $table where name = :name");
-			$stmnt->execute([':name' => $name]);
-			$row = $stmnt->fetch(PDO::FETCH_ASSOC);
-			if ($row) {
-				$ext = $row['extension'];
-				$res = true;
-			}
-			DB::disconnect();
-		}
-		return $res;
-	}
-}
-
-$list_reports = new ListReports();
+$filters = ['platform', 'extension', 'submitter', 'devicename', 'platformname', 'platformextension', 'extension', 'deviceinfo', 'platforminfo', 'value', 'invert'];
+$filter_list = new Filterlist($filters);
 
 $pageTitle = null;
 $caption = null;
 $subcaption = null;
-$showTabs = true;
-$filters = ['platform', 'extension', 'submitter', 'devicename', 'platformname', 'platformextension', 'extension', 'deviceinfo', 'platforminfo', 'value', 'invert'];
 foreach ($filters as $filter) {
-	$list_reports->addFilter($filter);
+	$filter_list->addFilter($filter);
 }
-$inverted = $list_reports->hasFilter('invert') && ($list_reports->getFilter('invert') == true);
+$inverted = $filter_list->hasFilter('invert') && ($filter_list->getFilter('invert') == true);
 
-if ($list_reports->hasFilter('extension')) {
-	$caption = "Reports ".($inverted ? "<b>not</b>" : "")." supporting device extension <code>".$list_reports->getFilter('extension')."</code>";
+if ($filter_list->hasFilter('extension')) {
+	$caption = "Reports ".($inverted ? "<b>not</b>" : "")." supporting device extension <code>".$filter_list->getFilter('extension')."</code>";
 }
-if ($list_reports->hasFilter('submitter')) {
-	$caption = "Reports submitted by <code>".$list_reports->getFilter('submitter')."</code>";
+if ($filter_list->hasFilter('submitter')) {
+	$caption = "Reports submitted by <code>".$filter_list->getFilter('submitter')."</code>";
 }
-if ($list_reports->hasFilter('devicename')) {
-	$caption = "Reports for <code>".$list_reports->getFilter('devicename')."</code>";
+if ($filter_list->hasFilter('devicename')) {
+	$caption = "Reports for <code>".$filter_list->getFilter('devicename')."</code>";
 }
-if ($list_reports->hasFilter('platformname')) {
-	$caption = "Reports for platform <code>".$list_reports->getFilter('platformname')."</code>";
+if ($filter_list->hasFilter('platformname')) {
+	$caption = "Reports for platform <code>".$filter_list->getFilter('platformname')."</code>";
 }
-if ($list_reports->hasFilter('platformextension')) {
-	$caption = "Reports " . ($inverted ? "<b>not</b>" : "") . " supporting platform extension <code>".$list_reports->getFilter('platformextension')."</code>";
+if ($filter_list->hasFilter('platformextension')) {
+	$caption = "Reports " . ($inverted ? "<b>not</b>" : "") . " supporting platform extension <code>".$filter_list->getFilter('platformextension')."</code>";
 }
-if ($list_reports->hasFilter('deviceinfo') && $list_reports->hasFilter('value')) {
+if ($filter_list->hasFilter('deviceinfo') && $filter_list->hasFilter('value')) {
 	// @todo: getdisplayvalue?
-	$caption = "Reports with <code>".$list_reports->getFilter('deviceinfo')."</code> = ".$list_reports->getFilter('value');
+	$caption = "Reports with <code>".$filter_list->getFilter('deviceinfo')."</code> = ".$filter_list->getFilter('value');
 	$extension = null;
-	if ($list_reports->belongsToExtension($list_reports->getFilter('deviceinfo'), $list_reports::DeviceInfo, $extension)) {
+	if ($filter_list->belongsToExtension($filter_list->getFilter('deviceinfo'), $filter_list::DeviceInfo, $extension)) {
 		$subcaption = "Part of the <code>$extension</code> extension";
 	}
 }
-if ($list_reports->hasFilter('platforminfo') && $list_reports->hasFilter('value')) {
+if ($filter_list->hasFilter('platforminfo') && $filter_list->hasFilter('value')) {
 	// @todo: getdisplayvalue?
-	$caption = "Reports with <code>".$list_reports->getFilter('platforminfo')."</code> = ".$list_reports->getFilter('value');
+	$caption = "Reports with <code>".$filter_list->getFilter('platforminfo')."</code> = ".$filter_list->getFilter('value');
 	$extension = null;
-	if ($list_reports->belongsToExtension($list_reports->getFilter('platforminfo'), $list_reports::PlatformInfo, $extension)) {
+	if ($filter_list->belongsToExtension($filter_list->getFilter('platforminfo'), $filter_list::PlatformInfo, $extension)) {
 		$subcaption = "Part of the <code>$extension</code> extension";
 	}
 }
-$defaultHeader = !($list_reports->hasFilters());
+$defaultHeader = !($filter_list->hasFilters());
 
 // Platform (os)
 $platform = 'all';
-if ($list_reports->hasFilter('platform')) {
-	$platform = $list_reports->getFilter('platform');
+if ($filter_list->hasFilter('platform')) {
+	$platform = $filter_list->getFilter('platform');
 }
 if ($platform && $platform !== 'all') {
 	if (!$caption) {
@@ -157,10 +99,7 @@ if ($defaultHeader) {
 	if (!$defaultHeader) {
 		echo "<div class='header'><h4>$caption</h4></div>";
 	}
-
-	if ($showTabs) {
-		PageGenerator::platformNavigation('listreports.php', $platform, true, $list_reports->filters);
-	}
+	PageGenerator::platformNavigation('listreports.php', $platform, true, $filter_list->filters);
 	?>
 	<div class='tablediv tab-content' style='display: inline-flex;'>
 		<form method="get" action="comparereports.php">
@@ -226,7 +165,7 @@ if ($defaultHeader) {
 				data: {
 					"filter": {
 					<?php
-					foreach ($list_reports->filters as $filter => $value) {
+					foreach ($filter_list->filters as $filter => $value) {
 						echo "'$filter': '$value',".PHP_EOL;
 					}
 					?>
