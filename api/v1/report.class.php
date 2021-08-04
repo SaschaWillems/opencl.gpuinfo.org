@@ -28,6 +28,13 @@ class Report {
 		$this->json = $json;
 	}
 
+	public function getDeviceIdentifier($name) {
+		if (array_key_exists($name, $this->data['device']['identifier'])) {
+			return $this->data['device']['identifier'][$name];
+		}
+		return null;
+	}
+
 	public function getDeviceInfoValue($name) {
 		foreach ($this->data['device']['info'] as $info) {
 			if (strcasecmp($info['name'], $name) == 0) {

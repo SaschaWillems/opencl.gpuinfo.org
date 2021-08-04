@@ -19,7 +19,10 @@
  *
  */
 
-// include "./../../includes/functions.php";
+/*
+ * Stores a new report in the database
+ */
+
 include './../../database/database.class.php';	
 include './report.class.php';
 
@@ -63,10 +66,12 @@ $report = new Report();
 $report->fromJson($source);
 
 $params = [
-	':devicename' => $report->getDeviceInfoValue('CL_DEVICE_NAME'),
-	':deviceversion' => $report->getDeviceInfoValue('CL_DEVICE_VERSION'),
-	':driverversion' => $report->getDeviceInfoValue('CL_DRIVER_VERSION'),
-	':deviceidentifier' => $report->getDeviceInfoValue('CL_DEVICE_NAME')." ".$report->getDeviceInfoValue('CL_DEVICE_VERSION'),
+	':devicename' => $report->getDeviceIdentifier('devicename'),
+	':gpuname' =>  $report->getDeviceIdentifier('gpuname'),
+	':deviceversion' => $report->getDeviceIdentifier('deviceversion'),
+	':driverversion' => $report->getDeviceIdentifier('driverversion'),	
+	// @todo: combine all identifier values?
+	':deviceidentifier' => $report->getDeviceIdentifier('devicename')." ".$report->getDeviceIdentifier('deviceversion'),
 	':devicetype' => $report->getDeviceInfoValue('CL_DEVICE_TYPE'),
 	':osname' => $report->getEnvironmentValue('name'),
 	':osversion' => $report->getEnvironmentValue('version'),
@@ -94,9 +99,9 @@ DB::$connection->beginTransaction();
 try {	
 	$sql = 
 		"INSERT INTO reports
-			(devicename, deviceversion, driverversion, deviceidentifier, devicetype, openclversionmajor, openclversionminor, osname, osversion, osarchitecture, ostype, reportversion, appversion, submitter, comment)
+			(devicename, gpuname, deviceversion, driverversion, deviceidentifier, devicetype, openclversionmajor, openclversionminor, osname, osversion, osarchitecture, ostype, reportversion, appversion, submitter, comment)
 		VALUES
-			(:devicename, :deviceversion, :driverversion, :deviceidentifier, :devicetype, :openclversionmajor, :openclversionminor, :osname, :osversion, :osarchitecture, :ostype, :reportversion, :appversion, :submitter, :comment)";
+			(:devicename, :gpuname, :deviceversion, :driverversion, :deviceidentifier, :devicetype, :openclversionmajor, :openclversionminor, :osname, :osversion, :osarchitecture, :ostype, :reportversion, :appversion, :submitter, :comment)";
 	$stmnt = DB::$connection->prepare($sql);
 	$stmnt->execute($params);
 } catch (Exception $e) {

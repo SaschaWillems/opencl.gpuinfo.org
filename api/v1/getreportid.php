@@ -20,6 +20,10 @@
  *
  */
 
+ /*
+  * Get the report id of a device
+  */ 
+
 include './../../database/database.class.php';	
 include './report.class.php';
 
@@ -46,9 +50,9 @@ try {
 	$report->fromJson($source);
 	
 	$params = [
-		':devicename' => $report->getDeviceInfoValue('CL_DEVICE_NAME'),
-		':deviceversion' => $report->getDeviceInfoValue('CL_DEVICE_VERSION'),
-		':driverversion' => $report->getDeviceInfoValue('CL_DRIVER_VERSION'),
+		':devicename' => $report->getDeviceIdentifier('devicename'),
+		':deviceversion' => $report->getDeviceIdentifier('deviceversion'),
+		':driverversion' => $report->getDeviceIdentifier('driverversion'),
 		':osname' => $report->getEnvironmentValue('name'),
 		':osversion' => $report->getEnvironmentValue('version'),
 		':osarchitecture' => $report->getEnvironmentValue('architecture'),
