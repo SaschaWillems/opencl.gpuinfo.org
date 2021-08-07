@@ -37,23 +37,23 @@ foreach ($filters as $filter) {
 $inverted = $filter_list->hasFilter('invert') && ($filter_list->getFilter('invert') == true);
 
 if ($filter_list->hasFilter('extension')) {
-	$caption = "Reports ".($inverted ? "<b>not</b>" : "")." supporting device extension <code>".$filter_list->getFilter('extension')."</code>";
+	$caption = "Devices ".($inverted ? "<b>not</b>" : "")." supporting device extension <code>".$filter_list->getFilter('extension')."</code>";
 }
 if ($filter_list->hasFilter('submitter')) {
-	$caption = "Reports submitted by <code>".$filter_list->getFilter('submitter')."</code>";
+	$caption = "Devices submitted by <code>".$filter_list->getFilter('submitter')."</code>";
 }
 if ($filter_list->hasFilter('devicename')) {
-	$caption = "Reports for <code>".$filter_list->getFilter('devicename')."</code>";
+	$caption = "Devices for <code>".$filter_list->getFilter('devicename')."</code>";
 }
 if ($filter_list->hasFilter('platformname')) {
-	$caption = "Reports for platform <code>".$filter_list->getFilter('platformname')."</code>";
+	$caption = "Devices for platform <code>".$filter_list->getFilter('platformname')."</code>";
 }
 if ($filter_list->hasFilter('platformextension')) {
-	$caption = "Reports " . ($inverted ? "<b>not</b>" : "") . " supporting platform extension <code>".$filter_list->getFilter('platformextension')."</code>";
+	$caption = "Devices " . ($inverted ? "<b>not</b>" : "") . " supporting platform extension <code>".$filter_list->getFilter('platformextension')."</code>";
 }
 if ($filter_list->hasFilter('deviceinfo') && $filter_list->hasFilter('value')) {
 	// @todo: getdisplayvalue?
-	$caption = "Reports with <code>".$filter_list->getFilter('deviceinfo')."</code> = ".$filter_list->getFilter('value');
+	$caption = "Devices with <code>".$filter_list->getFilter('deviceinfo')."</code> = ".$filter_list->getFilter('value');
 	$extension = null;
 	if ($filter_list->belongsToExtension($filter_list->getFilter('deviceinfo'), $filter_list::DeviceInfo, $extension)) {
 		$subcaption = "Part of the <code>$extension</code> extension";
@@ -61,7 +61,7 @@ if ($filter_list->hasFilter('deviceinfo') && $filter_list->hasFilter('value')) {
 }
 if ($filter_list->hasFilter('platforminfo') && $filter_list->hasFilter('value')) {
 	// @todo: getdisplayvalue?
-	$caption = "Reports with <code>".$filter_list->getFilter('platforminfo')."</code> = ".$filter_list->getFilter('value');
+	$caption = "Devices with <code>".$filter_list->getFilter('platforminfo')."</code> = ".$filter_list->getFilter('value');
 	$extension = null;
 	if ($filter_list->belongsToExtension($filter_list->getFilter('platforminfo'), $filter_list::PlatformInfo, $extension)) {
 		$subcaption = "Part of the <code>$extension</code> extension";
@@ -76,7 +76,7 @@ if ($filter_list->hasFilter('platform')) {
 }
 if ($platform && $platform !== 'all') {
 	if (!$caption) {
-		$caption = "Listing reports";
+		$caption = "Listing devices";
 	}
 	$caption .= " on <img src='images/".$platform."logo.png' class='platform-icon'/>".ucfirst($platform);
 	$defaultHeader = false;
@@ -85,11 +85,11 @@ if ($subcaption) {
 	$caption .= "<br/><br/>$subcaption";
 }
 
-PageGenerator::header($pageTitle == null ? "Reports" : "Reports for $pageTitle");
+PageGenerator::header($pageTitle == null ? "Devices" : "Devices for $pageTitle");
 
 if ($defaultHeader) {
 	echo "<div class='header'>";
-	echo "	<h4>Listing reports</h4>";
+	echo "	<h4>Listing devices</h4>";
 	echo "</div>";
 }
 ?>
@@ -99,7 +99,7 @@ if ($defaultHeader) {
 	if (!$defaultHeader) {
 		echo "<div class='header'><h4>$caption</h4></div>";
 	}
-	PageGenerator::platformNavigation('listreports.php', $platform, true, $filter_list->filters);
+	PageGenerator::platformNavigation('listdevices.php', $platform, true, $filter_list->filters);
 	?>
 	<div class='tablediv tab-content' style='display: inline-flex;'>
 		<form method="get" action="comparereports.php">
@@ -112,22 +112,14 @@ if ($defaultHeader) {
 						<th></th>
 						<th></th>
 						<th></th>
-						<th></th>
-						<th></th>
-						<th></th>
-						<th></th>
 					</tr>
 					<tr>
-						<th>id</th>
 						<th>Device</th>
-						<th>Version</th>
-						<th>Driver</th>
-						<th>API version</th>
-						<th>Type</th>
-						<th>OS</th>
-						<th>Version</th>
-						<th>Platform</th>
-						<th><input type='submit' value='Compare' class='button'></th>
+						<th>Max. API version</th>
+						<th>Latest Driver version</th>
+						<th>Last submission</th>
+						<th>Count</th>
+						<th><input type='submit' class='button' value='compare'></th>
 					</tr>
 				</thead>
 			</table>
@@ -152,16 +144,16 @@ if ($defaultHeader) {
 			"dom": 'lrtip',
 			"pageLength": 25,
 			"order": [
-				[0, 'desc']
+				[3, 'desc']
 			],
 			"columnDefs": [{
 				"searchable": false,
-				"targets": [0, 9],
+				"targets": [3, 4, 5],
 				"orderable": false,
-				"targets": 9,
+				"targets": [5]
 			}],
 			"ajax": {
-				url: "api/backend/reports.php",
+				url: "api/backend/devices.php",
 				data: {
 					"filter": {
 					<?php
@@ -178,35 +170,26 @@ if ($defaultHeader) {
 			},
 			"columns": [
 				{
-					data: 'id'
-				},
-				{
-					data: 'devicename'
-				},
-				{
-					data: 'deviceversion'
-				},
-				{
-					data: 'driverversion'
+					data: 'device'
 				},
 				{
 					data: 'openclversion'
 				},
 				{
-					data: 'devicetype'
+					data: 'driverversion'
+				},
+				// {
+				// 	data: 'deviceversion'
+				// },
+				{
+					data: 'submissiondate'
 				},
 				{
-					data: 'osname'
-				},
-				{
-					data: 'osversion'
-				},
-				{
-					data: 'osarchitecture'
+					data: 'reportcount'
 				},
 				{
 					data: 'compare'
-				},
+				}
 			],
 			// Pass order by column information to server side script
 			fnServerParams: function(data) {
@@ -218,43 +201,18 @@ if ($defaultHeader) {
 
 		yadcf.init(table, [
 			{
-				column_number: 1,
+				column_number: 0,
 				filter_type: "text",
 				filter_delay: 500,
 				style_class: "filter-240"
 			},
 			{
+				column_number: 1,
+				filter_type: "text",
+				filter_delay: 500
+			},
+			{
 				column_number: 2,
-				filter_type: "text",
-				filter_delay: 500
-			},
-			{
-				column_number: 3,
-				filter_type: "text",
-				filter_delay: 500
-			},
-			{
-				column_number: 4,
-				filter_type: "text",
-				filter_delay: 500
-			},
-			{
-				column_number: 5,
-				filter_type: "text",
-				filter_delay: 500
-			},
-			{
-				column_number: 6,
-				filter_type: "text",
-				filter_delay: 500
-			},
-			{
-				column_number: 7,
-				filter_type: "text",
-				filter_delay: 500
-			},
-			{
-				column_number: 8,
 				filter_type: "text",
 				filter_delay: 500
 			},

@@ -51,8 +51,8 @@ if (isset($_REQUEST['start']) && $_REQUEST['length'] != '-1') {
 }
 
 // Filtering
-$searchColumns = ['id'];
-array_push($searchColumns, 'devicename', 'deviceversion', 'driverversion', 'openclversion', 'devicetype', 'osname', 'osversion', 'osarchitecture');
+$searchColumns = [];
+array_push($searchColumns, 'device', 'openclversion', 'driverversion');
 
 // Per-column, filtering
 $filters = array();
@@ -153,36 +153,36 @@ if ($orderByColumn == "api") {
 }
 
 $sql = "SELECT
-        id,
-        devicename,
-        deviceversion,
-        devicetype,
-        driverversion,
-        concat(openclversionmajor, '.', openclversionminor) as openclversion,
-        osname,
-        osversion,
-        osarchitecture
-        from reports r      
-        " . $whereClause . "        
-        " . $searchClause . "
-        " . $orderBy;
+        devicename as device,
+        max(deviceversion) as deviceversion,
+        max(driverversion) as driverversion,
+        max(concat(openclversionmajor, '.', openclversionminor)) as openclversion,
+        max(r.submissiondate) as submissiondate,
+        count(distinct r.id) as reportcount
+        from reports r 
+        $whereClause
+        group by devicename 
+        $searchClause
+        $orderBy 
+        $paging";
 
-$devices = DB::$connection->prepare($sql . " " . $paging);
+$devices = DB::$connection->prepare($sql);
 $devices->execute($params);
 $display_utils = new DisplayUtils();
 if ($devices->rowCount() > 0) {
     foreach ($devices as $device) {
+        $url = 'listreports.php?devicename=' . urlencode($device['device']);
+        if ($platform !== 'all') {
+            $url .= '&platform=' . $platform;
+        }
         $data[] = [
-            'id' => $device['id'],
-            'devicename' => '<a href="displayreport.php?id=' . $device['id'] . '">' . $device['devicename'] . '</a>',
+            'device' => '<a href="' . $url . '">' . $device['device'] . '</a>',
             'deviceversion' => shorten($device['deviceversion']),
             'driverversion' => shorten($device['driverversion']),
             'openclversion' => $device['openclversion'],
-            'devicetype' => $display_utils->displayDeviceType($device['devicetype']),
-            'osname' => $device['osname'],
-            'osversion' => $device['osversion'],
-            'osarchitecture' => $device['osarchitecture'],
-            'compare' => '<center><input type="checkbox" name="id[' . $device["id"] . ']"></center>',
+            'submissiondate' => $device["submissiondate"],
+            'reportcount' => $device["reportcount"],
+            'compare' => '<center><input type="checkbox" name="devices[]" value="' . $device["device"] . '&os=' . $platform . '"></center>'
         ];
     }
 }
