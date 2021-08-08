@@ -35,12 +35,7 @@
 	</thead>
 	<tbody>
 		<?php
-		$cl_mem_flags = [
-			(1 << 0),  // CL_MEM_READ_WRITE
-			(1 << 1),  // CL_MEM_WRITE_ONLY                           
-			(1 << 2),  // CL_MEM_READ_ONLY
-			(1 << 12), // CL_MEM_KERNEL_READ_AND_WRITE
-		];
+		$cl_mem_flags = ['CL_MEM_READ_WRITE', 'CL_MEM_WRITE_ONLY', 'CL_MEM_READ_ONLY', 'CL_MEM_KERNEL_READ_AND_WRITE'];
 		$data = $report->fetchImageFormats();
 		if ($data) {
 			foreach ($data as $format) {				
@@ -49,7 +44,7 @@
 				echo "<td>".$display_utils->displayChannelOrder($format['channelorder'])."</td>";
 				echo "<td>".$display_utils->displayChannelType($format['channeltype'])."</td>";
 				foreach ($cl_mem_flags as $flag) {
-					$icon = ($flag & $format['flags']) ? 'check' : 'missing';
+					$icon = $format[$flag] ? 'check' : 'missing';
 					echo "<td><img src='images/icons/$icon.png' width=16px></td>";
 				}
 				echo "</tr>";

@@ -163,7 +163,7 @@ class Report
     public function fetchImageFormats()
     {
         try {
-            $sql = "SELECT type, channelorder, channeltype, flags from deviceimageformats where reportid = :reportid order by id asc";
+            $sql = "SELECT type, channelorder, channeltype, flags, CL_MEM_READ_WRITE, CL_MEM_WRITE_ONLY, CL_MEM_READ_ONLY, CL_MEM_KERNEL_READ_AND_WRITE from deviceimageformats where reportid = :reportid order by id asc";
             $stmnt = DB::$connection->prepare($sql);
             $stmnt->execute([":reportid" => $this->id]);
             $result = $stmnt->fetchAll(PDO::FETCH_ASSOC);
