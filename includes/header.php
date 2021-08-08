@@ -92,6 +92,7 @@
 					<li><a href="listreports.php">Reports</a></li>
 					<li><a href="listdeviceinfo.php">Deviceinfo</a></li>
 					<li><a href="listextensions.php">Extensions</a></li>
+					<li><a href="listimageformats.php">Formats</a></li>
 					<li class="dropdown">
 						<a class="dropdown-toggle" data-toggle="dropdown" href="#">Platforms
 							<span class="caret"></span></a>

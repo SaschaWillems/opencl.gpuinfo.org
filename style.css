@@ -671,3 +671,28 @@ code {
     color: #3DAE2B;
     background-color: inherit;
 }
+
+.format-coverage {
+	text-align: center;
+}
+
+.format-coverage-supported {
+	/* font-size: 12px; */
+}
+
+.format-coverage-unsupported {
+	color: #9b9b9b;
+	/* font-size: 12px; */
+}
+
+.format-coverage-high {
+	color: #088A29;
+}
+
+.format-coverage-medium {
+	color:goldenrod;
+}
+
+.format-coverage-low {
+	color:#ce1818;
+}
