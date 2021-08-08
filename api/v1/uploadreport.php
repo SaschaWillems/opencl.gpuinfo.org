@@ -203,9 +203,9 @@ try {
 	foreach ($report->deviceImageFormats() as $deviceImageFormat) {
 		$sql = 
 			"INSERT INTO deviceimageformats 
-				(reportid, type, channelorder, channeltype, flags)
+				(reportid, type, channelorder, channeltype, flags, CL_MEM_READ_WRITE, CL_MEM_WRITE_ONLY, CL_MEM_READ_ONLY, CL_MEM_KERNEL_READ_AND_WRITE)
 			VALUES
-				(:reportid, :type, :channelorder, :channeltype, :flags)";
+				(:reportid, :type, :channelorder, :channeltype, :flags, :CL_MEM_READ_WRITE, :CL_MEM_WRITE_ONLY, :CL_MEM_READ_ONLY, :CL_MEM_KERNEL_READ_AND_WRITE)";
 		$values = [
 			':reportid' => $reportid,
 			':type' => $deviceImageFormat['type'],
@@ -213,6 +213,17 @@ try {
 			':channeltype' => $deviceImageFormat['channeltype'],
 			':flags' => $deviceImageFormat['flags'],
 		];
+		// Explicitly store supported flags as columns
+		// Makes it much easier to evaluate these in database statements
+		$cl_mem_flags = [
+			':CL_MEM_READ_WRITE' => (1 << 0),
+			':CL_MEM_WRITE_ONLY' => (1 << 1),
+			':CL_MEM_READ_ONLY' => (1 << 2),
+			':CL_MEM_KERNEL_READ_AND_WRITE' => (1 << 12)
+		];
+		foreach ($cl_mem_flags as $key => $value) {
+			$values[$key] = ($deviceImageFormat['flags'] & $value) ? 1 : 0;
+		}
 		$stmnt = DB::$connection->prepare($sql);
 		$stmnt->execute($values);
 	}
