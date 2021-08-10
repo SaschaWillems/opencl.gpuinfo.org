@@ -137,6 +137,18 @@ if (isset($_REQUEST['filter']['platforminfo']) && isset($_REQUEST['filter']['val
         $params['filter_platforminfovalue'] = $value;
     }
 }
+// Image format
+if (isset($_REQUEST['filter']['flag']) && isset($_REQUEST['filter']['memobjecttype']) && isset($_REQUEST['filter']['channelorder']) && isset($_REQUEST['filter']['channeltype'])) {
+	$flag = $_REQUEST['filter']['flag'];
+	$mem_object_type = $_REQUEST['filter']['memobjecttype'];
+	$channel_order = $_REQUEST['filter']['channelorder'];
+	$channel_type = $_REQUEST['filter']['channeltype'];
+    $whereClause = "where r.id in (select distinct(reportid) from deviceimageformats where type = :filter_memobjecttype and channelorder = :filter_channelorder and channeltype = :filter_channeltype and $flag = :filter_flag)";
+    $params['filter_memobjecttype'] = $mem_object_type;
+    $params['filter_channelorder'] = $channel_order;
+    $params['filter_channeltype'] = $channel_type;
+    $params['filter_flag'] = 1;
+}
 
 // Platform (os)
 if (isset($_REQUEST['filter']['platform']) && ($_REQUEST['filter']['platform'] != '')) {

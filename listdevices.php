@@ -23,10 +23,28 @@
 include 'pagegenerator.php';
 include './includes/functions.php';
 include './includes/filterlist.class.php';
+require './includes/displayutils.php';
 include './database/database.class.php';
 
-$filters = ['platform', 'extension', 'submitter', 'devicename', 'platformname', 'platformextension', 'extension', 'deviceinfo', 'platforminfo', 'value', 'invert'];
+$filters = [
+	'platform', 
+	'extension', 
+	'submitter', 
+	'devicename', 
+	'platformname', 
+	'platformextension', 
+	'extension', 
+	'deviceinfo', 
+	'platforminfo', 
+	'value', 
+	'invert',
+	'memobjecttype',
+	'channelorder',
+	'channeltype',
+	'flag'
+];
 $filter_list = new Filterlist($filters);
+$display_utils = new DisplayUtils();
 
 $pageTitle = null;
 $caption = null;
@@ -67,6 +85,14 @@ if ($filter_list->hasFilter('platforminfo') && $filter_list->hasFilter('value'))
 		$subcaption = "Part of the <code>$extension</code> extension";
 	}
 }
+if ($filter_list->hasFilter('flag') && $filter_list->hasFilter('memobjecttype') && $filter_list->hasFilter('channelorder') && $filter_list->hasFilter('channeltype')) {
+	$flag = $filter_list->getFilter('flag');
+	$mem_object_type = $display_utils->displayMemObjectType($filter_list->getFilter('memobjecttype'));
+	$channel_order = $display_utils->displayChannelOrder($filter_list->getFilter('channelorder'));
+	$channel_type = $display_utils->displayChannelType($filter_list->getFilter('channeltype'));
+	$caption = sprintf("Devices supporting <code>%s</code> for <code>%s</code> with channel order <code>%s</code> and channel type <code>%s</code>", $flag, $mem_object_type, $channel_order, $channel_type);
+}
+
 $defaultHeader = !($filter_list->hasFilters());
 
 // Platform (os)

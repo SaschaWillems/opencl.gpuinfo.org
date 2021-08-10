@@ -70,9 +70,9 @@ $display_utils = new DisplayUtils();
 						type,
 						channelorder,
 						channeltype, 
-						sum(CL_MEM_READ_WRITE) as RW, 
-						sum(CL_MEM_WRITE_ONLY) as WO, 
-						sum(CL_MEM_READ_ONLY) as RO, 
+						sum(CL_MEM_READ_WRITE) as CL_MEM_READ_WRITE, 
+						sum(CL_MEM_WRITE_ONLY) as CL_MEM_WRITE_ONLY, 
+						sum(CL_MEM_READ_ONLY) as CL_MEM_READ_ONLY, 
 						sum(CL_MEM_KERNEL_READ_AND_WRITE) as KRW,  
 						count(distinct(r.devicename)) from deviceimageformats df 
 						join reports r on r.id = df.reportid
@@ -87,7 +87,7 @@ $display_utils = new DisplayUtils();
 						echo "<td>".$display_utils->displayMemObjectType($format['type'])."</td>";
 						echo "<td>".$display_utils->displayChannelOrder($format['channelorder'])."</td>";
 						echo "<td>".$display_utils->displayChannelType($format['channeltype'])."</td>";
-						$cl_mem_flags = ['RW', 'WO', 'RO' , 'KRW'];
+						$cl_mem_flags = ['CL_MEM_READ_WRITE', 'CL_MEM_WRITE_ONLY', 'CL_MEM_READ_ONLY' , 'CL_MEM_KERNEL_READ_AND_WRITE'];
 						foreach ($cl_mem_flags as $flag) {
 							$coverage = ($format[$flag] / $devicecount) * 100.0;
 							$class = ($coverage > 0) ? 'format-coverage-supported' : 'format-coverage-unsupported';
@@ -98,7 +98,10 @@ $display_utils = new DisplayUtils();
 							} elseif ($coverage > 0.0) {
 								$class .= ' format-coverage-low';
 							}
-							$link = null;
+							$link = "listdevices.php?memobjecttype=".$format['type']."&channelorder=".$format['channelorder']."&channeltype=".$format['channeltype']."&flag=".$flag;
+							if ($platform) {
+								$link .= "&platform=$platform";
+							}
 							echo "<td class='format-coverage'><a href='$link' class='$class'>" . round($coverage, 1) . "<span style='font-size:10px;'>%</span></a></td>";
 
 						}
