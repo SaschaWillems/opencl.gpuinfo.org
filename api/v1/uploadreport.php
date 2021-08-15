@@ -160,14 +160,15 @@ try {
 			foreach($deviceInfo['details'] as $detail) {
 				$sqlDetail = 
 					"INSERT INTO deviceinfodetails 
-						(deviceinfoid, reportid, name, value)
+						(deviceinfoid, reportid, name, detail, value)
 					VALUES 
-						(:deviceinfoid, :reportid, :name, :value)";
+						(:deviceinfoid, :reportid, :name, :detail, :value)";
 				$valuesDetail = [
 					':deviceinfoid' => $detailid,
 					':reportid' => $reportid,
 					':name' => $detail['name'],
-					':value' => $detail['value']
+					':detail' => $detail['detail'],
+					':value' => $detail['value'],
 				];
 				$stmntDetail = DB::$connection->prepare($sqlDetail);
 				$stmntDetail->execute($valuesDetail);				
