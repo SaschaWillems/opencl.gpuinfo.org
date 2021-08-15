@@ -35,6 +35,7 @@ class ReportInfo
 {
     public $version = null;
     public $device_description = null;
+    public $device_identifier = null;
     public $platform = null;
 }
 
@@ -72,7 +73,8 @@ class Report
                 devicename, 
                 deviceversion,
                 devicetype,                
-                driverversion, 
+                driverversion,
+                deviceidentifier,
                 openclversionmajor, 
                 openclversionminor, 
                 osname, 
@@ -92,6 +94,7 @@ class Report
         $row = $stmnt->fetch(PDO::FETCH_ASSOC);
         $this->info->version = $row['reportversion'];
         $this->info->device_description = $row['devicename'];
+        $this->info->device_identifier = $row['deviceidentifier'];
         $this->apiversion->major = $row['openclversionmajor'];
         $this->apiversion->minor = $row['openclversionminor'];
         $this->info->platform = $row['osname'];
@@ -137,7 +140,7 @@ class Report
     public function fetchDeviceInfoDetails()
     {
         try {
-            $sql = "SELECT d2.name as deviceinfo, d.name, d.value from deviceinfodetails d join deviceinfo d2 on d.deviceinfoid = d2.id where d.reportid = :reportid order by d.id asc";
+            $sql = "SELECT d2.name as deviceinfo, d.name, d.detail, d.value from deviceinfodetails d join deviceinfo d2 on d.deviceinfoid = d2.id where d.reportid = :reportid order by d.id asc";
             $stmnt = DB::$connection->prepare($sql);
             $stmnt->execute([":reportid" => $this->id]);
             $result = $stmnt->fetchAll(PDO::FETCH_ASSOC);

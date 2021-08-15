@@ -50,6 +50,10 @@
 				echo "<tr><td>$key</td><td>$displayvalue</td></tr>";
 			}
 
+			// Additional info 
+			$device_identifier = $report->info->device_identifier;
+			echo "<tr><td>Identifier</td><td>$device_identifier</td></tr>";
+
 			$device_info = $report->fetchDeviceInfo();			
 			$device_info_details = $report->fetchDeviceInfoDetails();
 			// Device info values
@@ -72,7 +76,7 @@
 				if (count($device_info_details) > 0 ){
 					foreach($device_info_details as $info_detail) {
 						if (strcasecmp($info_detail['deviceinfo'], $key) == 0) {
-							$details[] = ['name' => $info_detail['name'], 'value' => $info_detail['value']];
+							$details[] = ['name' => $info_detail['name'], 'detail' => $info_detail['detail'], 'value' => $info_detail['value']];
 						}
 					}
 				}
@@ -80,8 +84,8 @@
 				if (count($details) > 0) {
 					echo "<td>";
 					foreach($details as $detail) {
-						$detail_display_value = getDetailDisplayValue($key, $detail['name'], $detail['value']);
-						echo $detail_display_value."<br/>";
+						$detail_display_value = $display_utils->getDetailDisplayValue($key, $detail['name'], $detail['detail'], $detail['value']);
+						echo $detail_display_value;
 					}
 					echo "</td>";
 				} else {

@@ -75,7 +75,7 @@ function belongsToExtension($name, $target, &$ext) {
         $stmnt = DB::$connection->prepare("SELECT extension FROM $table where name = :name");
         $stmnt->execute([':name' => $name]);
         $row = $stmnt->fetch(PDO::FETCH_ASSOC);
-        if ($row) {
+        if ($row && ($row['extension'] !== "")) {
             $ext = $row['extension'];
             $res = true;
         }

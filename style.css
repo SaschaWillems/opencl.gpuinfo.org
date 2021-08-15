@@ -18,6 +18,12 @@ body {
 	min-width: 512px;
 }
 
+.deviceinfodiv {
+	width:75%;
+	min-width: 512px;	
+	background:#FFF;
+}
+
 .opencllogo {
 	padding-right:10px;
 }
@@ -695,4 +701,8 @@ code {
 
 .format-coverage-low {
 	color:#ce1818;
+}
+
+.deviceinfo-detail-detail {
+	padding-left: 20px;
 }

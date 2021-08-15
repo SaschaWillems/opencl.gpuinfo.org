@@ -90,10 +90,10 @@ if ($extension) {
 
 	<?php PageGenerator::platformNavigation("displaydeviceinfo.php?name=$name", $platform, true); ?>
 
-	<div class='parentdiv'>
+	<div class='deviceinfodiv'>
 		<div id="chart"></div>
 		<div class='valuelisting'>
-			<table id="extensions" class="table table-striped table-bordered table-hover">
+			<table id="deviceinfo" class="table table-striped table-bordered table-hover">
 				<thead>
 					<tr>
 						<th>Value</th>

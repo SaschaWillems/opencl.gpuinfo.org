@@ -61,7 +61,7 @@ class DisplayUtils {
         /* CL 1.1 */
         'CL_DEVICE_HOST_UNIFIED_MEMORY' => 'displayBool',
         'CL_DEVICE_OPENCL_C_VERSION' => 'displayText',
-        
+
         /* CL 1.2 */
         'CL_DEVICE_LINKER_AVAILABLE' => 'displayBool',
         'CL_DEVICE_BUILT_IN_KERNELS' => 'displayText',
@@ -73,7 +73,7 @@ class DisplayUtils {
 
         /* CL 2.0 */
         'CL_DEVICE_MAX_GLOBAL_VARIABLE_SIZE' => 'displayByteSize',
-        'CL_DEVICE_QUEUE_ON_DEVICE_PROPERTIES' => 'displayCommandQueueCapabilities',
+        'CL_DEVICE_QUEUE_ON_DEVICE_PROPERTIES' => 'displayCommandQueueProperties',
         'CL_DEVICE_QUEUE_ON_DEVICE_PREFERRED_SIZE' => 'displayByteSize',
         'CL_DEVICE_QUEUE_ON_DEVICE_MAX_SIZE' =>'displayByteSize',
         'CL_DEVICE_SVM_CAPABILITIES' => 'displayDeviceSvmCapabilities',
@@ -102,7 +102,7 @@ class DisplayUtils {
         'CL_DEVICE_GPU_OVERLAP_NV' => 'displaybool',
         'CL_DEVICE_KERNEL_EXEC_TIMEOUT_NV' => 'displaybool',
         'CL_DEVICE_INTEGRATED_MEMORY_NV' => 'displaybool',
-        'CL_DEVICE_EXT_MEM_PADDING_IN_BYTES_QCOM' => 'displayByteSize',        
+        'CL_DEVICE_EXT_MEM_PADDING_IN_BYTES_QCOM' => 'displayByteSize',
         'CL_DEVICE_PAGE_SIZE_QCOM' => 'displayByteSize',
         'CL_DEVICE_SUB_GROUP_SIZES_INTEL' => 'displayNumberArray',
         'CL_DEVICE_AVC_ME_SUPPORTS_TEXTURE_SAMPLER_USE_INTEL' => 'displayBool',
@@ -117,7 +117,7 @@ class DisplayUtils {
 
     /** If true, visualization of flag value types contains all possible flags, with support highlighted using different css classes */
     public $display_all_flags = true;
-    
+
     function displayNumberArray($value)
     {
         if (substr($value, 0, 2) == 'a:') {
@@ -137,7 +137,7 @@ class DisplayUtils {
             return $text;
         }
     }
-    
+
     function displayByteSize($value)
     {
         return number_format($value).' bytes';
@@ -167,7 +167,7 @@ class DisplayUtils {
             return "<span class='na'>$text</span>";
         } else {
             return $text;
-        }        
+        }
     }
 
     function displayDeviceType($value)
@@ -198,20 +198,22 @@ class DisplayUtils {
     function displayVersion($version)
     {
         $CL_VERSION_MINOR_BITS = 10;
-        $CL_VERSION_PATCH_BITS = 12;    
+        $CL_VERSION_PATCH_BITS = 12;
         $CL_VERSION_MINOR_MASK = ((1 << $CL_VERSION_MINOR_BITS) - 1);
-        $CL_VERSION_PATCH_MASK = ((1 << $CL_VERSION_PATCH_BITS) - 1);    
+        $CL_VERSION_PATCH_MASK = ((1 << $CL_VERSION_PATCH_BITS) - 1);
         $major = (($version) >> ($CL_VERSION_MINOR_BITS + $CL_VERSION_PATCH_BITS));
         $minor = ((($version) >> $CL_VERSION_PATCH_BITS) & $CL_VERSION_MINOR_MASK);
-        $patch = (($version) & $CL_VERSION_PATCH_MASK);    
+        $patch = (($version) & $CL_VERSION_PATCH_MASK);
         return "$major.$minor.$patch";
     }
 
     function displayNameVersionArray($value)
     {
-
+        if ($value == 0) {
+            return "<span class='na'>none</span>";
+        }
     }
-    
+
     function displayMemCacheType($value)
     {
         $mapping = [
@@ -219,9 +221,9 @@ class DisplayUtils {
             0x1 => 'CL_READ_ONLY_CACHE',
             0x2 => 'CL_READ_WRITE_CACHE',
         ];
-        return $mapping[$value];        
-    }    
-    
+        return $mapping[$value];
+    }
+
     function displayLocalMemType($value)
     {
         $mapping = [
@@ -229,8 +231,8 @@ class DisplayUtils {
             0x1 => 'CL_LOCAL',
             0x2 => 'CL_GLOBAL',
         ];
-        return $mapping[$value];        
-    }    
+        return $mapping[$value];
+    }
 
     function displayFloatingPointConfig($value)
     {
@@ -264,7 +266,7 @@ class DisplayUtils {
         ];
         return $cl_mem_object_types[$value];
     }
-    
+
     function displayChannelOrder($value)
     {
         $cl_channel_orders = [
@@ -299,7 +301,7 @@ class DisplayUtils {
         }
         return $cl_channel_orders[$value];
     }
-    
+
     function displayChannelType($value)
     {
         $cl_channel_types = [
@@ -322,7 +324,7 @@ class DisplayUtils {
             0x10E0 => "CL_UNORM_INT_101010_2",
         ];
         return $cl_channel_types[$value];
-    }    
+    }
 
     function displayAtomicCapabilities($value)
     {
@@ -336,7 +338,7 @@ class DisplayUtils {
             (1 << 6) => 'CL_DEVICE_ATOMIC_SCOPE_ALL_DEVICES',
         ];
         $res = $this->getFlags($flags, $value);
-        return implode($this->display_all_flags ? '<br/>' : '\n', $res);        
+        return implode($this->display_all_flags ? '<br/>' : '\n', $res);
     }
 
     function displayExecCapabilities($value)
@@ -346,7 +348,7 @@ class DisplayUtils {
             (1 << 1) => 'CL_EXEC_NATIVE_KERNEL',
         ];
         $res = $this->getFlags($flags, $value);
-        return implode($this->display_all_flags ? '<br/>' : '\n', $res);        
+        return implode($this->display_all_flags ? '<br/>' : '\n', $res);
     }
 
     function displayEnqueueCapabilities($value)
@@ -356,17 +358,17 @@ class DisplayUtils {
             (1 << 1) => 'CL_DEVICE_QUEUE_REPLACEABLE_DEFAULT',
         ];
         $res = $this->getFlags($flags, $value);
-        return implode($this->display_all_flags ? '<br/>' : '\n', $res);                
+        return implode($this->display_all_flags ? '<br/>' : '\n', $res);
     }
 
-    function displayCommandQueueCapabilities($value)
+    function displayCommandQueueProperties($value)
     {
         $flags = [
             (1 << 0) => 'CL_QUEUE_OUT_OF_ORDER_EXEC_MODE_ENABLE',
             (1 << 1) => 'CL_QUEUE_PROFILING_ENABLE',
         ];
         $res = $this->getFlags($flags, $value);
-        return implode($this->display_all_flags ? '<br/>' : '\n', $res);                        
+        return implode($this->display_all_flags ? '<br/>' : '\n', $res);
     }
 
     function displayDeviceSvmCapabilities($value)
@@ -378,7 +380,7 @@ class DisplayUtils {
             (1 << 3) => 'CL_DEVICE_SVM_ATOMICS',
         ];
         $res = $this->getFlags($flags, $value);
-        return implode($this->display_all_flags ? '<br/>' : '\n', $res);                        
+        return implode($this->display_all_flags ? '<br/>' : '\n', $res);
     }
 
     function displayDevicePartitionProperties($value)
@@ -405,14 +407,61 @@ class DisplayUtils {
             (1 << 5) => 'CL_DEVICE_AFFINITY_DOMAIN_NEXT_PARTITIONABLE',
         ];
         $res = $this->getFlags($flags, $value);
-        return implode($this->display_all_flags ? '<br/>' : '\n', $res); 
+        return implode($this->display_all_flags ? '<br/>' : '\n', $res);
+    }
+
+    function displayCommandQueueCapabilitiesIntel($value)
+    {
+        if ($value == 0) {
+            return 'CL_QUEUE_DEFAULT_CAPABILITIES_INTEL';
+        }
+        $flags = [
+            (1 << 0) => 'CL_QUEUE_CAPABILITY_CREATE_SINGLE_QUEUE_EVENTS_INTEL',
+            (1 << 1) => 'CL_QUEUE_CAPABILITY_CREATE_CROSS_QUEUE_EVENTS_INTEL',
+            (1 << 2) => 'CL_QUEUE_CAPABILITY_SINGLE_QUEUE_EVENT_WAIT_LIST_INTEL',
+            (1 << 3) => 'CL_QUEUE_CAPABILITY_CROSS_QUEUE_EVENT_WAIT_LIST_INTEL',
+            (1 << 8) => 'CL_QUEUE_CAPABILITY_TRANSFER_BUFFER_INTEL',
+            (1 << 9) => 'CL_QUEUE_CAPABILITY_TRANSFER_BUFFER_RECT_INTEL',
+            (1 << 10) => 'CL_QUEUE_CAPABILITY_MAP_BUFFER_INTEL',
+            (1 << 11) => 'CL_QUEUE_CAPABILITY_FILL_BUFFER_INTEL',
+            (1 << 12) => 'CL_QUEUE_CAPABILITY_TRANSFER_IMAGE_INTEL',
+            (1 << 13) => 'CL_QUEUE_CAPABILITY_MAP_IMAGE_INTEL',
+            (1 << 14) => 'CL_QUEUE_CAPABILITY_FILL_IMAGE_INTEL',
+            (1 << 15) => 'CL_QUEUE_CAPABILITY_TRANSFER_BUFFER_IMAGE_INTEL',
+            (1 << 16) => 'CL_QUEUE_CAPABILITY_TRANSFER_IMAGE_BUFFER_INTEL',
+            (1 << 24) => 'CL_QUEUE_CAPABILITY_MARKER_INTEL',
+            (1 << 25) => 'CL_QUEUE_CAPABILITY_BARRIER_INTEL',
+            (1 << 26)  => 'CL_QUEUE_CAPABILITY_KERNEL_INTEL',
+        ];
+        $res = $this->getFlags($flags, $value);
+        return implode($this->display_all_flags ? '<br/>' : '\n', $res);
+    }
+
+    function displayQueueFamilyPropertiesIntel($name, $detail, $value)
+    {
+        $displayValue = null;
+        switch(strtolower($detail)) {
+            case 'capabilities':
+                $displayValue = $this->displayCommandQueueCapabilitiesIntel($value);
+                break;
+            case 'properties':
+                $displayValue = $this->displayCommandQueueProperties($value);
+                break;
+            default:
+                $displayValue = $value;
+        }
+        if ($displayValue) {
+            return "$name - $detail:<div class='deviceinfo-detail-detail'>$displayValue</div>";
+        } else {
+            return null;
+        }
     }
 
     function displaySubmitter($value)
     {
         return "<a href=\"listreports.php?submitter=$value\">$value</a>";
     }
-    
+
     function displayOperatingsystem($value)
     {
         return ucfirst($value);
@@ -423,7 +472,7 @@ class DisplayUtils {
     function getFlags($flag_list, $flag_value)
     {
         $res = [];
-        foreach ($flag_list as $flag => $value) {            
+        foreach ($flag_list as $flag => $value) {
             if ($this->display_all_flags) {
                 $class = ($flag & $flag_value) ? "supported" : "na";
                 if ($this->display_all_flags) {
@@ -436,9 +485,9 @@ class DisplayUtils {
             }
         }
         return $res;
-    }    
-    
-    // 
+    }
+
+    //
 
     public function getDisplayValue($value_name, $value)
     {
@@ -450,19 +499,22 @@ class DisplayUtils {
         }
         return $value;
     }
-}
 
-/*
- * Contains the display mapping functions for device info detail values
- */
-function getDetailDisplayValue($deviceInfoName, $detailName, $detailValue)
-{
-    switch ($deviceInfoName) {
-        case 'CL_DEVICE_BUILT_IN_KERNELS_WITH_VERSION':
-        case 'CL_DEVICE_ILS_WITH_VERSION':
-        case 'CL_DEVICE_OPENCL_C_ALL_VERSIONS':
-        case 'CL_DEVICE_OPENCL_C_FEATURES':
-            return $detailName." ".displayVersion($detailValue);
-            break;
+    /** Contains the display mapping functions for device info detail values */
+    public function getDetailDisplayValue($deviceInfoName, $name, $detail, $value)
+    {
+        switch ($deviceInfoName) {
+            case 'CL_DEVICE_BUILT_IN_KERNELS_WITH_VERSION':
+            case 'CL_DEVICE_ILS_WITH_VERSION':
+            case 'CL_DEVICE_OPENCL_C_ALL_VERSIONS':
+            case 'CL_DEVICE_OPENCL_C_FEATURES':
+                return $name." ".displayVersion($value)."<br/>";
+                break;
+            case 'CL_DEVICE_PCI_BUS_INFO_KHR':
+                return "$name: $value<br/>";
+                break;
+            case 'CL_DEVICE_QUEUE_FAMILY_PROPERTIES_INTEL':
+                return $this->displayQueueFamilyPropertiesIntel($name, $detail, $value);
+        }
     }
 }
