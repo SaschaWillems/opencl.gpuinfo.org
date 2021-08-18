@@ -65,7 +65,7 @@ PageGenerator::header("Extensions");
 						join reports r on r.id = d.reportid
 						$where ".($where ? "and" : "where")." name = 'CL_PLATFORM_NAME' group by value";
 					$stmnt = DB::$connection->prepare($sql);
-					$stmnt->execute();
+					$stmnt->execute($params);
 					$platforms = $stmnt->fetchAll(PDO::FETCH_ASSOC);
 					foreach ($platforms as $platform) {
 						$link = "listreports.php?platformname=".$platform['value'];
