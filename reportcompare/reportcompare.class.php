@@ -24,6 +24,7 @@ class ReportCompareDeviceInfo
 {
     public $version = null;
     public $device_description = null;
+    public $driver_version = null;
     public $platform = null;
     public $reportid = null;
 }
@@ -91,6 +92,7 @@ class ReportCompare
             $device_info = new ReportCompareDeviceInfo;
             $device_info->version = $device['reportversion'];
             $device_info->device_description = $device['devicename'];
+            $device_info->driver_version = $device['driverversion'];
             $device_info->platform = $device['osname'];
             $device_info->reportid = $device['id'];
             $this->device_infos[] = $device_info;
@@ -115,6 +117,8 @@ class ReportCompare
             foreach ($this->device_infos as $device_info) {
                 echo "<th>";
                 echo $device_info->device_description;
+                echo "<br>";
+                echo $device_info->driver_version;
                 echo "<br>";
                 echo ucfirst($device_info->platform);
                 echo "</th>";

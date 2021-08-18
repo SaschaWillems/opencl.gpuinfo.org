@@ -69,7 +69,7 @@ $report_compare->beginTable('device-info-imageformats');
             echo "</td>";
             $css_class = $image_format_info ? null : 'class="na"';
             echo "<td $css_class>".$display_utils->displayChannelType($image_format['channeltype'])."</td>";
-            echo "<td $css_class>".$report_compare->device_infos[$index]->device_description."</td>";
+            echo "<td $css_class>".$report_compare->device_infos[$index]->device_description." - ".$report_compare->device_infos[$index]->driver_version."</td>";
 
             if ($image_format_info) {
                 $cl_mem_flags = [
