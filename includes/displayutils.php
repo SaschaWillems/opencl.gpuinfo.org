@@ -64,7 +64,7 @@ class DisplayUtils {
 
         /* CL 1.2 */
         'CL_DEVICE_LINKER_AVAILABLE' => 'displayBool',
-        'CL_DEVICE_BUILT_IN_KERNELS' => 'displayText',
+        'CL_DEVICE_BUILT_IN_KERNELS' => 'displaySemicolonSepratedList',
         'CL_DEVICE_PARTITION_PROPERTIES' => 'displayDevicePartitionProperties',
         'CL_DEVICE_PARTITION_AFFINITY_DOMAIN' => 'displayDeviceAffinityDomains',
         'CL_DEVICE_PARTITION_TYPE' => 'displayDevicePartitionProperties',
@@ -168,6 +168,12 @@ class DisplayUtils {
         } else {
             return $text;
         }
+    }
+
+    function displaySemicolonSepratedList($value)
+    {
+        $list = explode(';', $value);
+        return implode('<br/>', $list);
     }
 
     function displayDeviceType($value)
