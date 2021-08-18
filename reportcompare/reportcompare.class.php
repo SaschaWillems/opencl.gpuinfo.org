@@ -142,7 +142,7 @@ class ReportCompare
                 DB::disconnect();
             }
 
-            // Get device infor values for each selected report into an array 
+            // Get device info values for each selected report into an array 
             foreach ($this->report_ids as $reportid) {
                 try {
                     $stmnt = DB::$connection->prepare("SELECT name, value, extension from deviceinfo where reportid = :reportid");
@@ -157,6 +157,25 @@ class ReportCompare
             return false;
         }        
     }
+
+    public function fetchDeviceInfoDetails(&$report_data)
+    {
+        try {
+            // Get device info detail values for each selected report into an array 
+            foreach ($this->report_ids as $reportid) {
+                try {
+                    $stmnt = DB::$connection->prepare("SELECT di.name as deviceinfo, did.name, did.detail, did.value from deviceinfodetails did join deviceinfo di on did.deviceinfoid = di.id where di.reportid = :reportid");
+                    $stmnt->execute(['reportid' => $reportid]);
+                    $report_data[] = $stmnt->fetchAll(PDO::FETCH_GROUP | PDO::FETCH_ASSOC);
+                } catch (PDOException $e) {
+                    die("Could not fetch device info values for compare!");
+                }
+            }
+            return true;
+        } catch (Throwable $e) {
+            return false;
+        }     
+    }    
 
     public function fetchDeviceExtensions(&$device_extension_list, &$report_data)
     {

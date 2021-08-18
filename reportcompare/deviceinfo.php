@@ -23,7 +23,11 @@
 // Gather data
 $device_info_list = [];
 $device_info_report_data = [];
+$device_info_detail_report_data = [];
 if (!$report_compare->fetchDeviceInfo($device_info_list, $device_info_report_data)) {
+    PageGenerator::errorMessage("Error fetching data for report compare!");
+}
+if (!$report_compare->fetchDeviceInfoDetails($device_info_detail_report_data)) {
     PageGenerator::errorMessage("Error fetching data for report compare!");
 }
 
@@ -52,9 +56,18 @@ foreach ($device_info_list as $device_info) {
     for ($i = 0; $i < $report_compare->report_count; $i++) {
         echo "<td><div class='compare-info-value'>";
         if (key_exists($key, $device_info_report_data[$i])) {
-            $report_value = $device_info_report_data[$i][$key][0]['value'];
-            $displayvalue = $display_utils->getDisplayValue($key, $report_value);
-            echo $displayvalue;
+            $has_detail = array_key_exists($key, $device_info_detail_report_data[$i]);
+            if ($has_detail) {
+                $details = $device_info_detail_report_data[$i][$key];
+                foreach($details as $detail) {
+                    $detail_display_value = $display_utils->getDetailDisplayValue($key, $detail['name'], $detail['detail'], $detail['value']);
+                    echo $detail_display_value;
+                }
+            } else {
+                $report_value = $device_info_report_data[$i][$key][0]['value'];
+                $displayvalue = $display_utils->getDisplayValue($key, $report_value);
+                echo $displayvalue;
+            }
         } else {
             echo "<span class='na'>n/a</span>";
         }
