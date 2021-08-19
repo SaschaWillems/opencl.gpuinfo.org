@@ -339,4 +339,30 @@ class ReportCompare
     {
         echo "</div>";
     }
+
+    // Static functions
+
+    /** Get the id for the latest report for a given device and (optional) platform */
+    static public function getLatestReport($devicename, $os) 
+    {
+        try {
+            $osfilter = null;
+            $params = ['devicename' => $devicename];
+            if ($os && (trim($os) !== '')) {
+                $params = ['ostype' => ostype($os)];
+                $osfilter = "and ostype = :ostype";
+            }
+            $sql = "SELECT id from reports where devicename = :devicename $osfilter order by driverversion desc limit 1";
+            $stmnt = DB::$connection->prepare($sql);
+            $stmnt->execute($params);
+            $row = $stmnt->fetch(PDO::FETCH_ASSOC);
+            if ($row) {
+                return $row['id'];
+            } else {
+                return null;
+            }
+        } catch (PDOException $e) {
+            die("Could not get latest report for $devicename");
+        }
+    }
 }

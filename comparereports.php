@@ -45,14 +45,33 @@ if ((!isset($_REQUEST['id'])) && (!isset($_REQUEST['devices']))) {
 	PageGenerator::errorMessage("<strong>No report IDs set!</strong>");
 }
 
-// Get report ids selected for compare
-foreach ($_REQUEST['id'] as $key => $value) {
-	$reportids[] = (int)($key);
-	// Limit to 4 reports
-	if (count($reportids) > 4) {
-		$reportlimit = true;
-		break;
+// Compare from report list
+if (isset($_REQUEST['id'])) {
+	foreach ($_REQUEST['id'] as $key => $value) {
+		$reportids[] = (int)($key);
+		// Limit to 4 reports
+		if (count($reportids) > 4) {
+			$reportlimit = true;
+			break;
+		}
 	}
+}
+
+// Compare from device list
+if (isset($_REQUEST['devices'])) {
+	foreach ($_REQUEST['devices'] as $device) {
+		$device_id = explode('&os=', $device);
+		$reportids[] = ReportCompare::getLatestReport($device_id[0], $device_id[1]);
+		// Limit to 4 reports
+		if (count($reportids) > 4) {
+			$reportlimit = true;
+			break;
+		}
+	}
+}
+
+if (empty($reportids)) {
+	PageGenerator::errorMessage("<strong>No report IDs set!</strong>");
 }
 
 $display_utils = new DisplayUtils();
@@ -114,7 +133,6 @@ $colspan = count($reportids) + 1;
 			var tableNames = [
 				'device-info-table',
 				'device-extensions-table',
-				// 'device-image-formats',
 				'platform-info-table',
 				'platform-extensions-table'
 			];
