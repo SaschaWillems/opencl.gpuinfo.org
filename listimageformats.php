@@ -73,7 +73,7 @@ $display_utils = new DisplayUtils();
 						sum(CL_MEM_READ_WRITE) as CL_MEM_READ_WRITE, 
 						sum(CL_MEM_WRITE_ONLY) as CL_MEM_WRITE_ONLY, 
 						sum(CL_MEM_READ_ONLY) as CL_MEM_READ_ONLY, 
-						sum(CL_MEM_KERNEL_READ_AND_WRITE) as KRW,  
+						sum(CL_MEM_KERNEL_READ_AND_WRITE) as CL_MEM_KERNEL_READ_AND_WRITE,  
 						count(distinct(r.devicename)) from deviceimageformats df 
 						join reports r on r.id = df.reportid
 						$where
