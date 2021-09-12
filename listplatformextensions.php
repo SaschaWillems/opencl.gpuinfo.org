@@ -89,7 +89,7 @@ PageGenerator::header("Platform extensions");
 						echo "</tr>";
 					}
 				} catch (PDOException $e) {
-					echo "<b>Error while fetcthing data!</b><br>";
+					echo "<b>Error while fetching data!</b><br>";
 				}
 				DB::disconnect();
 				?>
