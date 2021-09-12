@@ -57,11 +57,11 @@ PageGenerator::header("Device info");
 						$params = ['ostype' => ostype($platform)];
 						$where = "where r.ostype = :ostype";
 					}
-					$devicecount = DB::getCount("SELECT count(distinct deviceidentifier) from reports r $where", $params);
+					$devicecount = DB::getCount("SELECT count(distinct devicename) from reports r $where", $params);
 					$sql = 
 						"SELECT 
 							name, 
-							count(distinct deviceidentifier) as coverage
+							count(distinct devicename) as coverage
 						from deviceinfo d
 						join reports r on r.id = d.reportid
 						$where
