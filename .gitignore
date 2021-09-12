@@ -3,3 +3,5 @@ database.config.php
 external/
 xdebug.log
 .vscode/
+composer*.*
+vendor/**
