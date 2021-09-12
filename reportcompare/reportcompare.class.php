@@ -118,7 +118,7 @@ class ReportCompare
                 echo "<th>";
                 echo $device_info->device_description;
                 echo "<br>";
-                echo $device_info->driver_version;
+                echo shorten($device_info->driver_version, 30);
                 echo "<br>";
                 echo ucfirst($device_info->platform);
                 echo "</th>";

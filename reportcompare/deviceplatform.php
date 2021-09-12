@@ -66,7 +66,17 @@ try {
 			if (key_exists($key, $platform_info_report_data[$i])) {
 				$report_value = $platform_info_report_data[$i][$key][0]['value'];
 				$displayvalue = $display_utils->getDisplayValue($key, $report_value);
-				echo $displayvalue;
+				// Shorten lengthy single line values and display them as hints
+				$valueHint = null;
+				if ((strlen($displayvalue) > 30) && (strpos($displayvalue, '<br/>') === false)) {
+					$valueHint = $displayvalue;
+					$displayvalue = shorten($displayvalue, 30);
+				}
+                if ($valueHint) {
+                    echo "<abbr title='$valueHint'>$displayvalue</abbr>";
+                } else {
+                    echo $displayvalue;
+                }
 			} else {
 				echo "<span class='na'>n/a</span>";
 			}
