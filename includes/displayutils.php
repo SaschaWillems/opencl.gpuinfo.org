@@ -39,6 +39,7 @@ class DisplayUtils {
     // Map device info enum to display function (only for values that need explicit display transformations)
     private $display_mapping = [
         /* CL 1.0 */
+        'CL_DEVICE_VENDOR_ID' => 'displayHexValue',
 		'CL_DEVICE_TYPE' => 'displayDeviceType',
 		'CL_DEVICE_MAX_WORK_ITEM_SIZES' => 'displayNumberArray',
 		'CL_DEVICE_MAX_MEM_ALLOC_SIZE' => 'displayByteSize',
@@ -174,6 +175,11 @@ class DisplayUtils {
     {
         $list = explode(';', $value);
         return implode('<br/>', $list);
+    }
+
+    function displayHexValue($value)
+    {
+        return '0x' . strtoupper(dechex($value));
     }
 
     function displayDeviceType($value)
