@@ -37,6 +37,7 @@ class ReportInfo
     public $device_description = null;
     public $device_identifier = null;
     public $platform = null;
+    public $platform_type = null;
 }
 
 class Report
@@ -98,6 +99,7 @@ class Report
         $this->apiversion->major = $row['openclversionmajor'];
         $this->apiversion->minor = $row['openclversionminor'];
         $this->info->platform = $row['osname'];
+        $this->info->platform_type = $row['ostype'];
         $this->flags->has_update_history = false;
         DB::disconnect();
     }
