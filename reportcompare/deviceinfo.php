@@ -68,7 +68,7 @@ foreach ($device_info_list as $device_info) {
                 $displayvalue = $display_utils->getDisplayValue($key, $report_value);
 				// Shorten lengthy single line values and display them as hints
                 $valueHint = null;
-				if ((strlen($displayvalue) > 30) && (strpos($displayvalue, '<br/>') === false)) {
+				if ((strlen($displayvalue) > 30) && (strpos($displayvalue, '<br/>') === false) && (strpos($displayvalue, '<span') === false)) {
 					$valueHint = $displayvalue;
 					$displayvalue = shorten($displayvalue, 30);
 				}
