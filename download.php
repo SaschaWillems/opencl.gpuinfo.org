@@ -33,6 +33,11 @@ PageGenerator::header('Download');
 			The database is populated using the OpenCL Hardware Capability Viewer application, available for multiple platforms. It reads and displays OpenCL related information for a selected implementation, and that data can then be uploaded to the database.
 			The OpenCL Hardware Capability Viewer is a free open source product and the sources are always available from <a href="https://github.com/SaschaWillems/OpenCLCapsViewer">this github repository</a>.<br>
 		</div>
+		<div>
+			<div class="div-alert alert alert-danger" style="margin-top: 40px;">
+				<strong>Please note:</strong> The current release is a <strong>beta</strong> version and may contain bugs and errors. If you encounter any problems, please report them at the <a href="https://github.com/SaschaWillems/OpenCLCapsViewer/issues">github repository</a>.
+			</div>
+		</div>		
 		<div class="page-header">
 			<h3>Current beta release 1.00</h3>
 			<ul>		
@@ -54,7 +59,7 @@ PageGenerator::header('Download');
 		</div>
 		<div class="page-header">
 			<h3>Release notes</h3>
-			<h4>1.00 - 2021-09-12</h4>
+			<h4>1.00 - 2021-XX-XX</h4>
 			<ul>
 				<li>First release</li>
 				<ul>
