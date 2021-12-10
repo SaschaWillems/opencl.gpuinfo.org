@@ -43,7 +43,7 @@ PageGenerator::header('Download');
 			<ul>		
 				<li>Windows
 					<ul>
-						<li><a href="downloads/openclcapsviewer_1.00_beta_win64.zip">Windows 64-bit</a> (zip)</li>
+						<li><a href="downloads/openclcapsviewer_1.00_win64.zip">Windows 64-bit</a> (zip)</li>
 					</ul>
 				</li>
 				<li>Linux
