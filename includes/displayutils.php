@@ -110,6 +110,7 @@ class DisplayUtils {
         'CL_DEVICE_AVC_ME_SUPPORTS_PREEMPTION_INTEL' => 'displayBool',
         'CL_DEVICE_DOUBLE_FP_CONFIG' => 'displayFloatingPointConfig',
         'CL_DEVICE_HALF_FP_CONFIG' => 'displayFloatingPointConfig',
+        'CL_DEVICE_COMMAND_BUFFER_CAPABILITIES_KHR' => 'displayCommandBufferCapabilities',
 
         /* Report meta data */
         'Submitted by' => 'displaySubmitter',
@@ -468,6 +469,19 @@ class DisplayUtils {
             return null;
         }
     }
+
+    function displayCommandBufferCapabilities($value)
+    {
+        $flags = [
+            (1 << 0) => 'CL_COMMAND_BUFFER_CAPABILITY_KERNEL_PRINTF_KHR',
+            (1 << 1) => 'CL_COMMAND_BUFFER_CAPABILITY_DEVICE_SIDE_ENQUEUE_KHR',
+            (1 << 2) => 'CL_COMMAND_BUFFER_CAPABILITY_SIMULTANEOUS_USE_KHR',
+            (1 << 3) => 'CL_COMMAND_BUFFER_CAPABILITY_OUT_OF_ORDER_KHR',
+        ];
+        $res = $this->getFlags($flags, $value);
+        return implode($this->display_all_flags ? '<br/>' : '\n', $res);        
+
+    }    
 
     function displaySubmitter($value)
     {
