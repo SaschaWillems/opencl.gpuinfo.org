@@ -142,7 +142,7 @@ class Report
     public function fetchDeviceInfoDetails()
     {
         try {
-            $sql = "SELECT d2.name as deviceinfo, d.name, d.detail, d.value from deviceinfodetails d join deviceinfo d2 on d.deviceinfoid = d2.id where d.reportid = :reportid order by d.id asc";
+            $sql = "SELECT d2.name as deviceinfo, d.name, d.detail, d.value from deviceinfodetails d join deviceinfo d2 on d.deviceinfoid = d2.id and d2.reportid = d.reportid where d.reportid = :reportid order by d.id asc";
             $stmnt = DB::$connection->prepare($sql);
             $stmnt->execute([":reportid" => $this->id]);
             $result = $stmnt->fetchAll(PDO::FETCH_ASSOC);
