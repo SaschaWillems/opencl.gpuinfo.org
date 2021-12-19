@@ -30,6 +30,8 @@ $data = [];
 $params = [];
 $searchClause = null;
 
+$platform = null;
+
 // Ordering
 $orderByColumn = '';
 $orderByDir = '';

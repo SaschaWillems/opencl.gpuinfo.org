@@ -68,7 +68,7 @@ if ($extension) {
 <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
 <script>
 	$(document).ready(function() {
-		var table = $('#extensions').DataTable({
+		var table = $('#deviceinfo').DataTable({
 			"pageLength": -1,
 			"paging": false,
 			"stateSave": false,

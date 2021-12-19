@@ -66,7 +66,7 @@ if ($extension) {
 <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
 <script>
 	$(document).ready(function() {
-		var table = $('#extensions').DataTable({
+		var table = $('#platforminfo').DataTable({
 			"pageLength": -1,
 			"paging": false,
 			"stateSave": false,
@@ -88,10 +88,10 @@ if ($extension) {
 
 	<?php PageGenerator::platformNavigation("displayplatforminfo.php?name=$name", $platform, true); ?>
 
-	<div class='parentdiv'>
+	<div class='parentdiv info-detail'>
 		<div id="chart"></div>
 		<div class='valuelisting'>
-			<table id="extensions" class="table table-striped table-bordered table-hover">
+			<table id="platforminfo" class="table table-striped table-bordered table-hover">
 				<thead>
 					<tr>
 						<th>Value</th>

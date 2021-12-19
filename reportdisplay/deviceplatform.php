@@ -74,7 +74,7 @@ $platform_extensions = $report->fetchPlatformExtensions();
 			<thead>
 				<tr>
 					<td class='caption'>Extension</td>
-					<td class='caption'>Version</td>
+					<td class='caption'><abbr title="Only available with OpenCL 3.0 and newer"></abbr>Version</td>
 				</tr>
 			</thead>
 			<tbody>

@@ -105,7 +105,7 @@ $colspan = count($reportids) + 1;
 	</ul>
 </div>
 
-<div class='tablediv tab-content' style='width:75%;'>
+<div class='tablediv tab-content report-display'>
 
 	<div id="overlay_devices">
 		<center>

@@ -68,7 +68,7 @@ echo "</div>";
 	</ul>
 </div>
 
-<div class='tablediv tab-content' style='width:75%;'>
+<div class='tablediv tab-content report-display'>
 
 	<?php
 	$views = [
