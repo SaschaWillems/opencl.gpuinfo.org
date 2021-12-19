@@ -89,6 +89,43 @@ if ($extension) {
 <center>
 
 	<?php PageGenerator::platformNavigation("displaydeviceinfo.php?name=$name", $platform, true); ?>
+	
+	<?php
+		$display_utils = new DisplayUtils();
+		$detail_info_detail_entries = [];
+
+		DB::connect();
+		// Check if values are stored in device info details (need to be handled different
+		// This is often the case with device info that also store versioning information (e.g. CL_DEVICE_ILS_WITH_VERSION) and requires access to an additional layer of data
+		$values_from_details = (DB::getCount("SELECT count(0) from deviceinfodetails did left join deviceinfo di on did.deviceinfoid = di.id where di.name = :name $filter", ['name' => $name]) > 0);
+		// If that's the case, we need to fetch unique value combinations from the deviceinfodetails 1:n relation
+		$result = DB::$connection->prepare(
+				"SELECT did.name, group_concat(did.value) as `values`, count(*) as reports 
+				from deviceinfodetails did 
+				left join deviceinfo di on did.deviceinfoid = di.id and did.reportid = di.reportid 
+				where di.name = :name $filter 
+				group by did.name, di.reportid");
+		$result->execute(['name' => $name]);
+		$rows = $result->fetchAll(PDO::FETCH_ASSOC);
+		// Gather all unique value entry combinations
+		$detail_info_detail_entries = [];
+		foreach ($rows as $row) {
+			// Primary key is a combo of name + aggregated values
+			$id = $row['name'].'-'.$row['values'];
+			if (!array_key_exists($id, $detail_info_detail_entries)) {
+				// Push new entry
+				$detail_info_detail_entries[$id] = [				
+					'name' => $row['name'],
+					'values' => $row['values'],
+					'reports' => $row['reports']
+				];
+			} else {
+				// Increase report count
+				$detail_info_detail_entries[$id]['reports'] += $row['reports'];
+			}
+		}
+		DB::disconnect();
+	?>
 
 	<div class='deviceinfodiv'>
 		<div id="chart"></div>
@@ -102,19 +139,34 @@ if ($extension) {
 				</thead>
 				<tbody>
 					<?php
-					$display_utils = new DisplayUtils();
-					DB::connect();
-					$result = DB::$connection->prepare("SELECT value, count(0) as reports from deviceinfo where name = :name $filter group by 1 order by 1");
-					$result->execute(['name' => $name]);
-					$rows = $result->fetchAll(PDO::FETCH_ASSOC);
-					foreach ($rows as $device_info) {
-						$link = "listreports.php?deviceinfo=$name&value=".$device_info["value"].($platform ? "&platform=$platform" : "");
-						echo "<tr>";
-						echo "<td>".$display_utils->getDisplayValue($name, $device_info['value'])."</td>";
-						echo "<td><a href='$link'>".$device_info['reports']."</a></td>";
-						echo "</tr>";
+					if ($values_from_details > 0) {
+						foreach ($detail_info_detail_entries as $key => $entry) {
+							$values = explode(',', $entry['values']);
+							// @todo: expand listreports
+							$link = "listreports.php?deviceinfodetail=$name&value=".$entry['values'].($platform ? "&platform=$platform" : "");
+							echo "<tr>";
+							echo "<td>";
+							foreach ($values as $value) {
+								echo $display_utils->getDetailDisplayValue($name, $entry['name'], null, $value);
+							}
+							echo "</td>";
+							echo "<td><a href='$link'>".$entry['reports']."</a></td>";
+							echo "</tr>";
+						}
+					} else {
+						DB::connect();
+						$result = DB::$connection->prepare("SELECT value, count(0) as reports from deviceinfo where name = :name $filter group by 1 order by 1");
+						$result->execute(['name' => $name]);
+						$rows = $result->fetchAll(PDO::FETCH_ASSOC);
+						foreach ($rows as $device_info) {
+							$link = "listreports.php?deviceinfo=$name&value=".$device_info["value"].($platform ? "&platform=$platform" : "");
+							echo "<tr>";
+							echo "<td>".$display_utils->getDisplayValue($name, $device_info['value'])."</td>";
+							echo "<td><a href='$link'>".$device_info['reports']."</a></td>";
+							echo "</tr>";
+						}
+						DB::disconnect();
 					}
-					DB::disconnect();
 					?>
 				</tbody>
 			</table>
@@ -133,16 +185,27 @@ if ($extension) {
 
 		var data = google.visualization.arrayToDataTable([
 			['Value', 'Reports'],
-			<?php
+			<?php			
 			$display_utils->display_all_flags = false;
-			DB::connect();
-			$result = DB::$connection->prepare("SELECT value, count(0) as reports from deviceinfo where name = :name $filter group by 1 order by 2 desc");
-			$result->execute(['name' => $name]);
-			$rows = $result->fetchAll(PDO::FETCH_ASSOC);
-			foreach ($rows as $device_info) {
-				echo "['" . $display_utils->getDisplayValue($name, $device_info['value']) . "'," . $device_info['reports'] . "],";
+			if ($values_from_details > 0) {				
+				foreach ($detail_info_detail_entries as $key => $entry) {
+					$values = explode(',', $entry['values']);
+					$display_value = "";
+					foreach ($values as $value) {
+						$display_value .= $display_utils->getDetailDisplayValue($name, $entry['name'], null, $value);
+					}
+					echo "['$display_value'," . $entry['reports'] . "],";
+				}
+			} else {
+				DB::connect();
+				$result = DB::$connection->prepare("SELECT value, count(0) as reports from deviceinfo where name = :name $filter group by 1 order by 2 desc");
+				$result->execute(['name' => $name]);
+				$rows = $result->fetchAll(PDO::FETCH_ASSOC);
+				foreach ($rows as $device_info) {
+					echo "['" . $display_utils->getDisplayValue($name, $device_info['value']) . "'," . $device_info['reports'] . "],";
+				}
+				DB::disconnect();
 			}
-			DB::disconnect();
 			?>
 		]);
 

@@ -534,7 +534,7 @@ class DisplayUtils {
             case 'CL_DEVICE_ILS_WITH_VERSION':
             case 'CL_DEVICE_OPENCL_C_ALL_VERSIONS':
             case 'CL_DEVICE_OPENCL_C_FEATURES':
-                return $name." ".displayVersion($value)."<br/>";
+                return $name." ".displayVersion($value).($this->display_all_flags ? '<br/>' : '\n');
                 break;
             case 'CL_DEVICE_PCI_BUS_INFO_KHR':
                 return "$name: $value<br/>";
