@@ -22,7 +22,7 @@
 ?>
 
 <div class="footer">
-	OpenCL Hardware Database - &copy; <?= date('Y') ?> by <a href="https://www.saschawillems.de/" target="blank">Sascha Willems</a><br>
+	OpenCL Hardware Database - &copy; 2021-<?= date('Y') ?> by <a href="https://www.saschawillems.de/" target="blank">Sascha Willems</a><br>
 	<a href="https://www.khronos.org/opencl/">OpenCL</a> and the OpenCL logo are trademarks of Apple Inc. used by permission by <a href="https://www.khronos.org">Khronos</a>.<br>
 	<a href="https://www.gpuinfo.org/privacypolicy.html">Privacy policy</a><br><br>
 	The data presented is licensed under the <a rel="license" href="https://creativecommons.org/licenses/by/4.0/">Creative Commons Attribution 4.0 International License</a>.<br />

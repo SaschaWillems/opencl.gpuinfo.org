@@ -24,6 +24,7 @@ require './pagegenerator.php';
 require './database/database.class.php';
 require './includes/functions.php';
 require './includes/displayutils.php';
+require './includes/chartutils.php';
 
 $name = null;
 if (isset($_GET['name'])) {
@@ -63,7 +64,6 @@ if ($extension) {
 }
 ?>
 
-<script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
 <script>
 	$(document).ready(function() {
 		var table = $('#platforminfo').DataTable({
@@ -86,7 +86,24 @@ if ($extension) {
 
 <center>
 
-	<?php PageGenerator::platformNavigation("displayplatforminfo.php?name=$name", $platform, true); ?>
+	<?php 
+		PageGenerator::platformNavigation("displayplatforminfo.php?name=$name", $platform, true);
+
+		$display_utils = new DisplayUtils();
+
+		// Gather data -->		
+		$labels = [];
+		$values = [];
+		DB::connect();
+		$result = DB::$connection->prepare("SELECT value, count(0) as reports from deviceplatforminfo where name = :name $filter group by 1 order by 2 desc");
+		$result->execute(['name' => $name]);
+		$rows = $result->fetchAll(PDO::FETCH_ASSOC);
+		foreach ($rows as $device_info) {
+			$labels[] = $display_utils->getDisplayValue($name, $device_info['value']);
+			$values[] = $device_info['reports'];
+		}
+		DB::disconnect();
+	?>
 
 	<div class='parentdiv info-detail'>
 		<div id="chart"></div>
@@ -100,19 +117,13 @@ if ($extension) {
 				</thead>
 				<tbody>
 					<?php
-					$display_utils = new DisplayUtils();
-					DB::connect();
-					$result = DB::$connection->prepare("SELECT value, count(0) as reports from deviceplatforminfo where name = :name $filter group by 1 order by 1");
-					$result->execute(['name' => $name]);
-					$rows = $result->fetchAll(PDO::FETCH_ASSOC);
-					foreach ($rows as $device_info) {
-						$link = "listreports.php?platforminfo=$name&value=".$device_info["value"].($platform ? "&platform=$platform" : "");
+					for ($i = 0; $i < count($labels); $i++) {
+						$link = "listreports.php?platforminfo=$name&value=".$labels[$i].($platform ? "&platform=$platform" : "");
 						echo "<tr>";
-						echo "<td>".$display_utils->getDisplayValue($name, $device_info['value'])."</td>";
-						echo "<td><a href='$link'>".$device_info['reports']."</a></td>";
+						echo "<td>".$labels[$i]."</td>";
+						echo "<td><a href='$link'>".$values[$i]."</a></td>";
 						echo "</tr>";
 					}
-					DB::disconnect();
 					?>
 				</tbody>
 			</table>
@@ -122,44 +133,9 @@ if ($extension) {
 </center>
 
 <script type="text/javascript">
-	google.charts.load('current', {
-		'packages': ['corechart']
-	});
-	google.charts.setOnLoadCallback(drawChart);
-
-	function drawChart() {
-
-		var data = google.visualization.arrayToDataTable([
-			['Value', 'Reports'],
-			<?php
-			$display_utils->display_all_flags = false;
-			DB::connect();
-			$result = DB::$connection->prepare("SELECT value, count(0) as reports from deviceplatforminfo where name = :name $filter group by 1 order by 2 desc");
-			$result->execute(['name' => $name]);
-			$rows = $result->fetchAll(PDO::FETCH_ASSOC);
-			foreach ($rows as $device_info) {
-				echo "['" . $display_utils->getDisplayValue($name, $device_info['value']) . "'," . $device_info['reports'] . "],";
-			}
-			DB::disconnect();
-			?>
-		]);
-
-		var options = {
-			legend: {
-				position: 'bottom'
-			},
-			chartArea: {
-				width: "80%",
-				height: "80%"
-			},
-			height: 360,
-			width: 360
-		};
-
-		var chart = new google.visualization.PieChart(document.getElementById('chart'));
-
-		chart.draw(data, options);
-	}
+	<?php			
+		drawChart($labels, $values, $chart_colors);
+	?>
 </script>
 
 <?php PageGenerator::footer(); ?>
