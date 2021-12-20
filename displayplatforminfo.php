@@ -91,7 +91,7 @@ if ($extension) {
 
 		$display_utils = new DisplayUtils();
 
-		// Gather data -->		
+		// Gather data		
 		$labels = [];
 		$values = [];
 		DB::connect();
