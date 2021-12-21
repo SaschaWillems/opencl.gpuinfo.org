@@ -117,12 +117,18 @@ if ($extension) {
 				</thead>
 				<tbody>
 					<?php
+					$color_idx = 0;
 					for ($i = 0; $i < count($labels); $i++) {
+						$color_style = "style='border-left: ".$chart_colors[$color_idx]." 3px solid'";
 						$link = "listreports.php?platforminfo=$name&value=".$labels[$i].($platform ? "&platform=$platform" : "");
 						echo "<tr>";
-						echo "<td>".$labels[$i]."</td>";
+						echo "<td $color_style>".$labels[$i]."</td>";
 						echo "<td><a href='$link'>".$values[$i]."</a></td>";
 						echo "</tr>";
+						$color_idx++;
+						if ($color_idx > count($chart_colors)) {
+							$color_idx = 0;
+						}						
 					}
 					?>
 				</tbody>
