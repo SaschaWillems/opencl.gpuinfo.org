@@ -31,10 +31,10 @@ PageGenerator::header('About');
 			</div>
 			<div>
 				Welcome to the non-official OpenCL hardware database, an online tool for developers that want to check out device capabilites for the <a href="https://www.khronos.org/opencl">open standard</a> for parallel programming of heterogeneous systems.<br><br>
-				This database and the client applications to submit reports are developed and maintained by me (<a href="http://www.saschawillems.de/" target="_blank">Sascha Willems</a>) in my spare time.<br><br>
+				This database and the client applications to submit reports are developed and maintained by me (<a href="https://www.saschawillems.de/" target="_blank">Sascha Willems</a>) in my spare time.<br><br>
 				No profit is made from this data, nor is this data used in any commercial way and no personal data is transferred, stored or passed.<br><br>
 				If you want to contribute to the development, you can find the source code at <a href="https://github.com/SaschaWillems" target="_blank">https://github.com/SaschaWillems</a>.				
-				Thanks to the authors of <a href="https://www.datatables.net/" target="_blank">datatables</a> and <a href="https://github.com/vedmack/yadcf" target="_blank">yadcf</a> which are both used by the front-end of the database.<br><br>
+				Thanks to the authors of <a href="https://www.datatables.net/" target="_blank">datatables</a>, <a href="https://github.com/vedmack/yadcf" target="_blank">yadcf</a> and <a href="https://github.com/apexcharts/apexcharts.js">ApexCharts</a> which are used by the front-end of the database.<br><br>
 			</div>
 			<div class="page-header">
 				<h2>Donating</h2>
