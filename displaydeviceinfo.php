@@ -92,6 +92,7 @@ if ($extension) {
 		PageGenerator::platformNavigation("displaydeviceinfo.php?name=$name", $platform, true); 
 
 		$display_utils = new DisplayUtils();
+		$display_utils->display_all_flags = false;
 
 		// Gather data
 		$labels = [];
@@ -173,7 +174,7 @@ if ($extension) {
 						// @todo: separate link for detail info? (or maybe as an argument)
 						$link = "listreports.php?deviceinfo=$name&value=".$values[$i].($platform ? "&platform=$platform" : "");
 						echo "<tr>";
-						echo "<td $color_style>".$labels[$i]."</td>";
+						echo "<td $color_style>".str_replace('\\n', '<br/>', $labels[$i])."</td>";
 						echo "<td><a href='$link'>".$counts[$i]."</a></td>";
 						echo "</tr>";
 						$color_idx++;
