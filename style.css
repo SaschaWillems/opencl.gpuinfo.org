@@ -711,8 +711,9 @@ code {
 	padding-left: 20px;
 }
 
-.info-detail {
-	max-width: 95%;
+.chart-div {
+	background: #FFF;
+	width: 75%;
 	margin-bottom: 20px;
 	border: 1px solid #ddd;
 	border-radius: 4px;

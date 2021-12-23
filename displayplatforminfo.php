@@ -24,7 +24,7 @@ require './pagegenerator.php';
 require './database/database.class.php';
 require './includes/functions.php';
 require './includes/displayutils.php';
-require './includes/chartutils.php';
+require './includes/chart.php';
 
 $name = null;
 if (isset($_GET['name'])) {
@@ -64,22 +64,6 @@ if ($extension) {
 }
 ?>
 
-<script>
-	$(document).ready(function() {
-		var table = $('#platforminfo').DataTable({
-			"pageLength": -1,
-			"paging": false,
-			"stateSave": false,
-			"searchHighlight": true,
-			"dom": '',
-			"bInfo": false,
-			"order": [
-				[0, "asc"]
-			]
-		});
-	});
-</script>
-
 <div class='header'>
 	<h4 class='headercaption'><?= $caption; ?></h4>
 </div>
@@ -93,19 +77,19 @@ if ($extension) {
 
 		// Gather data		
 		$labels = [];
-		$values = [];
+		$counts = [];
 		DB::connect();
 		$result = DB::$connection->prepare("SELECT value, count(0) as reports from deviceplatforminfo where name = :name $filter group by 1 order by 2 desc");
 		$result->execute(['name' => $name]);
 		$rows = $result->fetchAll(PDO::FETCH_ASSOC);
 		foreach ($rows as $device_info) {
 			$labels[] = $display_utils->getDisplayValue($name, $device_info['value']);
-			$values[] = $device_info['reports'];
+			$counts[] = $device_info['reports'];
 		}
 		DB::disconnect();
 	?>
 
-	<div class='parentdiv info-detail'>
+	<div class='chart-div'>
 		<div id="chart"></div>
 		<div class='valuelisting'>
 			<table id="platforminfo" class="table table-striped table-bordered table-hover">
@@ -117,18 +101,13 @@ if ($extension) {
 				</thead>
 				<tbody>
 					<?php
-					$color_idx = 0;
 					for ($i = 0; $i < count($labels); $i++) {
-						$color_style = "style='border-left: ".$chart_colors[$color_idx]." 3px solid'";
+						$color_style = "style='border-left: ".Chart::getColor($i)." 3px solid'";
 						$link = "listreports.php?platforminfo=$name&value=".$labels[$i].($platform ? "&platform=$platform" : "");
 						echo "<tr>";
 						echo "<td $color_style>".$labels[$i]."</td>";
-						echo "<td><a href='$link'>".$values[$i]."</a></td>";
+						echo "<td><a href='$link'>".$counts[$i]."</a></td>";
 						echo "</tr>";
-						$color_idx++;
-						if ($color_idx > count($chart_colors)) {
-							$color_idx = 0;
-						}						
 					}
 					?>
 				</tbody>
@@ -139,8 +118,21 @@ if ($extension) {
 </center>
 
 <script type="text/javascript">
+	$(document).ready(function() {
+		var table = $('#platforminfo').DataTable({
+			"pageLength": -1,
+			"paging": false,
+			"stateSave": false,
+			"searchHighlight": true,
+			"dom": '',
+			"bInfo": false,
+			"order": [
+				[0, "asc"]
+			]
+		});
+	});	
 	<?php			
-		drawChart($labels, $values, $chart_colors);
+		Chart::draw($labels, $counts);
 	?>
 </script>
 

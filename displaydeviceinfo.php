@@ -20,13 +20,11 @@
  *
  */
 
- // @todo: adopt changes made on displayplatforminfo.php
-
 require './pagegenerator.php';
 require './database/database.class.php';
 require './includes/functions.php';
 require './includes/displayutils.php';
-require './includes/chartutils.php';
+require './includes/chart.php';
 
 $name = null;
 if (isset($_GET['name'])) {
@@ -65,22 +63,6 @@ if ($extension) {
 	$caption .= "<br><br>Part of the <code>$extension</code> extension";
 }
 ?>
-
-<script>
-	$(document).ready(function() {
-		var table = $('#deviceinfo').DataTable({
-			"pageLength": -1,
-			"paging": false,
-			"stateSave": false,
-			"searchHighlight": true,
-			"dom": '',
-			"bInfo": false,
-			"order": [
-				[0, "asc"]
-			]
-		});
-	});
-</script>
 
 <div class='header'>
 	<h4 class='headercaption'><?php echo $caption; ?></h4>
@@ -156,7 +138,7 @@ if ($extension) {
 		DB::disconnect();	
 	?>
 
-	<div class='deviceinfodiv info-detail'>
+	<div class='chart-div'>
 		<div id="chart"></div>
 		<div class='valuelisting'>
 			<table id="deviceinfo" class="table table-striped table-bordered table-hover">
@@ -168,19 +150,14 @@ if ($extension) {
 				</thead>
 				<tbody>
 					<?php
-					$color_idx = 0;
 					for ($i = 0; $i < count($labels); $i++) {
-						$color_style = "style='border-left: ".$chart_colors[$color_idx]." 3px solid'";
+						$color_style = "style='border-left: ".Chart::getColor($i)." 3px solid'";
 						// @todo: separate link for detail info? (or maybe as an argument)
 						$link = "listreports.php?deviceinfo=$name&value=".$values[$i].($platform ? "&platform=$platform" : "");
 						echo "<tr>";
 						echo "<td $color_style>".str_replace('\\n', '<br/>', $labels[$i])."</td>";
 						echo "<td><a href='$link'>".$counts[$i]."</a></td>";
 						echo "</tr>";
-						$color_idx++;
-						if ($color_idx > count($chart_colors)) {
-							$color_idx = 0;
-						}
 					}
 					?>
 				</tbody>
@@ -191,8 +168,21 @@ if ($extension) {
 </center>
 
 <script type="text/javascript">
+	$(document).ready(function() {
+		var table = $('#deviceinfo').DataTable({
+			"pageLength": -1,
+			"paging": false,
+			"stateSave": false,
+			"searchHighlight": true,
+			"dom": '',
+			"bInfo": false,
+			"order": [
+				[0, "asc"]
+			]
+		});
+	});	
 	<?php			
-		drawChart($labels, $counts, $chart_colors);
+		Chart::draw($labels, $counts);
 	?>
 </script>
 
