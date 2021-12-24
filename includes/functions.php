@@ -96,3 +96,19 @@ function platformname($ostype)
 	}
 	return null;
 }
+
+/** Return device type from display/filter string */
+function devicetypeid($devicetype) {
+	$devicetype_ids = [
+		'default'  => 1,
+		'cpu' => 2,
+		'gpu' => 4,
+		'acceleator' => 8,
+		'custom' => 16
+	];
+	if (key_exists($devicetype, $devicetype_ids)) {
+		return $devicetype_ids[$devicetype];
+	} else {
+		return '';
+	}
+}

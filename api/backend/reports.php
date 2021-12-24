@@ -53,14 +53,24 @@ if (isset($_REQUEST['start']) && $_REQUEST['length'] != '-1') {
 // Filtering
 $searchColumns = ['id'];
 array_push($searchColumns, 'devicename', 'deviceversion', 'driverversion', 'openclversion', 'devicetype', 'osname', 'osversion', 'osarchitecture');
+$exactcolumns = ['devicetype'];
 
-// Per-column, filtering
+// Per-column filtering
 $filters = array();
 for ($i = 0; $i < count($_REQUEST['columns']); $i++) {
     $column = $_REQUEST['columns'][$i];
     if (($column['searchable'] == 'true') && ($column['search']['value'] != '')) {
-        $filters[] = $searchColumns[$i] . ' like :filter_' . $i;
-        $params['filter_' . $i] = '%' . $column['search']['value'] . '%';
+        if (in_array($searchColumns[$i], $exactcolumns)) {
+            $filters[] = $searchColumns[$i] . ' = :filter_' . $i;
+            if ($searchColumns[$i] == 'devicetype') {
+                $params['filter_' . $i] = devicetypeid($column['search']['value']);
+            } else {
+                $params['filter_' . $i] = $column['search']['value'];
+            }
+        } else {
+            $filters[] = $searchColumns[$i] . ' like :filter_' . $i;
+            $params['filter_' . $i] = '%' . $column['search']['value'] . '%';
+        }
     }
 }
 if (sizeof($filters) > 0) {
