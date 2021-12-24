@@ -25,7 +25,7 @@ include './includes/functions.php';
 include './includes/filterlist.class.php';
 include './database/database.class.php';
 
-$filters = ['platform', 'extension', 'submitter', 'devicename', 'platformname', 'platformextension', 'extension', 'deviceinfo', 'platforminfo', 'value', 'invert'];
+$filters = ['platform', 'extension', 'submitter', 'devicename', 'platformname', 'platformextension', 'extension', 'deviceinfo', 'platforminfo', 'value', 'invert', 'detailvalue'];
 $filter_list = new Filterlist($filters);
 
 $pageTitle = null;

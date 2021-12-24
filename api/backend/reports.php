@@ -104,10 +104,25 @@ if (isset($_REQUEST['filter']['devicename'])) {
 if (isset($_REQUEST['filter']['deviceinfo']) && isset($_REQUEST['filter']['value'])) {
     $deviceinfoname = $_REQUEST['filter']['deviceinfo'];
     $value = $_REQUEST['filter']['value'];
-    if (($deviceinfoname != '') && ($value != '')) {
-        $whereClause = "where r.id in (select distinct(reportid) from deviceinfo where name = :filter_deviceinfoname and value = :filter_deviceinfovalue)";
-        $params['filter_deviceinfoname'] = $deviceinfoname;
-        $params['filter_deviceinfovalue'] = $value;
+    // Values are stored as details for this device info value
+    if (isset($_REQUEST['filter']['detailvalue'])) {
+        $deviceinfodetailname = $_REQUEST['filter']['detailvalue'];
+        if (true) {
+            $whereClause = '
+            where r.id in (select reportid from (select di.reportid, group_concat(did.value order by did.value asc) as `values` from deviceinfodetails did left join deviceinfo di on did.deviceinfoid = di.id and did.reportid = di.reportid 
+            where di.name = :filter_deviceinfoname and did.name= :filter_deviceinfodetailname
+            group by reportid
+            having `values` = (:filter_values)) tab)';
+            $params['filter_deviceinfoname'] = $deviceinfoname;
+            $params['filter_deviceinfodetailname'] = $deviceinfodetailname;
+            $params['filter_values'] = $value;
+        }
+    } else {
+        if (($deviceinfoname != '') && ($value != '')) {
+            $whereClause = "where r.id in (select distinct(reportid) from deviceinfo where name = :filter_deviceinfoname and value = :filter_deviceinfovalue)";
+            $params['filter_deviceinfoname'] = $deviceinfoname;
+            $params['filter_deviceinfovalue'] = $value;
+        }
     }
 }
 

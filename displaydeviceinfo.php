@@ -80,6 +80,7 @@ if ($extension) {
 		$labels = [];
 		$counts = [];
 		$values = [];
+		$names = [];
 
 		DB::connect();
 		// Check if values are stored in device info details (need to be handled different)
@@ -89,7 +90,7 @@ if ($extension) {
 		if ($values_from_details) {
 			// If that's the case, we need to fetch unique value combinations from the deviceinfodetails 1:n relation
 			$result = DB::$connection->prepare(
-					"SELECT did.name, group_concat(did.value) as `values`, count(*) as reports 
+					"SELECT did.name, group_concat(did.value order by did.value asc) as `values`, count(*) as reports 
 					from deviceinfodetails did 
 					left join deviceinfo di on did.deviceinfoid = di.id and did.reportid = di.reportid 
 					where di.name = :name $filter 
@@ -122,6 +123,7 @@ if ($extension) {
 				$labels[] = $display_value;
 				$values[] = $entry['values'];
 				$counts[] = $entry['reports'];
+				$names[] = $entry['name'];
 			}
 		} else {
 			DB::connect();
@@ -152,8 +154,7 @@ if ($extension) {
 					<?php
 					for ($i = 0; $i < count($labels); $i++) {
 						$color_style = "style='border-left: ".Chart::getColor($i)." 3px solid'";
-						// @todo: separate link for detail info? (or maybe as an argument)
-						$link = "listreports.php?deviceinfo=$name&value=".$values[$i].($platform ? "&platform=$platform" : "");
+						$link = "listreports.php?deviceinfo=$name&value=".$values[$i].($values_from_details ? "&detailvalue=".$names[$i] : "").($platform ? "&platform=$platform" : "");
 						echo "<tr>";
 						echo "<td $color_style>".str_replace('\\n', '<br/>', $labels[$i])."</td>";
 						echo "<td><a href='$link'>".$counts[$i]."</a></td>";
