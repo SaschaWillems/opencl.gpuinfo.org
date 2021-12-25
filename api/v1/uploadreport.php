@@ -145,7 +145,12 @@ try {
 		];
 		if (array_key_exists('value', $deviceInfo)) {
 			if (is_array($deviceInfo['value'])) {
-				$values[':value'] = serialize($deviceInfo['value']);
+				$arr = $deviceInfo['value'];
+				// On Android and Linux, QT stores some numeric arrays as string arrays instead (unlike windows) so we need to manually fix that
+				if (in_array($deviceInfo['name'], ['CL_DEVICE_MAX_WORK_ITEM_SIZES', 'CL_DEVICE_SIMULTANEOUS_INTEROPS_INTEL', 'CL_DEVICE_SUB_GROUP_SIZES_INTEL'])) {
+					array_walk($arr, 'intval');
+				}
+				$values[':value'] = serialize($arr);
 			} else {
 				$values[':value'] = $deviceInfo['value'];
 			}
