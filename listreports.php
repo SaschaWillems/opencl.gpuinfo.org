@@ -23,6 +23,7 @@
 include 'pagegenerator.php';
 include './includes/functions.php';
 include './includes/filterlist.class.php';
+include './includes/displayutils.php';
 include './database/database.class.php';
 
 $filters = ['platform', 'extension', 'submitter', 'devicename', 'platformname', 'platformextension', 'extension', 'deviceinfo', 'platforminfo', 'value', 'invert', 'detailvalue'];
@@ -52,8 +53,17 @@ if ($filter_list->hasFilter('platformextension')) {
 	$caption = "Reports " . ($inverted ? "<b>not</b>" : "") . " supporting platform extension <code>".$filter_list->getFilter('platformextension')."</code>";
 }
 if ($filter_list->hasFilter('deviceinfo') && $filter_list->hasFilter('value')) {
-	// @todo: getdisplayvalue?
-	$caption = "Reports with <code>".$filter_list->getFilter('deviceinfo')."</code> = ".$filter_list->getFilter('value');
+	$display_utils = new DisplayUtils();
+	$display_utils->display_all_flags = false;
+	$info = $filter_list->getFilter('deviceinfo');
+	$value = $filter_list->getFilter('value');
+	$displayvalue = null;
+	if ($filter_list->hasFilter('detailvalue')) {
+		$displayvalue = $value;
+	} else {
+		$displayvalue = $display_utils->getDisplayValue($info, $value);
+	}
+	$caption = "Reports with <code>$info</code> = $displayvalue";
 	$extension = null;
 	if ($filter_list->belongsToExtension($filter_list->getFilter('deviceinfo'), $filter_list::DeviceInfo, $extension)) {
 		$subcaption = "Part of the <code>$extension</code> extension";
