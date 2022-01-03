@@ -2,7 +2,7 @@
  *
  * OpenCL hardware capability database MySQL database structure
  *
- * Copyright (C) 2021 by Sascha Willems (www.saschawillems.de)
+ * Copyright (C) 2021-2022 by Sascha Willems (www.saschawillems.de)
  *	
  * This code is free software, you can redistribute it and/or
  * modify it under the terms of the GNU Affero General Public
