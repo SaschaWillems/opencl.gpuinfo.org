@@ -111,7 +111,7 @@ try {
 // Get the id of the newly inserted report
 $reportid = DB::$connection->lastInsertId();
 
-// Store minified JSON for reference
+// Store JSON for reference
 try {	
 	$sql = 
 		"INSERT INTO reportsjson
@@ -120,7 +120,7 @@ try {
 			(:reportid, :json)";
 	$values = [
 		':reportid' => $reportid,
-		':json' => json_encode(json_decode($report->json))
+		':json' => $source
 	];
 	$stmnt = DB::$connection->prepare($sql);
 	$stmnt->execute($values);

@@ -24,7 +24,7 @@ class Report {
 	public $json = null;
 
 	public function fromJson($json) {	
-		$this->data = json_decode($json, true);
+		$this->data = json_decode($json, true, 512, JSON_BIGINT_AS_STRING);
 		$this->json = $json;
 	}
 
