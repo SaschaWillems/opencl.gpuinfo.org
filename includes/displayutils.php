@@ -111,6 +111,7 @@ class DisplayUtils {
         'CL_DEVICE_DOUBLE_FP_CONFIG' => 'displayFloatingPointConfig',
         'CL_DEVICE_HALF_FP_CONFIG' => 'displayFloatingPointConfig',
         'CL_DEVICE_COMMAND_BUFFER_CAPABILITIES_KHR' => 'displayCommandBufferCapabilities',
+        'CL_DEVICE_SIMULTANEOUS_INTEROPS_INTEL' => 'displaySimultaneousInteropsIntel',
 
         /* Report meta data */
         'Submitted by' => 'displaySubmitter',
@@ -481,7 +482,17 @@ class DisplayUtils {
         $res = $this->getFlags($flags, $value);
         return implode($this->display_all_flags ? '<br/>' : '\n', $res);        
 
-    }    
+    }
+
+    function displaySimultaneousInteropsIntel($value)
+    {
+        // @todo: Values reported by the client application don't seem to match extenion spec
+        if (substr($value, 0, 2) == 'a:') {
+            $value = unserialize($value);
+            return '[' . implode(', ', $value) . ']';
+        }
+        return $value;
+    }
 
     function displaySubmitter($value)
     {
