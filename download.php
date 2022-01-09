@@ -59,11 +59,11 @@ PageGenerator::header('Download');
 		</div>
 		<div class="page-header">
 			<h3>Release notes</h3>
-			<h4>1.00 - 2022-XX-XX</h4>
+			<h4>1.00 - 2022-01-11</h4>
 			<ul>
 				<li>First release</li>
 				<ul>
-					<li><b>Note:</b> This is the first release</li>
+					<li><b>Note:</b> This is the first public release</li>
 					<li>Support for OpenCL 1.x, 2.x and 3.x</li>
 				</ul>
 			</ul>
