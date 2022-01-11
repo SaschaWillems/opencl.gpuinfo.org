@@ -199,7 +199,7 @@ if ($devices->rowCount() > 0) {
     foreach ($devices as $device) {
         $data[] = [
             'id' => $device['id'],
-            'devicename' => '<a href="displayreport.php?id=' . $device['id'] . '">' . $device['devicename'] . '</a>',
+            'devicename' => '<a href="displayreport.php?id=' . $device['id'] . '">' . trim(shorten($device['devicename'], 40)) . '</a>',
             'deviceversion' => shorten($device['deviceversion']),
             'driverversion' => shorten($device['driverversion']),
             'openclversion' => $device['openclversion'],

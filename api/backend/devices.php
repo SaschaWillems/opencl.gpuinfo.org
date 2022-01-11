@@ -190,7 +190,7 @@ if ($devices->rowCount() > 0) {
             $url .= '&platform=' . $platform;
         }
         $data[] = [
-            'device' => '<a href="' . $url . '">' . $device['device'] . '</a>',
+            'device' => '<a href="' . $url . '">' . trim(shorten($device['device'], 40)) . '</a>',
             'deviceversion' => shorten($device['deviceversion']),
             'driverversion' => shorten($device['driverversion']),
             'openclversion' => $device['openclversion'],
