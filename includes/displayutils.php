@@ -494,6 +494,33 @@ class DisplayUtils {
         return $value;
     }
 
+    function displayExternalSemaphoreHandleTypes($value)
+    {
+        $handle_types = [
+            0x2055 => 'CL_SEMAPHORE_HANDLE_OPAQUE_FD_KHR',
+            0x2056 => 'CL_SEMAPHORE_HANDLE_OPAQUE_WIN32_KHR',
+            0x2057 => 'CL_SEMAPHORE_HANDLE_OPAQUE_WIN32_KMT_KHR',
+            0x2058 => 'CL_SEMAPHORE_HANDLE_SYNC_FD_KHR',
+            0x2059 => 'CL_SEMAPHORE_HANDLE_D3D12_FENCE_KHR',
+        ];
+        return $handle_types[$value];
+    }
+
+    function displayExternalMemoryHandleTypes($value)
+    {
+        $handle_types = [
+            0x2060 => 'CL_EXTERNAL_MEMORY_HANDLE_OPAQUE_FD_KHR',
+            0x2061 => 'CL_EXTERNAL_MEMORY_HANDLE_OPAQUE_WIN32_KHR',
+            0x2062 => 'CL_EXTERNAL_MEMORY_HANDLE_OPAQUE_WIN32_KMT_KHR',
+            0x2063 => 'CL_EXTERNAL_MEMORY_HANDLE_D3D11_TEXTURE_KHR',
+            0x2064 => 'CL_EXTERNAL_MEMORY_HANDLE_D3D11_TEXTURE_KMT_KHR',
+            0x2065 => 'CL_EXTERNAL_MEMORY_HANDLE_D3D12_HEAP_KHR',
+            0x2066 => 'CL_EXTERNAL_MEMORY_HANDLE_D3D12_RESOURCE_KHR',
+            0x2067 => 'CL_EXTERNAL_MEMORY_HANDLE_DMA_BUF_KHR',
+        ];
+        return $handle_types[$value];
+    }
+
     function displaySubmitter($value)
     {
         return "<a href=\"listreports.php?submitter=$value\">$value</a>";
@@ -540,18 +567,25 @@ class DisplayUtils {
     /** Contains the display mapping functions for device info detail values */
     public function getDetailDisplayValue($deviceInfoName, $name, $detail, $value)
     {
+        $line_break = $this->display_all_flags ? '<br/>' : '\n';
         switch ($deviceInfoName) {
             case 'CL_DEVICE_BUILT_IN_KERNELS_WITH_VERSION':
             case 'CL_DEVICE_ILS_WITH_VERSION':
             case 'CL_DEVICE_OPENCL_C_ALL_VERSIONS':
             case 'CL_DEVICE_OPENCL_C_FEATURES':
-                return $name." ".displayVersion($value).($this->display_all_flags ? '<br/>' : '\n');
+                return $name." ".displayVersion($value).$line_break;
                 break;
             case 'CL_DEVICE_PCI_BUS_INFO_KHR':
                 return "$name: $value<br/>";
                 break;
             case 'CL_DEVICE_QUEUE_FAMILY_PROPERTIES_INTEL':
                 return $this->displayQueueFamilyPropertiesIntel($name, $detail, $value);
+            case 'CL_DEVICE_EXTERNAL_MEMORY_IMPORT_HANDLE_TYPES_KHR':
+                return $this->displayExternalMemoryHandleTypes($value).$line_break;
+            case 'CL_DEVICE_SEMAPHORE_IMPORT_HANDLE_TYPES_KHR':
+            case 'CL_DEVICE_SEMAPHORE_EXPORT_HANDLE_TYPES_KHR':
+                return $this->displayExternalSemaphoreHandleTypes($value).$line_break;
+                break;
         }
     }
 }
