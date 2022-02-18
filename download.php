@@ -54,6 +54,7 @@ PageGenerator::header('Download');
 				<li>Android
 					<ul>
 						<li><a href="downloads/openclcapsviewer_1.00_arm.apk">Android arm-v8</a> (apk)</li>
+						<li><a href="https://play.google.com/store/apps/details?id=de.saschawillems.openclcapsviewer&hl=en_US&gl=US">Download from Google Play</a></li> 
 					</ul>
 			</ul>
 		</div>
