@@ -39,27 +39,37 @@ PageGenerator::header('Download');
 			</div>
 		</div>		
 		<div class="page-header">
-			<h3>Current release 1.00</h3>
+			<h3>Current release</h3>
 			<ul>		
 				<li>Windows
 					<ul>
-						<li><a href="downloads/openclcapsviewer_1.00_win64.zip">Windows 64-bit</a> (zip)</li>
+						<li><a href="downloads/openclcapsviewer_1.20_win64.zip">Windows 64-bit</a> (zip)</li>
 					</ul>
 				</li>
 				<li>Linux
 					<ul>
-						<li><a href="downloads/openclcapsviewer_1.00_linux64_x11.AppImage">X11 x86-64</a> (AppImage)</li>
+						<li><a href="downloads/openclcapsviewer_1.20_linux64_x11.AppImage">X11 x86-64</a> (AppImage)</li>
+						<li><a href="downloads/openclcapsviewer_1.20_linux64_cli.AppImage">CLI x86-64</a> (AppImage)</li>
 					</ul>
 				</li>
 				<li>Android
 					<ul>
-						<li><a href="downloads/openclcapsviewer_1.00_arm.apk">Android arm-v8</a> (apk)</li>
+						<li><a href="downloads/openclcapsviewer_1.20_arm.apk">Android arm-v8</a> (apk)</li>
 						<li><a href="https://play.google.com/store/apps/details?id=de.saschawillems.openclcapsviewer&hl=en_US&gl=US">Download from Google Play</a></li> 
 					</ul>
 			</ul>
 		</div>
 		<div class="page-header">
 			<h3>Release notes</h3>
+			<h4>1.20 - 2022-11-05</h4>
+			<ul>
+				<li>Fixes some version checks that were too strict, resulting in some missing queries for OpenCL 3.0 implementations</li>
+			</ul>
+			<h4>1.10 - 2022-07-02</h4>
+			<ul>
+				<li>Added a new command line only release for windows to be used on systems without user interfaces</li>
+				<li>Adds command line arguments for uploading reports, see <a href="https://github.com/SaschaWillems/OpenCLCapsViewer/blob/master/docs/commandline_arguments.md"></a></li>
+			</ul>
 			<h4>1.00 - 2022-01-11</h4>
 			<ul>
 				<li>First release</li>

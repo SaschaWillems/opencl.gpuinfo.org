@@ -177,10 +177,9 @@ $sql = "SELECT
         $whereClause
         group by devicename 
         $searchClause
-        $orderBy 
-        $paging";
+        $orderBy";
 
-$devices = DB::$connection->prepare($sql);
+$devices = DB::$connection->prepare($sql." ".$paging);
 $devices->execute($params);
 $display_utils = new DisplayUtils();
 if ($devices->rowCount() > 0) {
@@ -201,22 +200,14 @@ if ($devices->rowCount() > 0) {
     }
 }
 
-$filteredCount = 0;
-$stmnt = DB::$connection->prepare("select count(*) from reports");
-$stmnt->execute();
-$totalCount = $stmnt->fetchColumn();
-
-$filteredCount = $totalCount;
-if (($searchClause != '') or ($whereClause != '')) {
-    $stmnt = DB::$connection->prepare($sql);
-    $stmnt->execute($params);
-    $filteredCount = $stmnt->rowCount();
-}
+$stmnt = DB::$connection->prepare($sql);
+$stmnt->execute($params);
+$totalCount = $stmnt->rowCount();
 
 $results = array(
     "draw" => isset($_REQUEST['draw']) ? intval($_REQUEST['draw']) : 0,
     "recordsTotal" => intval($totalCount),
-    "recordsFiltered" => intval($filteredCount),
+    "recordsFiltered" => intval($totalCount),
     "data" => $data
 );
 
