@@ -20,6 +20,8 @@
  *
  */
 
+session_start();
+
 include 'pagegenerator.php';
 include './includes/functions.php';
 include './includes/filterlist.class.php';
@@ -109,42 +111,53 @@ if ($defaultHeader) {
 	if (!$defaultHeader) {
 		echo "<div class='header'><h4>$caption</h4></div>";
 	}
+	?>
+	<!-- Compare block (only visible when at least one report is selected) -->
+	<div id="compare-div" class="well well-sm" role="alert" style="text-align: center; display: none;">
+		<div class="compare-header">Selected reports for compare:</div>
+		<span id="compare-info"></span>
+		<div class="compare-footer">
+			<Button onClick="clearCompare()"><span class='glyphicon glyphicon-button glyphicon-erase'></span> Clear</Button>
+			<Button onClick="compare()"><span class='glyphicon glyphicon-button glyphicon-duplicate'></span> Compare</Button>
+		</div>
+	</div>	
+	<?php
 	PageGenerator::platformNavigation('listreports.php', $platform, true, $filter_list->filters);
 	?>
 	<div class='tablediv tab-content' style='display: inline-flex;'>
-		<form method="get" action="comparereports.php">
-			<table id='reports' class='table table-striped table-bordered table-hover responsive' style='width:auto'>
-				<thead>
-					<tr>
-						<th></th>
-						<th></th>
-						<th></th>
-						<th></th>
-						<th></th>
-						<th></th>
-						<th></th>
-						<th></th>
-						<th></th>
-						<th></th>
-					</tr>
-					<tr>
-						<th>id</th>
-						<th>Device</th>
-						<th>Version</th>
-						<th>Driver</th>
-						<th>API version</th>
-						<th>Type</th>
-						<th>OS</th>
-						<th>Version</th>
-						<th>Platform</th>
-						<th><input type='submit' value='Compare' class='button'></th>
-					</tr>
-				</thead>
-			</table>
-			<div id="errordiv" style="color:#D8000C;"></div>
-		</form>
+		<table id='reports' class='table table-striped table-bordered table-hover responsive' style='width:auto'>
+			<thead>
+				<tr>
+					<th></th>
+					<th></th>
+					<th></th>
+					<th></th>
+					<th></th>
+					<th></th>
+					<th></th>
+					<th></th>
+					<th></th>
+					<th></th>
+				</tr>
+				<tr>
+					<th>id</th>
+					<th>Device</th>
+					<th>Version</th>
+					<th>Driver</th>
+					<th>API version</th>
+					<th>Type</th>
+					<th>OS</th>
+					<th>Version</th>
+					<th>Platform</th>
+					<th>Compare</th>
+				</tr>
+			</thead>
+		</table>
+		<div id="errordiv" style="color:#D8000C;"></div>
 	</div>
 </center>
+
+<script src="js/reportcompare.js"></script>
 
 <script>
 	$(document).on("keypress", "form", function(event) {
@@ -152,6 +165,10 @@ if ($defaultHeader) {
 	});
 
 	$(document).ready(function() {
+
+		$.get(comparerUrl, null, function (response) {
+			displayCompare(response);
+		});	
 
 		var table = $('#reports').DataTable({
 			"processing": true,

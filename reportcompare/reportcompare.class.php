@@ -116,7 +116,7 @@ class ReportCompare
         if ($device_info) {
             foreach ($this->device_infos as $device_info) {
                 echo "<th>";
-                echo $device_info->device_description;
+                echo shorten($device_info->device_description, 30);
                 echo "<br>";
                 echo shorten($device_info->driver_version, 30);
                 echo "<br>";

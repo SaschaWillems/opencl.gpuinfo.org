@@ -41,9 +41,14 @@ $headerFields = array("device", "driverversion", "apiversion", "os");
 $reportids = array();
 $reportlimit = false;
 
-if ((!isset($_REQUEST['id'])) && (!isset($_REQUEST['devices']))) {
+if ((!isset($_REQUEST['id'])) && (!isset($_REQUEST['devices'])) && (!isset($_REQUEST['reports']))) {
 	PageGenerator::errorMessage("<strong>No report IDs set!</strong>");
 }
+
+// The number of reports that can be compared is limited due to performance and layout
+$maxReportCount = 4;
+
+$reportids = [];
 
 // Compare from report list
 if (isset($_REQUEST['id'])) {
@@ -53,6 +58,18 @@ if (isset($_REQUEST['id'])) {
 		if (count($reportids) > 4) {
 			$reportlimit = true;
 			break;
+		}
+	}
+}
+
+// Compare from report list (new format)
+// The URL contains a comma separated list of report ids dot compare
+// e.g. compare.php/reports=100,200,900
+if (isset($_REQUEST['reports'])) {
+	$params = explode(',', $_REQUEST['reports']);
+	foreach($params as $param) {
+		if (is_numeric($param)) {
+			$reportids[] = intval($param);
 		}
 	}
 }
@@ -73,6 +90,14 @@ if (isset($_REQUEST['devices'])) {
 if (empty($reportids)) {
 	PageGenerator::errorMessage("<strong>No report IDs set!</strong>");
 }
+
+// Limit max. number of reports to compare
+$reportlimit = false;
+if (count($reportids) > $maxReportCount) {
+	$reportlimit = true;
+	$reportids = array_slice($reportids, 0, $maxReportCount);
+}
+
 
 $display_utils = new DisplayUtils();
 $report_compare = new ReportCompare($reportids);
