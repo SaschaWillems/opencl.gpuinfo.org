@@ -50,15 +50,10 @@ $maxReportCount = 4;
 
 $reportids = [];
 
-// Compare from report list
+// Compare from report list (old format)
 if (isset($_REQUEST['id'])) {
 	foreach ($_REQUEST['id'] as $key => $value) {
 		$reportids[] = (int)($key);
-		// Limit to 4 reports
-		if (count($reportids) > 4) {
-			$reportlimit = true;
-			break;
-		}
 	}
 }
 
@@ -72,6 +67,7 @@ if (isset($_REQUEST['reports'])) {
 			$reportids[] = intval($param);
 		}
 	}
+	$_SESSION['opencl_compare_reports'] = [];
 }
 
 // Compare from device list
@@ -79,12 +75,8 @@ if (isset($_REQUEST['devices'])) {
 	foreach ($_REQUEST['devices'] as $device) {
 		$device_id = explode('&os=', $device);
 		$reportids[] = ReportCompare::getLatestReport($device_id[0], $device_id[1]);
-		// Limit to 4 reports
-		if (count($reportids) > 4) {
-			$reportlimit = true;
-			break;
-		}
 	}
+	$_SESSION['opencl_compare_devices'] = [];
 }
 
 if (empty($reportids)) {
