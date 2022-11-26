@@ -36,7 +36,7 @@ PageGenerator::header('About');
 				If you want to contribute to the development, you can find the source code for the client application <a href="https://github.com/SaschaWillems/OpenCLCapsViewer" target="_blank">here</a> and the source code for the database <a href="https://github.com/SaschaWillems/opencl.gpuinfo.org" target="_blank">here</a>.<br><br>
 				Thanks to the authors of <a href="https://www.datatables.net/" target="_blank">datatables</a>, <a href="https://github.com/vedmack/yadcf" target="_blank">yadcf</a> and <a href="https://github.com/apexcharts/apexcharts.js">ApexCharts</a> which are used by the front-end of the database.<br><br>
 			</div>			
-			<div class="page-header">
+			<!-- <div class="page-header">
 				<h2>Donating</h2>
 			</div>
 			<div>
@@ -45,7 +45,7 @@ PageGenerator::header('About');
 			<div>
 				<h3>PayPal</h3>
 				<a href="https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&amp;hosted_button_id=BHXPMV6ZKPH9E"><img alt="" src="https://www.paypalobjects.com/en_US/i/btn/btn_donate_SM.gif"/></a>
-			</div>				
+			</div>				 -->
 		</div>    
 	</div>
 </div>

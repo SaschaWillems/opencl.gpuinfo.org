@@ -195,7 +195,7 @@ if ($devices->rowCount() > 0) {
             'openclversion' => $device['openclversion'],
             'submissiondate' => $device["submissiondate"],
             'reportcount' => $device["reportcount"],
-            'compare' => '<center><input type="checkbox" name="devices[]" value="' . $device["device"] . '&os=' . $platform . '"></center>'
+            'compare' => '<center><Button onClick="addToCompare(\''.$device['device'].'\','.($ostype !== null ? $ostype : '').')">Add</Button>'
         ];
     }
 }

@@ -18,6 +18,8 @@
  * PURPOSE.  See the GNU AGPL 3.0 for more details.		
  *
  */
+
+session_start();
 ?>
 <html>
 
