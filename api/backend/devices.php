@@ -195,7 +195,7 @@ if ($devices->rowCount() > 0) {
             'openclversion' => $device['openclversion'],
             'submissiondate' => $device["submissiondate"],
             'reportcount' => $device["reportcount"],
-            'compare' => '<center><Button onClick="addToCompare(\''.$device['device'].'\','.($ostype ? $ostype : '').')">Add</Button>'
+            'compare' => '<center><Button onClick="addToCompare(\''.$device['device'].'\','.($ostype !== null ? $ostype : '').')">Add</Button>'
         ];
     }
 }
