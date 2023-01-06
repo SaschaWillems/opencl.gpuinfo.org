@@ -108,6 +108,7 @@ session_start();
 					</li>
 					<li><a href="download.php">Download</a></li>
 					<li><a href="about.php">About</a></li>
+					<li><a href="#" onclick="toggleDarkMode()" title="Toggle dark/light themes"><img id="mode-toggle" class="mode-toggle" src="./images/moon.svg"/></a> </li>
 				</ul>
 				<ul class="nav navbar-nav navbar-right">
 					<li class="dropdown">
@@ -128,3 +129,6 @@ session_start();
 			</div>
 		</div>
 	</nav>
+
+	<script type="text/javascript" src="js/darkmode.js"></script>
+	<script>loadDarkMode();</script>	
