@@ -3,7 +3,7 @@
  *
  * OpenCL hardware capability database server implementation
  *	
- * Copyright (C) 2021-2022 by Sascha Willems (www.saschawillems.de)
+ * Copyright (C) 2021-2023 by Sascha Willems (www.saschawillems.de)
  *	
  * This code is free software, you can redistribute it and/or
  * modify it under the terms of the GNU Affero General Public
@@ -18,9 +18,8 @@
  * PURPOSE.  See the GNU AGPL 3.0 for more details.		
  *
  */
-
-session_start();
 ?>
+
 <html>
 
 <head>
