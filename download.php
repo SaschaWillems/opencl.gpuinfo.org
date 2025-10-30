@@ -4,7 +4,7 @@
  *
  * OpenCL hardware capability database server implementation
  *
- * Copyright (C) 2021-2022 by Sascha Willems (www.saschawillems.de)
+ * Copyright (C) 2021-2025 by Sascha Willems (www.saschawillems.de)
  *
  * This code is free software, you can redistribute it and/or
  * modify it under the terms of the GNU Affero General Public
@@ -38,24 +38,30 @@ PageGenerator::header('Download');
 			<ul>		
 				<li>Windows
 					<ul>
-						<li><a href="downloads/openclcapsviewer_1.20_win64.zip">Windows 64-bit</a> (zip)</li>
+						<li><a href="downloads/openclcapsviewer_1.30_win64.zip">Windows 64-bit</a> (zip)</li>
 					</ul>
 				</li>
 				<li>Linux
 					<ul>
-						<li><a href="downloads/openclcapsviewer_1.20_linux64_x11.AppImage">X11 x86-64</a> (AppImage)</li>
-						<li><a href="downloads/openclcapsviewer_1.20_linux64_cli.AppImage">CLI x86-64</a> (AppImage)</li>
+						<li><a href="downloads/openclcapsviewer_1.30_linux64_x11.AppImage">X11 x86-64</a> (AppImage)</li>
+						<li><a href="downloads/openclcapsviewer_1.30_linux64_cli.AppImage">CLI x86-64</a> (AppImage)</li>
 					</ul>
 				</li>
 				<li>Android
 					<ul>
-						<li><a href="downloads/openclcapsviewer_1.20_arm.apk">Android arm-v8</a> (apk)</li>
+						<li><a href="downloads/openclcapsviewer_1.30_arm.apk">Android arm-v8</a> (apk)</li>
 						<li><a href="https://play.google.com/store/apps/details?id=de.saschawillems.openclcapsviewer&hl=en_US&gl=US">Download from Google Play</a></li> 
 					</ul>
 			</ul>
 		</div>
 		<div class="page-header">
 			<h3>Release notes</h3>
+			<h4>1.30 - 2025-11-01</h4>
+			<ul>
+				<li>Update to Qt 6</li>
+				<li>Improved compatibility with newer Android versions</li>
+				<li>Enable support on additional mobile devices (e.g. Google Pixel)</li>
+			</ul>
 			<h4>1.20 - 2022-11-05</h4>
 			<ul>
 				<li>Fixes some version checks that were too strict, resulting in some missing queries for OpenCL 3.0 implementations</li>
